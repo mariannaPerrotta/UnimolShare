@@ -90,6 +90,32 @@ $app->post('/login', function (Request $request, Response $response) {
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
 
+//endpoint Recover
+
+$app->post('/recover', function (Request $request, Response $response){
+
+$db = new DBQueryManager();
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $email = $requestData['email'];
+
+
+    //Risposta del servizio REST
+    $responseData = array();
+
+    //Controllo la risposta dal DB e compilo i campi della risposta
+    if ($db->registrazione($email)) { //Se l'email viene trovata
+        $responseData['error'] = false; //Campo errore = false
+        $responseData['message'] = 'invio l'email; //Messaggio di esiso positivo
+
+
+    } else { //Se le credenziali non sono corrette
+        $responseData['error'] = true; //Campo errore = true
+        $responseData['message'] = 'email non trovata'; //Messaggio di esito negativo
+    }
+    return $response->withJson($responseData); //Invio la risposta del servizio REST al client
+});
+?>
 
 // Run app = ho riempito $app e avvio il servizio REST
 $app->run();
