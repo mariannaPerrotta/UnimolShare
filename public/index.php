@@ -104,9 +104,9 @@ $db = new DBQueryManager();
     $responseData = array();
 
     //Controllo la risposta dal DB e compilo i campi della risposta
-    if ($db->registrazione($email)) { //Se l'email viene trovata
+    if ($db->registration($email)) { //Se l'email viene trovata
         $responseData['error'] = false; //Campo errore = false
-        $responseData['message'] = 'invio l'email; //Messaggio di esiso positivo
+        $responseData['message'] = "invio l'email"; //Messaggio di esiso positivo
 
 
     } else { //Se le credenziali non sono corrette
@@ -115,7 +115,6 @@ $db = new DBQueryManager();
     }
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
-?>
 
 // Run app = ho riempito $app e avvio il servizio REST
 $app->run();

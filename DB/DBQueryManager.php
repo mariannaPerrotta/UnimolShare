@@ -110,7 +110,7 @@ class DBQueryManager {
             $campi[0]." = ?"
     ;
 
-        $stmt = $this->conection->prepare($query);
+        $stmt = $this->connection->prepare($query);
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $stmt->store_result();
