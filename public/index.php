@@ -103,8 +103,14 @@ $app->post('/registration', function (Request $request, Response $response) {
 //Risposta del servizio REST
     $responseData = array(); //La risposta è un array di informazioni da compilare
 
+    /**** SUGGERIMENTO DI ANDREA ****/
+    /**** Consiglio di modificare questa funzione utilizzando una query dedicata per fare la registrazione per due motivi
+     * 1. Faccio un solo accesso al db invece di 2 he con una sola query inserisce il nuovo utente solo se non esiste già
+     * 2. Rendo il codice indipendente dall'altro servizio (recover) quindi facilmente manutenzionabile e scalare
+     ****/
+
 //Controllo la risposta dal DB e compilo i campi della risposta
-    if (!$db->registration($email)) { //Se l'email non esiste prosegue con la registrazione
+    if (!$db->recover($email)) { //Se l'email non esiste prosegue con la registrazione
         $responseData['error'] = false; //Campo errore = false
         //to do funzione di popolamento del database
         $responseData['message'] = 'Registrazione'; //Messaggio di esito positivo
@@ -130,7 +136,7 @@ $db = new DBQueryManager();
     $responseData = array();
 
     //Controllo la risposta dal DB e compilo i campi della risposta
-    if ($db->registration($email)) { //Se l'email viene trovata
+    if ($db->recover($email)) { //Se l'email viene trovata
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = "invio l'email"; //Messaggio di esiso positivo
 
