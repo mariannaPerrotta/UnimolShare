@@ -96,8 +96,8 @@ class DBQueryManager {
         return $stmt->num_rows > 0;
     }
 
-    //Funzione di registrazione
-    public function registration ($email)
+    //Funzione di recupero
+    public function recover ($email)
     {
         $table = $this->tabelleDB[0]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
