@@ -104,9 +104,9 @@ $db = new DBQueryManager();
     $responseData = array();
 
     //Controllo la risposta dal DB e compilo i campi della risposta
-    if ($db->registrazione($email)) { //Se l'email viene trovata
+    if ($db->registration($email)) { //Se l'email viene trovata
         $responseData['error'] = false; //Campo errore = false
-        $responseData['message'] = 'invio l'email; //Messaggio di esiso positivo
+        $responseData['message'] = 'email inviata con successo'; //Messaggio di esiso positivo
 
 
     } else { //Se le credenziali non sono corrette
