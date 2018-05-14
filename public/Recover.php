@@ -1,5 +1,5 @@
-<?php
-// endpoint: /registration
+
+// endpoint: /registration (Francesco)
 $app->post('/registration', function (Request $request, Response $response) {
 $db = new DBQueryManager();
 
@@ -24,4 +24,3 @@ $responseData['message'] = 'Email associata a un account già esistente!'; //Mes
 }
 return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
-?>
