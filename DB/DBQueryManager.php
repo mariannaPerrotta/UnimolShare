@@ -96,6 +96,28 @@ class DBQueryManager {
         return $stmt->num_rows > 0;
     }
 
+    //Funzione di registrazione
+    public function registration ($email)
+    {
+        $table = $this->tabelleDB[0]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
+        $query = //query:  "SELECT email FROM attori New2 WHERE email = ?"
+            "SELECT".
+            $campi[0].", ".
+            "FROM ".
+            $table." ".
+            "WHERE ".
+            $campi[0]." = ?"
+    ;
+
+        $stmt = $this->conection->prepare($query);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $stmt->store_result();
+        //Controllo se ha trovato matching tra dati inseriti e capi del db
+        return $stmt->num_rows > 0;
+    }
+
     //Funzione che restituisce il tipo attore in base al suo id (serve per la specializzazione degli utenti)
     public function getTypeByIdAttore($idattore)
     {

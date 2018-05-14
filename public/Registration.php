@@ -1,0 +1,4 @@
+// endpoint: /registrazione
+<?php
+
+?>
