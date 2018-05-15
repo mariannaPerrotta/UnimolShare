@@ -91,7 +91,7 @@ class DBQueryManager
         $stmt->bind_param("ss", $idattore, $password); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
         $stmt->execute();
         $stmt->store_result();
-        //Controllo se ha trovato matching tra dati inseriti e capi del db
+        //Controllo se ha trovato matching tra dati inseriti e campi del db
         return $stmt->num_rows > 0;
     }
 
@@ -100,8 +100,8 @@ class DBQueryManager
     {
         $table = $this->tabelleDB[0]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
-        $query = //query:  "SELECT email FROM attori New2 WHERE email = ?"
-            "SELECT" .
+        $query = //query:  "SELECT email FROM attoriNew2 WHERE email = ?"
+            "SELECT " .
             $campi[0] . ", " .
             "FROM " .
             $table . " " .
@@ -112,18 +112,18 @@ class DBQueryManager
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $stmt->store_result();
-        //Controllo se ha trovato matching tra dati inseriti e capi del db
+        //Controllo se ha trovato matching tra dati inseriti e campi del db
         return $stmt->num_rows > 0;
     }
 
-    // Funzione Modifica Profilo (da rivedere) //Gigi
+    // Funzione Modifica Profilo
     public function updateProfile($idattore, $nome, $cognome, $password)
     {
         $table = $this->tabelleDB[0]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
-        $query = //query:  " UPDATE TABLE, SET CAMPO WHERE ID ATTORE"
+        $query = //query:  " UPDATE TABLE, SET CAMPI WHERE ID ATTORE"
             "UPDATE " .
-            $table . " " .
+            $table . ", " .
             "SET " .
             $campi[2] . " = ? , " .
             $campi[3] . " = ?, " .
@@ -135,36 +135,36 @@ class DBQueryManager
         $stmt->bind_param("ssss", $nome, $cognome, $password, $idattore); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
         $stmt->execute();
         $stmt->store_result();
-
-        /***** CORREZIONE DI ANDREA: NON RITORNAVA NULLA LA FUNZIONE *****/
         //Controllo se ha trovato matching tra dati inseriti e capi del db
         return $stmt->num_rows > 0;
     }
 
-    // Funzione inserisci email
-    public function registration($email, $nome, $cognome, $password, $idattore)
+    // Funzione registrazione
+    public function registration($email, $tipo, $nome, $cognome, $password)
     {
         $table = $this->tabelleDB[0]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
         // N.B. Probabilmente effettuando una query più accurata si può migliorare la logica che serve a filtrare i dati
-        $query = //query: "SELECT idattore, tipo, nome, cognome FROM attoriNew2 WHERE idattore = ?"
+        $query = //query: "INSERT INTO attoriNew2 (idattore, tipo, nome, cognome, password) VALUES (?,?,?,?,?)"
             "INSERT INTO " .
             $table." ( ".
-            $campi[0] .",".
-            $campi[1] .",".
-            $campi[2] .",".
-            $campi[3] .")".
+            $campi[0] .", ".
+            $campi[1] .", ".
+            $campi[2] .", ".
+            $campi[3] .", ".
+            $campi[4] ." ) ".
 
             "VALUES (?,?,?,?,?)" ;
 
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("ssss", $idattore, $nome, $cognome, $password); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
+        $stmt->bind_param("sssss", $email, $tipo, $nome, $cognome, $password); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
         $result = $stmt->execute();
 
         return $result;
     }
 
 
+    /**** COMMENTO DI ANDREA: FORSE NON SERVE NEL NOSTRO PROGETTO ****/
     //Funzione che restituisce il tipo attore in base al suo id (serve per la specializzazione degli utenti)
     public function getTypeByIdAttore($idattore)
     {
