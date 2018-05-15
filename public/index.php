@@ -54,7 +54,7 @@ $app = new App($settings); //"Contenitore" per gli endpoint da riempire
 
 /* aggiungo ad $app tutta la lista di endpoint che voglio */
 
-// endpoint: /listaUtenti
+// endpoint: /listaUtenti (Andrea)
 $app->get('/listaUtenti', function (Request $request, Response $response) {
     $db = new DBQueryManager();
 
@@ -66,7 +66,7 @@ $app->get('/listaUtenti', function (Request $request, Response $response) {
     return $newResponse; //Invio la risposta del servizio REST al client
 });
 
-// endpoint: /login
+// endpoint: /login (Andrea)
 $app->post('/login', function (Request $request, Response $response) {
     $db = new DBQueryManager();
 
@@ -100,30 +100,23 @@ $app->post('/registration', function (Request $request, Response $response) {
     $nome = $requestData['nome'];
     $cognome = $requestData['cognome'];
     $idattore=$requestData['idattore'];
-//Risposta del servizio REST
+
+    //Risposta del servizio REST
     $responseData = array(); //La risposta è un array di informazioni da compilare
 
-    /**** SUGGERIMENTO DI ANDREA ****/
-    /**** Consiglio di modificare questa funzione utilizzando una query dedicata per fare la registrazione per due motivi
-     * 1. Faccio un solo accesso al db invece di 2 he con una sola query inserisce il nuovo utente solo se non esiste già
-     * 2. Rendo il codice indipendente dall'altro servizio (recover) quindi facilmente manutenzionabile e scalabile
-     ****/
-
-//Controllo la risposta dal DB e compilo i campi della risposta
-    if (!$db->registration($email,$nome,$cognome,$password,$idattore)) { //Se l'email non esiste prosegue con la registrazione
+    //Controllo la risposta dal DB e compilo i campi della risposta
+    if (!$db->registration($email,$nome,$cognome,$password,$idattore)) { //Se la registrazione è andata a buon fine
         $responseData['error'] = false; //Campo errore = false
-        //to do funzione di popolamento del database
-        $responseData['message'] = 'Registrazione'; //Messaggio di esito positivo
+        $responseData['message'] = 'Registrazione avvenuta con successo'; //Messaggio di esito positivo
 
-    } else { //Se l'email già è stata registrata in precedenza
+    } else {
         $responseData['error'] = true; //Campo errore = true
         $responseData['message'] = 'Email associata a un account già esistente!'; //Messaggio di esito negativo
     }
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
 
-// endpoint: updateProfile  (Gigi)
-
+// endpoint: /update (Gigi)
 $app->post('/update', function (Request $request, Response $response) {
     $db = new DBQueryManager();
 
@@ -149,7 +142,7 @@ $app->post('/update', function (Request $request, Response $response) {
 });
 
 
-//endpoint Recover
+//endpoint /recover (Danilo)
 
 $app->post('/recover', function (Request $request, Response $response){
 
@@ -158,19 +151,17 @@ $db = new DBQueryManager();
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $email = $requestData['email'];
 
-
     //Risposta del servizio REST
     $responseData = array();
 
     //Controllo la risposta dal DB e compilo i campi della risposta
     if ($db->recover($email)) { //Se l'email viene trovata
         $responseData['error'] = false; //Campo errore = false
-        $responseData['message'] = "invio l'email"; //Messaggio di esito positivo
-
+        $responseData['message'] = "Invio email di recupero"; //Messaggio di esito positivo
 
     } else { //Se le credenziali non sono corrette
         $responseData['error'] = true; //Campo errore = true
-        $responseData['message'] = 'email non trovata'; //Messaggio di esito negativo
+        $responseData['message'] = 'Email non presente nel DB'; //Messaggio di esito negativo
     }
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
