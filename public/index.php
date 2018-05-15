@@ -122,6 +122,33 @@ $app->post('/registration', function (Request $request, Response $response) {
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
 
+// endpoint: updateProfile  (Gigi)
+
+$app->post('/update', function (Request $request, Response $response) {
+    $db = new DBQueryManager();
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $idattore = $requestData['idattore'];
+    $password = $requestData['password'];
+    $nome = $requestData['nome'];
+    $cognome= $requestData['cognome'];
+
+    //Risposta del servizio REST
+    $responseData = array(); //La risposta è un array di informazioni da compilare
+
+    //Controllo la risposta dal DB e compilo i campi della risposta
+    if ($db->updateProfile($idattore, $nome, $cognome, $password)) {
+        $responseData['error'] = false; //Campo errore = false
+        $responseData['message'] = 'Update effettuato con successo'; //Messaggio di esiso positivo
+
+    } else { //Se le credenziali non sono corrette
+        $responseData['error'] = true; //Campo errore = true
+        $responseData['message'] = 'Errore nel DB'; //Messaggio di esito negativo
+    }
+    return $response->withJson($responseData); //Invio la risposta del servizio REST al client
+});
+
+
 //endpoint Recover
 
 $app->post('/recover', function (Request $request, Response $response){
