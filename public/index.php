@@ -54,6 +54,8 @@ $app = new App($settings); //"Contenitore" per gli endpoint da riempire
 
 /* aggiungo ad $app tutta la lista di endpoint che voglio */
 
+/**** ENDPOINT DI TEST ****/
+
 // endpoint: /listaUtenti (Andrea)
 $app->get('/listaUtenti', function (Request $request, Response $response) {
     $db = new DBQueryManager();
@@ -65,6 +67,20 @@ $app->get('/listaUtenti', function (Request $request, Response $response) {
     $newResponse = $response->withHeader('Content-type', 'application/json');
     return $newResponse; //Invio la risposta del servizio REST al client
 });
+
+// endpoint: /testGetStudenti (Andrea)
+$app->get('/testGetUtenti', function (Request $request, Response $response) {
+    $db = new DBQueryManager();
+
+    $responseData = $db->testGetStudenti();//Risposta del DB
+    //metto in un json e lo inserisco nella risposta del servizio REST
+    $response->getBody()->write(json_encode(array("studenti" => $responseData)));
+    //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
+    $newResponse = $response->withHeader('Content-type', 'application/json');
+    return $newResponse; //Invio la risposta del servizio REST al client
+});
+
+/**** ENDPOINT DEL PROGETTO ****/
 
 // endpoint: /login (Andrea)
 $app->post('/login', function (Request $request, Response $response) {

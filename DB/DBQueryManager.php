@@ -13,18 +13,86 @@ class DBQueryManager
 
     //DA MODIFICARE IN BASE AL DB DEL SOTTOGRUPPO DI DORO
     private $tabelleDB = [ //Array di tabelle del db
-        "attoriNew2"
+        "attoriNew2", //E' per dei test verrà eliminato
+        "annuncio",
+        "cdl",
+        "docente",
+        "documento",
+        "libro",
+        "materia",
+        "studente",
+        "valutazione"
     ];
 
     //DA MODIFICARE ANCHE QUESTO IN BASE AL DB
     private $campiTabelleDB = [ //Ogni tabella ha i suoi campi e li salvo in un array bidimensionale indicizzato con key
-        "attoriNew2" => [
+        "attoriNew2" => [ //E' per dei test verrà eliminato
             "idattore",
             "tipo",
             "nome",
             "cognome",
             "password"
+        ],
+        "annuncio" => [
+            "id",
+            "titolo",
+            "contatto",
+            "prezzo",
+            "edizione",
+            "casa_editrice",
+            "cod_stud",
+            "autore",
+            "cod_materia"
+        ],
+        "cdl" => [
+            "id",
+            "nome"
+        ],
+        "docente" => [
+            "matricola",
+            "nome",
+            "cognome",
+            "email",
+            "password"
+        ],
+        "documento" => [
+            "id",
+            "titolo",
+            "cod_docente",
+            "cod_studente",
+            "cod_materia",
+            "link"
+        ],
+        "libro" => [
+            "id",
+            "titolo",
+            "autore",
+            "casa_editrice",
+            "edizione",
+            "cod_docente",
+            "cod_materia",
+            "link"
+        ],
+        "materia" => [
+            "id",
+            "nome",
+            "cod_docente",
+            "cod_cdl"
+        ],
+        "studente" => [
+            "matricola",
+            "nome",
+            "cognome",
+            "email",
+            "password",
+            "cod_cds"
+        ],
+        "valutazione" => [
+            "id",
+            "valutazione",
+            "cod_documento"
         ]
+
     ];
 
     //Costruttore
@@ -36,6 +104,43 @@ class DBQueryManager
     }
 
     /*********** FUNZIONE DI ESEMPIO ***********/
+
+    //Funzione per recuperare la lista degli utenti presenti del DB
+    public function testGetStudenti()
+    {
+        $utenti = array(); //risultato: array bidimensionale
+        $table = $this->tabelleDB[7]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
+        $query = //query: "SELECT idattore, tipo, nome, cognome FROM attoriNew2"
+            "SELECT " .
+            $campi[0] . ", " .
+            $campi[1] . ", " .
+            $campi[2] . ", " .
+            $campi[3] . ", " .
+            $campi[4] . ", " .
+            $campi[5] . " " .
+            "FROM " .
+            $table;
+
+        $stmt = $this->connection->prepare($query); //Preparo la query
+        $stmt->execute();//Esegue la query
+        //Salvo il risultato della query in alcune variabili
+        $stmt->bind_result($codice, $nome, $cognome, $email, $psw, $cds);
+
+        while ($stmt->fetch()) { //Scansiono la risposta della query
+            $temp = array(); //Array temporaneo per l'acquisizione dei dati
+            //Indicizzo con key i dati nell'array
+            $temp[$campi[0]] = $codice;
+            $temp[$campi[1]] = $nome;
+            $temp[$campi[2]] = $cognome;
+            $temp[$campi[3]] = $email;
+            $temp[$campi[4]] = $psw;
+            $temp[$campi[5]] = $cds;
+            array_push($utenti, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $utenti
+        }
+        return $utenti;
+    }
+
     //Funzione per recuperare la lista degli utenti presenti del DB
     public function getUtenti()
     {
