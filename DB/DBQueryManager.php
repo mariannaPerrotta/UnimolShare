@@ -6,7 +6,8 @@
  * Time: 20:01
  */
 
-class DBQueryManager {
+class DBQueryManager
+{
     //Variabili di classe
     private $connection;
 
@@ -42,14 +43,13 @@ class DBQueryManager {
         $table = $this->tabelleDB[0]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
         $query = //query: "SELECT idattore, tipo, nome, cognome FROM attoriNew2"
-            "SELECT ".
-                $campi[0].", ".
-                $campi[1].", ".
-                $campi[2].", ".
-                $campi[3]." ".
-            "FROM ".
-                $table
-        ;
+            "SELECT " .
+            $campi[0] . ", " .
+            $campi[1] . ", " .
+            $campi[2] . ", " .
+            $campi[3] . " " .
+            "FROM " .
+            $table;
 
         $stmt = $this->connection->prepare($query); //Preparo la query
         $stmt->execute();//Esegue la query
@@ -76,17 +76,16 @@ class DBQueryManager {
         $table = $this->tabelleDB[0]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
         $query = //query: "SELECT idattore, tipo, nome, cognome FROM attoriNew2 WHERE idattore = ? AND password = ?"
-            "SELECT ".
-                $campi[0].", ".
-                $campi[1].", ".
-                $campi[2].", ".
-                $campi[3]." ".
-            "FROM ".
-                $table." ".
-            "WHERE ".
-                $campi[0]." = ? AND ".
-                $campi[4]." = ?"
-        ;
+            "SELECT " .
+            $campi[0] . ", " .
+            $campi[1] . ", " .
+            $campi[2] . ", " .
+            $campi[3] . " " .
+            "FROM " .
+            $table . " " .
+            "WHERE " .
+            $campi[0] . " = ? AND " .
+            $campi[4] . " = ?";
 
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("ss", $idattore, $password); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
@@ -97,18 +96,17 @@ class DBQueryManager {
     }
 
     //Funzione di recupero
-    public function recover ($email)
+    public function recover($email)
     {
         $table = $this->tabelleDB[0]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
         $query = //query:  "SELECT email FROM attori New2 WHERE email = ?"
-            "SELECT".
-            $campi[0].", ".
-            "FROM ".
-            $table." ".
-            "WHERE ".
-            $campi[0]." = ?"
-    ;
+            "SELECT" .
+            $campi[0] . ", " .
+            "FROM " .
+            $table . " " .
+            "WHERE " .
+            $campi[0] . " = ?";
 
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("s", $email);
@@ -119,7 +117,7 @@ class DBQueryManager {
     }
 
     // Funzione Modifica Profilo (da rivedere) //Gigi
-    public function updateProfile ($idattore, $nome, $cognome, $password)
+    public function updateProfile($idattore, $nome, $cognome, $password)
     {
         $table = $this->tabelleDB[0]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
@@ -141,6 +139,29 @@ class DBQueryManager {
         /***** CORREZIONE DI ANDREA: NON RITORNAVA NULLA LA FUNZIONE *****/
         //Controllo se ha trovato matching tra dati inseriti e capi del db
         return $stmt->num_rows > 0;
+    }
+
+    // Funzione inserisci email
+    public function registration($email, $nome, $cognome, $password, $idattore)
+    {
+        $table = $this->tabelleDB[0]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
+        // N.B. Probabilmente effettuando una query più accurata si può migliorare la logica che serve a filtrare i dati
+        $query = //query: "SELECT idattore, tipo, nome, cognome FROM attoriNew2 WHERE idattore = ?"
+            "INSERT INTO " .
+            $table." ( ".
+            $campi[0] .",".
+            $campi[1] .",".
+            $campi[2] .",".
+            $campi[3] .")".
+
+            "VALUES (?,?,?,?,?)" ;
+
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("ssss", $idattore, $nome, $cognome, $password); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
+        $result = $stmt->execute();
+
+        return $result;
     }
 
 
