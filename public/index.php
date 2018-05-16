@@ -198,6 +198,32 @@ $app->post('/visualizzaprofilostudente', function (Request $request, Response $r
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
 
+
+// endpoint: /caricaDocumento (Jonathan)
+$app->post('/caricadocumento', function (Request $request, Response $response) {
+    $db = new DBQueryManager();
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $titolo = $requestData['titolo'];
+    $codice_docente = $requestData['codice_docente'];
+    $codice_studente = $requestData['codice_studente'];
+    $codice_materia = $requestData['codice_materia'];
+    $link=$requestData['link'];
+
+    //Risposta del servizio REST
+    $responseData = array(); //La risposta è un array di informazioni da compilare
+
+    //Controllo la risposta dal DB e compilo i campi della risposta
+    if ($db->caricaDocumento($titolo,$codice_docente,$codice_studente,$codice_materia,$link)) { //Se il caricamento del doc è andata a buon fine
+        $responseData['error'] = false; //Campo errore = false
+        $responseData['message'] = 'Caricamento avvenuto con successo'; //Messaggio di esito positivo
+
+    } else {
+        $responseData['error'] = true; //Campo errore = true
+        $responseData['message'] = 'Caricamento non effettuato'; //Messaggio di esito negativo
+    }
+    return $response->withJson($responseData); //Invio la risposta del servizio REST al client
+});
 // Run app = ho riempito $app e avvio il servizio REST
 $app->run();
 
