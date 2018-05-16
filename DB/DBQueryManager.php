@@ -22,7 +22,7 @@ class DBQueryManager
         "documento",
         "libro",
         "materia",
-        "studente2",
+        "studente",
         "valutazione"
     ];
 
@@ -46,7 +46,7 @@ class DBQueryManager
             "autore",
             "cod_materia"
         ],
-        "cdl2" => [
+        "cdl" => [
             "id",
             "nome"
         ],
@@ -81,7 +81,7 @@ class DBQueryManager
             "cod_docente",
             "cod_cdl"
         ],
-        "studente2" => [
+        "studente" => [
             "matricola",
             "nome",
             "cognome",
@@ -394,6 +394,9 @@ class DBQueryManager
          * */
         return $tipoUtente;
     }
+
+    //------------ NUOVI DA CONTROLLARE --------------
+
     public function visualizzaDocumento($idDocumento)
     {
         $documento = array();
@@ -532,6 +535,35 @@ class DBQueryManager
         return $result;
     }
 
+    //Funzione per scaricare un documento (Andrea)
+    public function downloadDocumento($id)
+    {
+        $table = $this->tabelleDB[4]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
+        /*  query: "SELECT link FROM documento WHERE id = ?" */
+        $query=
+            "SELECT " .
+            $campi[5] . " " .
+            "FROM " .
+            $table . " "  .
+            "WHERE " .
+            $campi[0] . " = ?";
+
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("s", $id);
+
+        $stmt->execute();
+        $stmt->store_result();
+
+        if($stmt->num_rows > 0) {
+            $stmt->bind_result($link);
+            return $link;
+        }
+        else {
+            return null;
+        }
+    }
+
     public function rimuoviDocumento($idDocumento)
     {
         $table = $this->tabelleDB[4]; //Tabella per la query
@@ -563,6 +595,7 @@ class DBQueryManager
         $stmt->execute();
         $stmt->store_result();
     }
+
     public function visualizzaDocumentoPerMateria($Materia)
     {
         $documento = array();
@@ -608,6 +641,7 @@ class DBQueryManager
         }
         return $documento; //ritorno array Documento riempito con i risultati della query effettuata.
     }
+
     public function visualizzaDocumentoPerDocente($nomeDocente)
     {
         $documento = array();

@@ -233,6 +233,29 @@ $app->post('/caricadocumento', function (Request $request, Response $response) {
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
 
+// endpoint: /downloadDocumento (Andrea)
+$app->post('/downloadDocumento', function (Request $request, Response $response) {
+    $db = new DBQueryManager();
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $id = $requestData['id'];
+
+    //Risposta del servizio REST
+    $responseData = array(); //La risposta è un array di informazioni da compilare
+
+    //Controllo la risposta dal DB e compilo i campi della risposta
+    $link = $db->downloadDocumento($id);
+    if ($link != null) { //Se l'utente esiste ed è corretta la password
+        $responseData['error'] = false; //Campo errore = false
+        $responseData['message'] = 'In download'; //Messaggio di esiso positivo
+        $responseData['link'] = $link;
+
+    } else { //Se le credenziali non sono corrette
+        $responseData['error'] = true; //Campo errore = true
+        $responseData['message'] = 'Impossibile scaricare il file'; //Messaggio di esito negativo
+    }
+    return $response->withJson($responseData); //Invio la risposta del servizio REST al client
+});
 
 
 
