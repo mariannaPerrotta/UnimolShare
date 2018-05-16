@@ -390,7 +390,6 @@ class DBQueryManager
         $campi = $this->campiTabelleDB[$table];
         $query = //query: "SELECT idattore, tipo, nome, cognome FROM attoriNew2 WHERE idattore = ? AND password = ?"
             "SELECT " .
-            $campi[0] . ", " .
             $campi[1] . ", " .
             $campi[2] . ", " .
             $campi[3] . " " .
