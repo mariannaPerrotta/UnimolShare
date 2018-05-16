@@ -183,7 +183,7 @@ $db = new DBQueryManager();
 });
 
 
-//endpoint /visualizzaprofilostudente
+//endpoint /visualizzaprofilostudente (Michela)
 $app->post('/visualizzaprofilostudente', function (Request $request, Response $response) {
 
     $db = new DBQueryManager();
