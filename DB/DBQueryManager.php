@@ -520,6 +520,6 @@ class DBQueryManager
         }
         return $documento; //ritorno array Documento riempito con i risultati della query effettuata.
     }
-
+//
 }
 ?>
