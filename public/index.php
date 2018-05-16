@@ -87,17 +87,18 @@ $app->post('/login', function (Request $request, Response $response) {
     $db = new DBQueryManager();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
-    $idattore = $requestData['idattore'];
+    $email = $requestData['email'];
     $password = $requestData['password'];
 
     //Risposta del servizio REST
     $responseData = array(); //La risposta è un array di informazioni da compilare
 
     //Controllo la risposta dal DB e compilo i campi della risposta
-    if ($db->login($idattore, $password)) { //Se l'utente esiste ed è corretta la password
+    $utente = $db->login($email, $password);
+    if ($utente != null) { //Se l'utente esiste ed è corretta la password
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Accesso effettuato con successo'; //Messaggio di esiso positivo
-        $responseData['tipoUtente'] = $db->getTypeByIdAttore($idattore); //Restituisco il tipo attore per la specializzazione dell'utente
+        $responseData['utente'] = $utente[0];
 
     } else { //Se le credenziali non sono corrette
         $responseData['error'] = true; //Campo errore = true
@@ -162,7 +163,7 @@ $app->post('/update', function (Request $request, Response $response) {
 
 $app->post('/recover', function (Request $request, Response $response){
 
-$db = new DBQueryManager();
+    $db = new DBQueryManager();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $email = $requestData['email'];

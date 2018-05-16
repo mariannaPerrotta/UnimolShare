@@ -176,27 +176,65 @@ class DBQueryManager
     //Funzione di accesso
     public function login($email, $password)
     {
-        $table = $this->tabelleDB[0]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table];
-        $query = //query: "SELECT idattore, tipo, nome, cognome FROM attoriNew2 WHERE idattore = ? AND password = ?"
+        $table1 = $this->tabelleDB[7]; //Tabella per la query
+        $table2 = $this->tabelleDB[3]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table1];
+        /*  query: "SELECT matricola, nome, cognome, email, 'studente' as tabella FROM studente WHERE email = ? AND password = ?
+                    UNION
+                    SELECT matricola, nome, cognome, email, 'docente' as tabella FROM docente WHERE email = ? AND password = ?" */
+        $query =
             "SELECT " .
             $campi[0] . ", " .
             $campi[1] . ", " .
             $campi[2] . ", " .
-            $campi[3] . " " .
+            $campi[3] . ", " .
+            "'" . $table1 . "' as tabella " .
             "FROM " .
-            $table . " " .
+            $table1 . " " .
             "WHERE " .
-            $campi[0] . " = ? AND " .
+            $campi[3] . " = ? AND " .
+            $campi[4] . " = ? " .
+            "UNION " .
+            "SELECT " .
+            $campi[0] . ", " .
+            $campi[1] . ", " .
+            $campi[2] . ", " .
+            $campi[3] . ", " .
+            "'" . $table2 . "' as tabella " .
+            "FROM " .
+            $table2 . " " .
+            "WHERE " .
+            $campi[3] . " = ? AND " .
             $campi[4] . " = ?";
 
         $stmt = $this->connection->prepare($query);
-        $stmt->execute();
-        $stmt->bind_param("ss", $email, $password); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
+        //$stmt->bind_param("ss", $email, $password); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
+        $stmt->bind_param("ssss", $email, $password, $email, $password); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
 
+        $stmt->execute();
         $stmt->store_result();
-        //Controllo se ha trovato matching tra dati inseriti e campi del db
-        return $stmt->num_rows > 0;
+
+        if($stmt->num_rows > 0) {
+            $stmt->bind_result($matricola, $nome, $cognome, $email, $table);
+            $utente = array(); //risultato: array
+            //Indicizzo con key i dati nell'array
+
+            while($stmt->fetch()) {
+                $temp = array();
+                $temp[$campi[0]] = $matricola;
+                $temp[$campi[1]] = $nome;
+                $temp[$campi[2]] = $cognome;
+                $temp[$campi[3]] = $email;
+                $temp["tabella"] = $table;
+                array_push($utente, $temp);
+            }
+            //Controllo se ha trovato matching tra dati inseriti e campi del db
+            return $utente;
+        }
+        else {
+            return null;
+        }
+
     }
 
     //Funzione di recupero
@@ -206,11 +244,11 @@ class DBQueryManager
         $campi = $this->campiTabelleDB[$table];
         $query = //query:  "SELECT email FROM attoriNew2 WHERE email = ?"
             "SELECT " .
-            $campi[0] . ", " .
+            $campi[3] . " " .
             "FROM " .
             $table . " " .
             "WHERE " .
-            $campi[0] . " = ?";
+            $campi[3] . " = ?";
 
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("s", $email);
