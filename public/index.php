@@ -181,6 +181,22 @@ $db = new DBQueryManager();
     }
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
+//endpoint /visualizzaprofilostudente
+$app->post('/visualizzaprofilostudente', function (Request $request, Response $response) {
+
+    $db = new DBQueryManager();
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $matricola = $requestData['matricola'];
+
+//Risposta del servizio REST
+    $responseData = array();
+
+//Controllo la risposta dal DB e compilo i campi della risposta
+    $responseData['profilo']=$db->visualizzaProfiloStudente($matricola)//Se l'email viene trovata
+    $responseData['error'] = false; //Campo errore = false
+    return $response->withJson($responseData); //Invio la risposta del servizio REST al client
+});
 
 // Run app = ho riempito $app e avvio il servizio REST
 $app->run();
