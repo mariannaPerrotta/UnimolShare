@@ -420,8 +420,29 @@ class DBQueryManager
 
     }
 
+    public function caricaDocumento($titolo, $cod_docente, $cod_studente, $cod_materia, $link)
+    {
+        $table = $this->tabelleDB[4]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
 
+        $query = //query: "INSERT INTO documento (id, titolo, cod_docente, cod_studente, cod_materia,link) VALUES (?,?,?,?,?)"
+            "INSERT INTO  " .
+            $table." ( ".
+            //$campi[0] .", ". Non setto l'ID del documento perchè è AUTO_INCREMENTALE, si setta in automatico
+            $campi[1] .", ".
+            $campi[2] .", ".
+            $campi[3] .", ".
+            $campi[4] .", ".
+            $campi[5] ." ) ".
+
+            "VALUES (?,?,?,?,?)" ;
+
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("sssss", $titolo, $cod_docente, $cod_studente, $cod_materia, $link);
+        $result = $stmt->execute();
+
+        return $result;
+    }
 
 }
-
 ?>
