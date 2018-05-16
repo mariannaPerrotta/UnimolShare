@@ -444,5 +444,36 @@ class DBQueryManager
         return $result;
     }
 
+    public function rimuoviDocumento($idDocumento)
+    {
+        $table = $this->tabelleDB[4]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
+
+        $query = //query:  " DELETE FROM DOCUMENTO WHERE ID = $idDocumento"
+            "DELETE FROM" .
+            $table . "WHERE " .
+            $campi[0] . " = ? ";
+
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("i", $idDocumento);
+        $stmt->execute();
+        $stmt->store_result();
+    }
+
+    public function rimuoviAnnuncio($idAnnuncio)
+    {
+        $table = $this->tabelleDB[1]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
+
+        $query = //query:  " DELETE FROM ANNUNCIO WHERE ID = $idAnnuncio"
+            "DELETE FROM" .
+            $table . "WHERE " .
+            $campi[0] . " = ? ";
+
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("i", $idAnnuncio);
+        $stmt->execute();
+        $stmt->store_result();
+    }
 }
 ?>
