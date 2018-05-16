@@ -112,9 +112,7 @@ class DBQueryManager
         $table = $this->tabelleDB[7]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
         $query = //query: "SELECT idattore, tipo, nome, cognome FROM attoriNew2"
-            "SELECT " .
-            $campi[0] . ", " .
-            $campi[1] . ", " .
+            "SELECT " .$campi[0] . ", " .$campi[1] . ", " .
             $campi[2] . ", " .
             $campi[3] . ", " .
             $campi[4] . ", " .
@@ -251,8 +249,8 @@ class DBQueryManager
         $campi = $this->campiTabelleDB[$table];
         // N.B. Probabilmente effettuando una query più accurata si può migliorare la logica che serve a filtrare i dati
         $query = //query: "INSERT INTO attoriNew2 (idattore, tipo, nome, cognome, password) VALUES (?,?,?,?,?)"
-            "INSERT INTO " .
-            $table." ( ".
+            "INSERT INTO  " .
+            $table." ( *".
             $campi[0] .", ".
             $campi[1] .", ".
             $campi[2] .", ".
@@ -332,12 +330,12 @@ class DBQueryManager
         return $stmt->num_rows > 0;
     }
 
-    public function visualizzaProfilo($idattore,  $matricola, $nome, $cognome, $email )
+    public function visualizzaProfiloDocente($matricola )
     {
-
+        $profilo = array(); //risultato: array bidimensionale
         $table = $this->tabelleDB[3]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
-        $query =
+        $query =//query di matricola nome cognome email
             "SELECT " .
             $campi[0] . ", " .
             $campi[1] . ", " .
@@ -353,8 +351,57 @@ class DBQueryManager
         $stmt->bind_param("s", $matricola);
         $stmt->execute();
         $stmt->store_result();
+        $stmt->bind_result($matricola,  $nome, $cognome, $email);
+        while ($stmt->fetch()) { //Scansiono la risposta della query
+            $temp = array(); //Array temporaneo per l'acquisizione dei dati
+            //Indicizzo con key i dati nell'array
+            $temp[$campi[0]] = $matricola;
+            $temp[$campi[1]] = $nome;
+            $temp[$campi[2]] = $cognome;
+            $temp[$campi[3]] = $email;
+
+            array_push($profilo, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $utenti
+        }
         //Controllo se ha trovato matching tra dati inseriti e campi del db
-        return $stmt->num_rows > 0;
+        return $profilo ;
+    }
+//funzione per visualizzare il profilo studenti
+    public function VisualizzaProfiloStudente($matricola)
+    {
+        $profilo = array();
+        $table = $this->tabelleDB[8]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
+        $query = //query: "SELECT idattore, tipo, nome, cognome FROM attoriNew2 WHERE idattore = ? AND password = ?"
+            "SELECT " .
+            $campi[0] . ", " .
+            $campi[1] . ", " .
+            $campi[2] . ", " .
+            $campi[3] . " " .
+            "FROM " .
+            $table . " " .
+            "WHERE " .
+            $campi[0] . " = ? ";
+
+
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("ss", $matricola); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
+        $stmt->execute();
+        $stmt->store_result();
+        $stmt->bind_result($matricola, $nome, $cognome, $email);
+        while ($stmt->fetch()) { //Scansiono la risposta della query
+            $temp = array(); //Array temporaneo per l'acquisizione dei dati
+            //Indicizzo con key i dati nell'array
+            $temp[$campi[0]] = $matricola;
+            $temp[$campi[1]] = $nome;
+            $temp[$campi[2]] = $cognome;
+            $temp[$campi[3]] = $email;
+
+            array_push($profilo, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $utenti
+        }
+        //Controllo se ha trovato matching tra dati inseriti e campi del db
+        return $profilo;
+//Controllo se ha trovato matching tra dati inseriti e campi del db
+
     }
 
 
