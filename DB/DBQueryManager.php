@@ -312,7 +312,7 @@ class DBQueryManager
         $table = $this->tabelleDB[4]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
         $query = //query: "SELECT id, titolo, cod_docente, cod_studente, cod_materia, link FROM documento WHERE id = ?"
-            "SELECT " .    //avrei potuto usare anche " * " ?
+            "SELECT " .
             $campi[0] . ", " .
             $campi[1] . ", " .
             $campi[2] . ", " .
