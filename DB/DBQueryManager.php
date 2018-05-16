@@ -6,6 +6,8 @@
  * Time: 20:01
  */
 
+require '../StringHelper/StringHelper.php';
+
 class DBQueryManager
 {
     //Variabili di classe
@@ -20,7 +22,7 @@ class DBQueryManager
         "documento",
         "libro",
         "materia",
-        "studente",
+        "studente2",
         "valutazione"
     ];
 
@@ -44,7 +46,7 @@ class DBQueryManager
             "autore",
             "cod_materia"
         ],
-        "cdl" => [
+        "cdl2" => [
             "id",
             "nome"
         ],
@@ -79,7 +81,7 @@ class DBQueryManager
             "cod_docente",
             "cod_cdl"
         ],
-        "studente" => [
+        "studente2" => [
             "matricola",
             "nome",
             "cognome",
@@ -298,32 +300,61 @@ class DBQueryManager
         return $result;
     }
 
-    //------------ OK ------------
-
-    // Funzione registrazione
-    public function registration($email, $tipo, $nome, $cognome, $password)
+    // Funzione registrazione (Francesco)
+    public function registration($matricola, $nome, $cognome, $email, $password)
     {
-        $table = $this->tabelleDB[0]; //Tabella per la query
+
+        //Controllare il discorso del cds, va discusso sul come fare
+
+        $stringHelper = new StringHelper();
+        $substr = $stringHelper->subString($email);
+        $table = $this->tabelleDB[7];
         $campi = $this->campiTabelleDB[$table];
-        // N.B. Probabilmente effettuando una query più accurata si può migliorare la logica che serve a filtrare i dati
-        $query = //query: "INSERT INTO attoriNew2 (idattore, tipo, nome, cognome, password) VALUES (?,?,?,?,?)"
-            "INSERT INTO  " .
-            $table." ( *".
-            $campi[0] .", ".
-            $campi[1] .", ".
-            $campi[2] .", ".
-            $campi[3] .", ".
-            $campi[4] ." ) ".
+        $stmt = null;
 
-            "VALUES (?,?,?,?,?)" ;
+        if($substr == "studenti") {
+            $cds = 1;
+            $query = //query: "INSERT INTO TABLE (matricola, nome, cognome, email, password, cod_cds) VALUES (?,?,?,?,?,?)"
+                //INSERT INTO studente (matricola, nome, cognome, email, password, cod_cds) VALUES ('155975', 'Andrea', 'Petrella', 'a.petrella@studenti.unimol.it', 123456, '1')
+                "INSERT INTO " .
+                $table . " (" .
+                $campi[0] . ", " .
+                $campi[1] . ", " .
+                $campi[2] . ", " .
+                $campi[3] . ", " .
+                $campi[4] . ", " .
+                $campi[5] . ") " .
 
-        $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("sssss", $email, $tipo, $nome, $cognome, $password); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
+                "VALUES (?,?,?,?,?,?)";
+
+            $stmt = $this->connection->prepare($query);
+            $stmt->bind_param("ssssss", $matricola, $nome, $cognome, $email, $password, $cds); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
+
+        }
+        else {
+            $table = $this->tabelleDB[3];
+            $query = //query: "INSERT INTO TABLE (matricola, nome, cognome, email, password) VALUES (?,?,?,?,?)"
+                "INSERT INTO " .
+                $table . " (" .
+                $campi[0] . ", " .
+                $campi[1] . ", " .
+                $campi[2] . ", " .
+                $campi[3] . ", " .
+                $campi[4] . ") " .
+
+                "VALUES (?,?,?,?,?)";
+
+            $stmt = $this->connection->prepare($query);
+            $stmt->bind_param("sssss", $matricola, $nome, $cognome, $email, $password); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
+
+        }
+
         $result = $stmt->execute();
 
         return $result;
     }
 
+    //------------ OK ------------
 
     /**** COMMENTO DI ANDREA: FORSE NON SERVE NEL NOSTRO PROGETTO ****/
     //Funzione che restituisce il tipo attore in base al suo id (serve per la specializzazione degli utenti)

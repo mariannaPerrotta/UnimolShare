@@ -112,17 +112,17 @@ $app->post('/registration', function (Request $request, Response $response) {
     $db = new DBQueryManager();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
-    $email = $requestData['email'];
-    $password = $requestData['password'];
+    $matricola=$requestData['matricola'];
     $nome = $requestData['nome'];
     $cognome = $requestData['cognome'];
-    $idattore=$requestData['idattore'];
+    $email = $requestData['email'];
+    $password = $requestData['password'];
 
     //Risposta del servizio REST
     $responseData = array(); //La risposta è un array di informazioni da compilare
 
     //Controllo la risposta dal DB e compilo i campi della risposta
-    if (!$db->registration($email,$nome,$cognome,$password,$idattore)) { //Se la registrazione è andata a buon fine
+    if ($db->registration($matricola,$nome,$cognome,$email,$password)) { //Se la registrazione è andata a buon fine
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Registrazione avvenuta con successo'; //Messaggio di esito positivo
 
