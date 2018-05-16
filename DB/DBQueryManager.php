@@ -309,10 +309,12 @@ class DBQueryManager
     }
     public function visualizzaDocumento($idDocumento)
     {
+        $documento = array();
+
         $table = $this->tabelleDB[4]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
         $query = //query: "SELECT id, titolo, cod_docente, cod_studente, cod_materia, link FROM documento WHERE id = ?"
-            "SELECT " .
+            "SELECT " .    //avrei potuto ussare anche
             $campi[0] . ", " .
             $campi[1] . ", " .
             $campi[2] . ", " .
@@ -328,8 +330,23 @@ class DBQueryManager
         $stmt->bind_param("s", $idDocumento);
         $stmt->execute();
         $stmt->store_result();
-        //Controllo se ha trovato matching tra dati inseriti e campi del db
-        return $stmt->num_rows > 0;
+
+        //Salvo il risultato della query in alcune variabili
+        $stmt->bind_result($idDocumento, $titolo, $cod_docente, $cod_studente, $cod_materia, $link);
+
+
+        while ($stmt->fetch()) { //Scansiono la risposta della query
+            $temp = array(); //Array temporaneo per l'acquisizione dei dati
+            //Indicizzo con key i dati nell'array
+            $temp[$campi[0]] = $idDocumento;
+            $temp[$campi[1]] = $titolo;
+            $temp[$campi[2]] = $cod_docente;
+            $temp[$campi[3]] = $cod_studente;
+            $temp[$campi[4]] = $cod_materia;
+            $temp[$campi[5]] = $link;
+            array_push($documento, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $documento
+        }
+        return $documento; //ritorno array Documento riempito con i risultati della query effettuata.
     }
 
 
