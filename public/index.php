@@ -225,9 +225,11 @@ $app->post('/caricadocumento', function (Request $request, Response $response) {
         $responseData['message'] = 'Caricamento non effettuato'; //Messaggio di esito negativo
     }
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
+
 });
+
+
 // Run app = ho riempito $app e avvio il servizio REST
 $app->run();
 
-//
 ?>
