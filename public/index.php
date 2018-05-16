@@ -54,7 +54,9 @@ $app = new App($settings); //"Contenitore" per gli endpoint da riempire
 
 /* aggiungo ad $app tutta la lista di endpoint che voglio */
 
-// endpoint: /listaUtenti
+/**** ENDPOINT DI TEST ****/
+
+// endpoint: /listaUtenti (Andrea)
 $app->get('/listaUtenti', function (Request $request, Response $response) {
     $db = new DBQueryManager();
 
@@ -66,7 +68,21 @@ $app->get('/listaUtenti', function (Request $request, Response $response) {
     return $newResponse; //Invio la risposta del servizio REST al client
 });
 
-// endpoint: /login
+// endpoint: /testGetStudenti (Andrea)
+$app->get('/testGetUtenti', function (Request $request, Response $response) {
+    $db = new DBQueryManager();
+
+    $responseData = $db->testGetStudenti();//Risposta del DB
+    //metto in un json e lo inserisco nella risposta del servizio REST
+    $response->getBody()->write(json_encode(array("studenti" => $responseData)));
+    //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
+    $newResponse = $response->withHeader('Content-type', 'application/json');
+    return $newResponse; //Invio la risposta del servizio REST al client
+});
+
+/**** ENDPOINT DEL PROGETTO ****/
+
+// endpoint: /login (Andrea)
 $app->post('/login', function (Request $request, Response $response) {
     $db = new DBQueryManager();
 
@@ -90,7 +106,59 @@ $app->post('/login', function (Request $request, Response $response) {
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
 
-//endpoint Recover
+// endpoint: /registration (Francesco)
+$app->post('/registration', function (Request $request, Response $response) {
+    $db = new DBQueryManager();
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $email = $requestData['email'];
+    $password = $requestData['password'];
+    $nome = $requestData['nome'];
+    $cognome = $requestData['cognome'];
+    $idattore=$requestData['idattore'];
+
+    //Risposta del servizio REST
+    $responseData = array(); //La risposta è un array di informazioni da compilare
+
+    //Controllo la risposta dal DB e compilo i campi della risposta
+    if (!$db->registration($email,$nome,$cognome,$password,$idattore)) { //Se la registrazione è andata a buon fine
+        $responseData['error'] = false; //Campo errore = false
+        $responseData['message'] = 'Registrazione avvenuta con successo'; //Messaggio di esito positivo
+
+    } else {
+        $responseData['error'] = true; //Campo errore = true
+        $responseData['message'] = 'Email associata a un account già esistente!'; //Messaggio di esito negativo
+    }
+    return $response->withJson($responseData); //Invio la risposta del servizio REST al client
+});
+
+// endpoint: /update (Gigi)
+$app->post('/update', function (Request $request, Response $response) {
+    $db = new DBQueryManager();
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $idattore = $requestData['idattore'];
+    $password = $requestData['password'];
+    $nome = $requestData['nome'];
+    $cognome= $requestData['cognome'];
+
+    //Risposta del servizio REST
+    $responseData = array(); //La risposta è un array di informazioni da compilare
+
+    //Controllo la risposta dal DB e compilo i campi della risposta
+    if ($db->updateProfile($idattore, $nome, $cognome, $password)) {
+        $responseData['error'] = false; //Campo errore = false
+        $responseData['message'] = 'Update effettuato con successo'; //Messaggio di esiso positivo
+
+    } else { //Se le credenziali non sono corrette
+        $responseData['error'] = true; //Campo errore = true
+        $responseData['message'] = 'Errore nel DB'; //Messaggio di esito negativo
+    }
+    return $response->withJson($responseData); //Invio la risposta del servizio REST al client
+});
+
+
+//endpoint /recover (Danilo)
 
 $app->post('/recover', function (Request $request, Response $response){
 
@@ -99,23 +167,20 @@ $db = new DBQueryManager();
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $email = $requestData['email'];
 
-
     //Risposta del servizio REST
     $responseData = array();
 
     //Controllo la risposta dal DB e compilo i campi della risposta
-    if ($db->registration($email)) { //Se l'email viene trovata
+    if ($db->recover($email)) { //Se l'email viene trovata
         $responseData['error'] = false; //Campo errore = false
-        $responseData['message'] = 'email inviata con successo'; //Messaggio di esiso positivo
-
+        $responseData['message'] = "Invio email di recupero"; //Messaggio di esito positivo
 
     } else { //Se le credenziali non sono corrette
         $responseData['error'] = true; //Campo errore = true
-        $responseData['message'] = 'email non trovata'; //Messaggio di esito negativo
+        $responseData['message'] = 'Email non presente nel DB'; //Messaggio di esito negativo
     }
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
-?>
 
 // Run app = ho riempito $app e avvio il servizio REST
 $app->run();
