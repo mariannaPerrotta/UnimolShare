@@ -174,7 +174,7 @@ class DBQueryManager
     /*********** FUNZIONI DEL PROGETTO ***********/
 
     //Funzione di accesso
-    public function login($idattore, $password)
+    public function login($email, $password)
     {
         $table = $this->tabelleDB[0]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
@@ -191,8 +191,9 @@ class DBQueryManager
             $campi[4] . " = ?";
 
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("ss", $idattore, $password); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
         $stmt->execute();
+        $stmt->bind_param("ss", $email, $password); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
+
         $stmt->store_result();
         //Controllo se ha trovato matching tra dati inseriti e campi del db
         return $stmt->num_rows > 0;
@@ -201,7 +202,7 @@ class DBQueryManager
     //Funzione di recupero
     public function recover($email)
     {
-        $table = $this->tabelleDB[0]; //Tabella per la query
+        $table = $this->tabelleDB[7]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
         $query = //query:  "SELECT email FROM attoriNew2 WHERE email = ?"
             "SELECT " .
@@ -475,5 +476,51 @@ class DBQueryManager
         $stmt->execute();
         $stmt->store_result();
     }
+    public function visualizzaDocumentoPerMateria($idMateria)
+    {
+        $documento = array();
+
+        $table = $this->tabelleDB[4]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
+        $table2 = $this->tabelleDB[6];
+        $campi2= $this->campitabelleDB[$table2];
+        $query = //query: "SELECT id=0, titolo=1, cod_docente=2, cod materia=5,link=6, id_materia=0, FROM documento inner join materie on codmateria = id materia"
+            "SELECT " .    //avrei potuto ussare anche
+            $campi[0] . ", " .
+            $campi[1] . ", " .
+            $campi[2] . ", " .
+            $campi[5] . ", " .
+            $campi[6] . ", " .
+
+            "FROM " .
+            $table . ", ".
+            $table2. " ".
+            "WHERE". $campi2[2] .'= ? '.
+            "AND ".
+            $campi[0]. " = ".
+            $campi2[0];
+
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("s", $idDocumento);
+        $stmt->execute();
+        $stmt->store_result();
+
+        //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp //
+        $stmt->bind_result($idDocumento, $titolo, $cod_docente, $cod_studente, $cod_materia, $link);
+
+        while ($stmt->fetch()) { //Scansiono la risposta della query
+            $temp = array(); //Array temporaneo per l'acquisizione dei dati
+            //Indicizzo con key i dati nell'array
+            $temp[$campi[0]] = $idDocumento;
+            $temp[$campi[1]] = $titolo;
+            $temp[$campi[2]] = $cod_docente;
+            $temp[$campi[3]] = $cod_studente;
+            $temp[$campi[4]] = $cod_materia;
+            $temp[$campi[5]] = $link;
+            array_push($documento, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $documento
+        }
+        return $documento; //ritorno array Documento riempito con i risultati della query effettuata.
+    }
+
 }
 ?>
