@@ -520,6 +520,50 @@ class DBQueryManager
         }
         return $documento; //ritorno array Documento riempito con i risultati della query effettuata.
     }
-//
+    public function visualizzaDocumentoPerDocente($nomeDocente)
+    {
+        $documento = array();
+
+        $table = $this->tabelleDB[4]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
+        $table2 = $this->tabelleDB[3];
+        $campi2= $this->campitabelleDB[$table2];
+        $query = //query: "SELECT id=0, titolo=1, cod_docente=2, cod materia=5,link=6, id_materia=0, FROM documento inner join materie on codmateria = id materia"
+            "SELECT " .
+            $campi[0] . ", " .
+            $campi[1] . ", " .
+            $campi[2] . ", " .
+            $campi[5] . ", " .
+            $campi[6] . ", " .
+
+            "FROM " .
+            $table . ", ".
+            $table2. " ".
+            "WHERE". $campi2[1] .'= ? '.
+            "AND ".
+            $campi[2]. " = ".
+            $campi2[0];
+
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("s", $nomeDocente);
+        $stmt->execute();
+        $stmt->store_result();
+
+        //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp //
+        $stmt->bind_result($idDocumento, $titolo, $cod_docente, $cod_materia, $link);
+
+        while ($stmt->fetch()) { //Scansiono la risposta della query
+            $temp = array(); //Array temporaneo per l'acquisizione dei dati
+            //Indicizzo con key i dati nell'array
+            $temp[$campi[0]] = $idDocumento;
+            $temp[$campi[1]] = $titolo;
+            $temp[$campi[2]] = $cod_docente;
+
+            $temp[$campi[5]] = $cod_materia;
+            $temp[$campi[6]] = $link;
+            array_push($documento, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $documento
+        }
+        return $documento; //ritorno array Documento riempito con i risultati della query effettuata.
+    }
 }
 ?>
