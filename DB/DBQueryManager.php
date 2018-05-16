@@ -173,7 +173,7 @@ class DBQueryManager
 
     /*********** FUNZIONI DEL PROGETTO ***********/
 
-    //Funzione di accesso
+    //Funzione di accesso (Andrea)
     public function login($email, $password)
     {
         $table1 = $this->tabelleDB[7]; //Tabella per la query
@@ -270,30 +270,35 @@ class DBQueryManager
         return $stmt->num_rows > 0;
     }
 
-    //------------ OK ------------
-
-    // Funzione Modifica Profilo
-    public function updateProfile($idattore, $nome, $cognome, $password)
+    // Funzione Modifica Profilo (Gigi)
+    public function updateProfile($matricola, $nome, $cognome, $password, $tabella)
     {
-        $table = $this->tabelleDB[0]; //Tabella per la query
+        $table = $tabella;
         $campi = $this->campiTabelleDB[$table];
-        $query = //query:  " UPDATE TABLE, SET CAMPI WHERE ID ATTORE"
+        $query = //query:  "UPDATE TABLE SET nome = ?, cognome = ?, password = ? WHERE matricola = ?"
             "UPDATE " .
-            $table . ", " .
+            $table . " " .
             "SET " .
-            $campi[2] . " = ? , " .
-            $campi[3] . " = ?, " .
-            $campi[4] . " = ?, " .
+            $campi[1] . " = ?, " .
+            $campi[2] . " = ?, " .
+            $campi[4] . " = ? " .
             "WHERE " .
-            $campi[0] . " = ? ";
+            $campi[0] . " = ?";
 
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("ssss", $nome, $cognome, $password, $idattore); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
-        $stmt->execute();
-        $stmt->store_result();
+        $stmt->bind_param("ssss", $nome, $cognome, $password, $matricola); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
+        $result = true;
+        try {
+            $stmt->execute();
+            $stmt->store_result();
+        }catch (Exception $exception){
+            $result = false;
+        }
         //Controllo se ha trovato matching tra dati inseriti e capi del db
-        return $stmt->num_rows > 0;
+        return $result;
     }
+
+    //------------ OK ------------
 
     // Funzione registrazione
     public function registration($email, $tipo, $nome, $cognome, $password)

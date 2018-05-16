@@ -97,7 +97,7 @@ $app->post('/login', function (Request $request, Response $response) {
     $utente = $db->login($email, $password);
     if ($utente != null) { //Se l'utente esiste ed è corretta la password
         $responseData['error'] = false; //Campo errore = false
-        $responseData['message'] = 'Accesso effettuato con successo'; //Messaggio di esiso positivo
+        $responseData['message'] = 'Accesso effettuato'; //Messaggio di esiso positivo
         $responseData['utente'] = $utente[0];
 
     } else { //Se le credenziali non sono corrette
@@ -138,22 +138,23 @@ $app->post('/update', function (Request $request, Response $response) {
     $db = new DBQueryManager();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
-    $idattore = $requestData['idattore'];
-    $password = $requestData['password'];
+    $matricola = $requestData['matricola'];
     $nome = $requestData['nome'];
     $cognome= $requestData['cognome'];
+    $password = $requestData['password'];
+    $tabella = $requestData['tabella'];
 
     //Risposta del servizio REST
     $responseData = array(); //La risposta è un array di informazioni da compilare
 
     //Controllo la risposta dal DB e compilo i campi della risposta
-    if ($db->updateProfile($idattore, $nome, $cognome, $password)) {
+    if ($db->updateProfile($matricola, $nome, $cognome, $password, $tabella)) {
         $responseData['error'] = false; //Campo errore = false
-        $responseData['message'] = 'Update effettuato con successo'; //Messaggio di esiso positivo
+        $responseData['message'] = 'Update effettuato'; //Messaggio di esiso positivo
 
     } else { //Se le credenziali non sono corrette
         $responseData['error'] = true; //Campo errore = true
-        $responseData['message'] = 'Errore nel DB'; //Messaggio di esito negativo
+        $responseData['message'] = "Impossibile effettuare l'update"; //Messaggio di esito negativo
     }
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
