@@ -331,9 +331,8 @@ class DBQueryManager
         $stmt->execute();
         $stmt->store_result();
 
-        //Salvo il risultato della query in alcune variabili
+        //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp
         $stmt->bind_result($idDocumento, $titolo, $cod_docente, $cod_studente, $cod_materia, $link);
-
 
         while ($stmt->fetch()) { //Scansiono la risposta della query
             $temp = array(); //Array temporaneo per l'acquisizione dei dati
@@ -348,7 +347,7 @@ class DBQueryManager
         }
         return $documento; //ritorno array Documento riempito con i risultati della query effettuata.
     }
-//
+
 
 
 }
