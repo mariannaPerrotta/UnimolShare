@@ -160,7 +160,6 @@ $app->post('/update', function (Request $request, Response $response) {
 
 
 //endpoint /recover (Danilo)
-
 $app->post('/recover', function (Request $request, Response $response){
 
     $db = new DBQueryManager();
@@ -175,6 +174,8 @@ $app->post('/recover', function (Request $request, Response $response){
     if ($db->recover($email)) { //Se l'email viene trovata
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = "Invio email di recupero"; //Messaggio di esito positivo
+
+        //Funzione di invio email
 
     } else { //Se le credenziali non sono corrette
         $responseData['error'] = true; //Campo errore = true

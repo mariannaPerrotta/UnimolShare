@@ -237,26 +237,40 @@ class DBQueryManager
 
     }
 
-    //Funzione di recupero
+    //Funzione di recupero (Danilo)
     public function recover($email)
     {
-        $table = $this->tabelleDB[7]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table];
-        $query = //query:  "SELECT email FROM attoriNew2 WHERE email = ?"
+        $table1 = $this->tabelleDB[7]; //Tabella per la query
+        $table2 = $this->tabelleDB[3]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table1];
+
+        /*  query: "SELECT email FROM studente WHERE email = ?
+                    UNION
+                    SELECT email FROM docente WHERE email = ?" */
+        $query =
             "SELECT " .
             $campi[3] . " " .
             "FROM " .
-            $table . " " .
+            $table1 . " " .
+            "WHERE " .
+            $campi[3] . " = ? " .
+            "UNION " .
+            "SELECT " .
+            $campi[3] . " " .
+            "FROM " .
+            $table2 . " " .
             "WHERE " .
             $campi[3] . " = ?";
 
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("s", $email);
+        $stmt->bind_param("ss", $email, $email);
         $stmt->execute();
         $stmt->store_result();
         //Controllo se ha trovato matching tra dati inseriti e campi del db
         return $stmt->num_rows > 0;
     }
+
+    //------------ OK ------------
 
     // Funzione Modifica Profilo
     public function updateProfile($idattore, $nome, $cognome, $password)
