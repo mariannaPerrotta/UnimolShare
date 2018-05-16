@@ -227,4 +227,5 @@ $app->post('/caricadocumento', function (Request $request, Response $response) {
 // Run app = ho riempito $app e avvio il servizio REST
 $app->run();
 
+//
 ?>
