@@ -476,7 +476,7 @@ class DBQueryManager
         $stmt->execute();
         $stmt->store_result();
     }
-    public function visualizzaDocumentoPerMateria($idMateria)
+    public function visualizzaDocumentoPerMateria($Materia)
     {
         $documento = array();
 
@@ -501,12 +501,12 @@ class DBQueryManager
             $campi2[0];
 
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("s", $idDocumento);
+        $stmt->bind_param("s", $Materia);
         $stmt->execute();
         $stmt->store_result();
 
         //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp //
-        $stmt->bind_result($idDocumento, $titolo, $cod_docente, $cod_studente, $cod_materia, $link);
+        $stmt->bind_result($idDocumento, $titolo, $cod_docente, $cod_materia, $link);
 
         while ($stmt->fetch()) { //Scansiono la risposta della query
             $temp = array(); //Array temporaneo per l'acquisizione dei dati
@@ -514,9 +514,9 @@ class DBQueryManager
             $temp[$campi[0]] = $idDocumento;
             $temp[$campi[1]] = $titolo;
             $temp[$campi[2]] = $cod_docente;
-            $temp[$campi[3]] = $cod_studente;
-            $temp[$campi[4]] = $cod_materia;
-            $temp[$campi[5]] = $link;
+
+            $temp[$campi[5]] = $cod_materia;
+            $temp[$campi[6]] = $link;
             array_push($documento, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $documento
         }
         return $documento; //ritorno array Documento riempito con i risultati della query effettuata.
