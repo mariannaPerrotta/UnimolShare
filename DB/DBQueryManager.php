@@ -307,6 +307,56 @@ class DBQueryManager
          * */
         return $tipoUtente;
     }
+    public function visualizzaDocumento($idDocumento)
+    {
+        $table = $this->tabelleDB[4]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
+        $query = //query: "SELECT id, titolo, cod_docente, cod_studente, cod_materia, link FROM documento WHERE id = ?"
+            "SELECT " .
+            $campi[0] . ", " .
+            $campi[1] . ", " .
+            $campi[2] . ", " .
+            $campi[3] . " " .
+            $campi[4] . " " .
+            $campi[5] . " " .
+            "FROM " .
+            $table . " " .
+            "WHERE " .
+            $campi[0] . " = ?";
+
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("s", $idDocumento);
+        $stmt->execute();
+        $stmt->store_result();
+        //Controllo se ha trovato matching tra dati inseriti e campi del db
+        return $stmt->num_rows > 0;
+    }
+
+    public function visualizzaProfilo($idattore,  $matricola, $nome, $cognome, $email )
+    {
+
+        $table = $this->tabelleDB[3]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
+        $query =
+            "SELECT " .
+            $campi[0] . ", " .
+            $campi[1] . ", " .
+            $campi[2] . ", " .
+            $campi[3] . " " .
+
+            "FROM " .
+            $table . " " .
+            "WHERE " .
+            $campi[0] . " = ?";
+
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("s", $matricola);
+        $stmt->execute();
+        $stmt->store_result();
+        //Controllo se ha trovato matching tra dati inseriti e campi del db
+        return $stmt->num_rows > 0;
+    }
+
 
 
 }
