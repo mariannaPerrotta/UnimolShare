@@ -229,7 +229,7 @@ $app->delete('/rimuoviAnnuncio', function (Request $request, Response $response)
     }
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
-
+//-----
 
 //endpoint /visualizzaprofilostudente (Michela)
 $app->post('/visualizzaprofilostudente', function (Request $request, Response $response) {
@@ -244,13 +244,45 @@ $app->post('/visualizzaprofilostudente', function (Request $request, Response $r
 
 //Controllo la risposta dal DB e compilo i campi della risposta
     $temp=$db->visualizzaProfiloStudente($matricola);
-    $responseData['nome']=$temp[1];
-    $responseData['cognome']=$temp[2];
-    $responseData['email']=$temp[3];
-
+    if($temp!=null) {
+        $responseData['error'] = false; //Campo errore = false
+        $responseData['nome'] = $temp[1];
+        $responseData['cognome'] = $temp[2];
+        $responseData['email'] = $temp[3];
+        $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
+    }
+    else{
+        $responseData['error'] = true; //Campo errore = false
+        $responseData['message'] = 'Errore imprevisto'; //Messaggio di esiso positivo
+    }
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
+//visualizza profilo docente by danilo
+$app->post('/visualizzaprofilodocente', function (Request $request, Response $response) {
 
+    $db = new DBQueryManager();
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $matricola = $requestData['matricola'];
+
+//Risposta del servizio REST
+    $responseData = array();
+
+//Controllo la risposta dal DB e compilo i campi della risposta
+    $temp=$db->visualizzaProfiloDocente($matricola);
+    if($temp!=null) {
+        $responseData['error'] = false; //Campo errore = false
+        $responseData['nome'] = $temp[1];
+        $responseData['cognome'] = $temp[2];
+        $responseData['email'] = $temp[3];
+        $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
+    }
+    else{
+        $responseData['error'] = true; //Campo errore = false
+        $responseData['message'] = 'Errore imprevisto'; //Messaggio di esiso positivo
+    }
+    return $response->withJson($responseData); //Invio la risposta del servizio REST al client
+});
 
 // endpoint: /caricaDocumento (Jonathan)
 $app->post('/caricadocumento', function (Request $request, Response $response) {

@@ -495,18 +495,21 @@ class DBQueryManager
         $stmt->execute();
         $stmt->store_result();
         $stmt->bind_result($matricola, $nome, $cognome, $email);
-        while ($stmt->fetch()) { //Scansiono la risposta della query
-            $temp = array(); //Array temporaneo per l'acquisizione dei dati
-            //Indicizzo con key i dati nell'array
-            $temp[$campi[0]] = $matricola;
-            $temp[$campi[1]] = $nome;
-            $temp[$campi[2]] = $cognome;
-            $temp[$campi[3]] = $email;
+        if($stmt->num_rows>0) {
+            while ($stmt->fetch()) { //Scansiono la risposta della query
+                $temp = array(); //Array temporaneo per l'acquisizione dei dati
+                //Indicizzo con key i dati nell'array
+                $temp[$campi[0]] = $matricola;
+                $temp[$campi[1]] = $nome;
+                $temp[$campi[2]] = $cognome;
+                $temp[$campi[3]] = $email;
 
-            array_push($profilo, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $utenti
+                array_push($profilo, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $utenti
+            }
+            //Controllo se ha trovato matching tra dati inseriti e campi del db
+            return $profilo;
         }
-        //Controllo se ha trovato matching tra dati inseriti e campi del db
-        return $profilo;
+        else return null;
 //Controllo se ha trovato matching tra dati inseriti e campi del db
 
     }
