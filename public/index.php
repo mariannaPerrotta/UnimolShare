@@ -334,6 +334,18 @@ $app->post('/downloadDocumento', function (Request $request, Response $response)
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
 
+//----------------------
+
+$app->get('/testGetMateria', function (Request $request, Response $response) {
+    $db = new DBQueryManager();
+
+    $responseData = $db->testGetMateria();//Risposta del DB
+    //metto in un json e lo inserisco nella risposta del servizio REST
+    $response->getBody()->write(json_encode(array("materie" => $responseData)));
+    //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
+    $newResponse = $response->withHeader('Content-type', 'application/json');
+    return $newResponse; //Invio la risposta del servizio REST al client
+});
 
 
 

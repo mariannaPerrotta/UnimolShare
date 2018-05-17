@@ -692,5 +692,69 @@ class DBQueryManager
         }
         return $documento; //ritorno array Documento riempito con i risultati della query effettuata.
     }
+    //danilo da controllare
+    public function visualizzaMateriaPerCdl($cdlid)
+    {
+        $materie= array();
+        $table = $this->tabelleDB[6]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
+        $query = //query: "SELECT nome, FROM materia where cod_cdl=?"
+            "SELECT " .
+            $campi[1] . ", " .
+            "FROM " .
+            $table . ", " .
+            "WHERE" .
+            $campi[0] . '= ? ' ;
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("s", $cdlid);
+        $stmt->execute();
+        $stmt->store_result();
+
+//Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp //
+        $stmt->bind_result($nome_materia);
+
+        while ($stmt->fetch()) { //Scansiono la risposta della query
+            $temp = array(); //Array temporaneo per l'acquisizione dei dati
+//Indicizzo con key i dati nell'array
+            $temp[$campi[0]] = $nome_materia;
+
+            array_push($materie, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $documento
+        }
+        return $nome_materia; //ritorno array Documento riempito con i risultati della query effettuata.
+    }
+
+//---------------------------
+public function testGetMateria()
+{
+    $materie = array(); //risultato: array bidimensionale
+    $table = $this->tabelleDB[6]; //Tabella per la query
+    $campi = $this->campiTabelleDB[$table];
+    $query = //query: "SELECT idattore, tipo, nome, cognome FROM attoriNew2"
+        "SELECT * " .
+     /*
+        $campi[1] . ", " .
+        $campi[2] . ", " .
+        $campi[3] . ", " .
+*/
+        "FROM " .
+        $table;
+
+    $stmt = $this->connection->prepare($query); //Preparo la query
+    $stmt->execute();//Esegue la query
+    //Salvo il risultato della query in alcune variabili
+    $stmt->bind_result( $campi[1], $campi[2], $campi[3]);
+
+    while ($stmt->fetch()) { //Scansiono la risposta della query
+        $temp = array(); //Array temporaneo per l'acquisizione dei dati
+        //Indicizzo con key i dati nell'array
+
+        $temp[$campi[1]] = $campi[1];
+        $temp[$campi[2]] = $campi[2];
+        $temp[$campi[3]] = $campi[3];
+
+        array_push($materie, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $utenti
+    }
+    return $materie;
+}
 }
 ?>
