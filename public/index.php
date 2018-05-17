@@ -347,9 +347,49 @@ $app->get('/testGetMateria', function (Request $request, Response $response) {
     return $newResponse; //Invio la risposta del servizio REST al client
 });
 
+$app->get('/visualizzamateriapercdl', function (Request $request, Response $response) {
+    $db = new DBQueryManager();
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $id = $requestData['id'];
+    $responseData = $db->visualizzaMateriaPerCdl($id);//Risposta del DB
+    //metto in un json e lo inserisco nella risposta del servizio REST
+    $response->getBody()->write(json_encode(array("materie" => $responseData)));
+    //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
+    $newResponse = $response->withHeader('Content-type', 'application/json');
+    return $newResponse; //Invio la risposta del servizio REST al client
+});
 
 
 // Run app = ho riempito $app e avvio il servizio REST
-$app->run();
 
+//-------------------------------------------------------- test popolamento
+$app->post('/insertmateria', function (Request $request, Response $response) {
+    $db = new DBQueryManager();
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $titolo = $requestData['titolo'];
+    $cod_doc= $requestData['cod_doc'];
+    $cdl = $requestData['cdl'];
+
+    //Risposta del servizio REST
+    $responseData = array(); //La risposta è un array di informazioni da compilare
+
+    //Controllo la risposta dal DB e compilo i campi della risposta
+    if (!$db->testInsertMateria($id,$titolo,$cod_doc,$cdl)) { //Se la registrazione è andata a buon fine
+        $responseData['error'] = false; //Campo errore = false
+        $responseData['message'] = 'Registrazione avvenuta con successo'; //Messaggio di esito positivo
+
+    } else {
+        $responseData['error'] = true; //Campo errore = true
+        $responseData['message'] = 'Email associata a un account già esistente!'; //Messaggio di esito negativo
+    }
+    return $response->withJson($responseData); //Invio la risposta del servizio REST al client
+});
+
+
+
+
+
+
+$app->run();
 ?>

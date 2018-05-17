@@ -328,7 +328,7 @@ class DBQueryManager
                 "VALUES (?,?,?,?,?,?)";
 
             $stmt = $this->connection->prepare($query);
-            $stmt->bind_param("ssssss", $matricola, $nome, $cognome, $email, $password, $cds); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
+            $stmt->bind_param("issssi", $matricola, $nome, $cognome, $email, $password, $cds); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
 
         }
         else {
@@ -345,7 +345,7 @@ class DBQueryManager
                 "VALUES (?,?,?,?,?)";
 
             $stmt = $this->connection->prepare($query);
-            $stmt->bind_param("sssss", $matricola, $nome, $cognome, $email, $password); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
+            $stmt->bind_param("isssi", $matricola, $nome, $cognome, $email, $password); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
 
         }
 
@@ -700,13 +700,13 @@ class DBQueryManager
         $campi = $this->campiTabelleDB[$table];
         $query = //query: "SELECT nome, FROM materia where cod_cdl=?"
             "SELECT " .
-            $campi[1] . ", " .
+            $campi[1] . " " .
             "FROM " .
-            $table . ", " .
-            "WHERE" .
-            $campi[0] . '= ? ' ;
+            $table . " " .
+            "WHERE " .
+            $campi[0] . ' = ? ' ;
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("s", $cdlid);
+        $stmt->bind_param("i", $cdlid);
         $stmt->execute();
         $stmt->store_result();
 
@@ -730,12 +730,10 @@ public function testGetMateria()
     $table = $this->tabelleDB[6]; //Tabella per la query
     $campi = $this->campiTabelleDB[$table];
     $query = //query: "SELECT idattore, tipo, nome, cognome FROM attoriNew2"
-        "SELECT * " .
-     /*
+        "SELECT " .
         $campi[1] . ", " .
         $campi[2] . ", " .
-        $campi[3] . ", " .
-*/
+        $campi[3] . " ".
         "FROM " .
         $table;
 
@@ -756,5 +754,23 @@ public function testGetMateria()
     }
     return $materie;
 }
+    public function testInsertMateria()
+    {
+
+        $table = $this->tabelleDB[6]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
+        $query = //query:
+            "INSERT INTO  ".
+            $table. " ( " .
+            $campi[1]." , ".
+            $campi[2]." , ".
+            $campi[3].
+            " ) VALUES (?,?,?)";
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("sii",$nome,$cod_docente,$cdl); //Preparo la query
+        $result= $stmt->execute();//Esegue la query
+
+        return $result;
+    }
 }
 ?>
