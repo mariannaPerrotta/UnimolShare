@@ -184,6 +184,28 @@ $app->post('/recover', function (Request $request, Response $response){
     }
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
+$app->delete('/rimuovidocumento', function (Request $request, Response $response) {
+    $db = new DBQueryManager();
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $idDocumento = $requestData['idDocumento'];
+
+    //Risposta del servizio REST
+    $responseData = array(); //La risposta è un array di informazioni da compilare
+
+    //Controllo la risposta dal DB e compilo i campi della risposta
+    $esito = $db->rimuoviDocumento($idDocumento);
+    if ($esito) { //Se è stato possibile rimuovere il documento
+        $responseData['error'] = false; //Campo errore = false
+        $responseData['message'] = 'Documento rimosso'; //Messaggio di esito positivo
+
+    } else { //Se le credenziali non sono corrette
+        $responseData['error'] = true; //Campo errore = true
+        $responseData['message'] = 'Non è stato possibile rimuovere il documento'; //Messaggio di esito negativo
+    }
+    return $response->withJson($responseData); //Invio la risposta del servizio REST al client
+});
+
 
 
 //endpoint /visualizzaprofilostudente (Michela)
