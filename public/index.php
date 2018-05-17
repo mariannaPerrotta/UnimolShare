@@ -375,7 +375,7 @@ $app->post('/insertmateria', function (Request $request, Response $response) {
     $responseData = array(); //La risposta è un array di informazioni da compilare
 
     //Controllo la risposta dal DB e compilo i campi della risposta
-    if (!$db->testInsertMateria($id,$titolo,$cod_doc,$cdl)) { //Se la registrazione è andata a buon fine
+    if (!$db->testInsertMateria($titolo,$cod_doc,$cdl)) { //Se la registrazione è andata a buon fine
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Registrazione avvenuta con successo'; //Messaggio di esito positivo
 
