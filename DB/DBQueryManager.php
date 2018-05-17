@@ -578,6 +578,7 @@ class DBQueryManager
         $stmt->bind_param("i", $idDocumento);
         $stmt->execute();
         $stmt->store_result();
+        return $stmt->num_rows>0;
     }
 
     public function rimuoviAnnuncio($idAnnuncio)
@@ -594,6 +595,7 @@ class DBQueryManager
         $stmt->bind_param("i", $idAnnuncio);
         $stmt->execute();
         $stmt->store_result();
+        return $stmt->num_rows>0;
     }
 
     public function visualizzaDocumentoPerMateria($Materia)
