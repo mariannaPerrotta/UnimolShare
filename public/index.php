@@ -184,6 +184,7 @@ $app->post('/recover', function (Request $request, Response $response){
     }
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
+//endpoint rimuovi by jo dom e danilo
 $app->delete('/rimuovidocumento', function (Request $request, Response $response) {
     $db = new DBQueryManager();
 
@@ -206,6 +207,28 @@ $app->delete('/rimuovidocumento', function (Request $request, Response $response
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
 
+$app->delete('/rimuoviAnnuncio', function (Request $request, Response $response) {
+    $db = new DBQueryManager();
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $id = $requestData['idannuncio'];
+
+
+    //Risposta del servizio REST
+    $responseData = array(); //La risposta è un array di informazioni da compilare
+
+
+    if ($db->rimuoviAnnuncio($id)) { //Se l'utente esiste ed è corretta la password
+        $responseData['error'] = false; //Campo errore = false
+        $responseData['message'] = 'Documento eliminato'; //Messaggio di esiso positivo
+
+
+    } else { //Se le credenziali non sono corrette
+        $responseData['error'] = true; //Campo errore = true
+        $responseData['message'] = 'Erorre imprevisto'; //Messaggio di esito negativo
+    }
+    return $response->withJson($responseData); //Invio la risposta del servizio REST al client
+});
 
 
 //endpoint /visualizzaprofilostudente (Michela)
