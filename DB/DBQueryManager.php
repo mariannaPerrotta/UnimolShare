@@ -345,12 +345,14 @@ class DBQueryManager
                 "VALUES (?,?,?,?,?)";
 
             $stmt = $this->connection->prepare($query);
-            $stmt->bind_param("isssi", $matricola, $nome, $cognome, $email, $password); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
+            $stmt->bind_param("issss", $matricola, $nome, $cognome, $email, $password); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
 
         }
 
         $result = $stmt->execute();
-
+        if (!$result) {
+            throw new Exception($stmt->error);
+        }
         return $result;
     }
 
@@ -530,17 +532,17 @@ Cannot add or update a child row: a foreign key constraint fails
         $query = //query: "INSERT INTO documento (id, titolo, cod_docente, cod_studente, cod_materia,link) VALUES (?,?,?,?,?)"
             "INSERT INTO  " .
             $table." ( ".
-            $campi[0] .", ".// Non setto l'ID del documento perchè è AUTO_INCREMENTALE, si setta in automatico
+
             $campi[1] .", ".
             $campi[2] .", ".
             $campi[3] .", ".
             $campi[4] .", ".
             $campi[5] ." ) ".
 
-            "VALUES (50,?,?,?,?,?)" ;
+            "VALUES (?,?,?,?,?)" ;
 
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("siiis", $titolo, $cod_docente, $cod_studente, $cod_materia, $link);
+        $stmt->bind_param("sssis", $titolo, $cod_docente, $cod_studente, $cod_materia, $link);
         $result = $stmt->execute();
 
         return $result;
