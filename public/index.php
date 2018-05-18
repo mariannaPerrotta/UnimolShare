@@ -20,7 +20,7 @@ require '../DB/DBQueryManager.php';
 if (PHP_SAPI == 'cli-server') {
     // To help the built-in PHP dev server, check if the request was actually for
     // something which should probably be served as a static file
-    $url  = parse_url($_SERVER['REQUEST_URI']);
+    $url = parse_url($_SERVER['REQUEST_URI']);
     $file = __DIR__ . $url['path'];
     if (is_file($file)) {
         return false;
@@ -99,7 +99,7 @@ $app->post('/insertmateria', function (Request $request, Response $response) {
     $db = new DBQueryManager();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
-    $id=$requestData['id'];
+    $id = $requestData['id'];
     $nome = $requestData['nome'];
     $cod_doc = $requestData['cod_doc'];
     $cdl = $requestData['cdl'];
@@ -108,7 +108,7 @@ $app->post('/insertmateria', function (Request $request, Response $response) {
     $responseData = array(); //La risposta Ã¨ un array di informazioni da compilare
 
     //Controllo la risposta dal DB e compilo i campi della risposta
-    if ($db->testInsertMateria($id,$nome,$cod_doc,$cdl)) { //Se la registrazione Ã¨ andata a buon fine
+    if ($db->testInsertMateria($id, $nome, $cod_doc, $cdl)) { //Se la registrazione Ã¨ andata a buon fine
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Registrazione avvenuta con successo'; //Messaggio di esito positivo
 
@@ -132,7 +132,7 @@ $app->post('/login', function (Request $request, Response $response) {
 
     //Controllo la risposta dal DB e compilo i campi della risposta
     $utente = $db->login($email, $password);
-    if ($utente ) { //Se l'utente esiste ed Ã¨ corretta la password
+    if ($utente) { //Se l'utente esiste ed Ã¨ corretta la password
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Accesso effettuato'; //Messaggio di esiso positivo
         $responseData['utente'] = $utente[0];
@@ -149,7 +149,7 @@ $app->post('/registration', function (Request $request, Response $response) {
     $db = new DBQueryManager();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
-    $matricola=$requestData['matricola'];
+    $matricola = $requestData['matricola'];
     $nome = $requestData['nome'];
     $cognome = $requestData['cognome'];
     $email = $requestData['email'];
@@ -159,7 +159,7 @@ $app->post('/registration', function (Request $request, Response $response) {
     $responseData = array(); //La risposta Ã¨ un array di informazioni da compilare
 
     //Controllo la risposta dal DB e compilo i campi della risposta
-    if ($db->registration($matricola,$nome,$cognome,$email,$password)) { //Se la registrazione Ã¨ andata a buon fine
+    if ($db->registration($matricola, $nome, $cognome, $email, $password)) { //Se la registrazione Ã¨ andata a buon fine
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Registrazione avvenuta con successo'; //Messaggio di esito positivo
 
@@ -177,7 +177,7 @@ $app->post('/update', function (Request $request, Response $response) {
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $matricola = $requestData['matricola'];
     $nome = $requestData['nome'];
-    $cognome= $requestData['cognome'];
+    $cognome = $requestData['cognome'];
     $password = $requestData['password'];
     $tabella = $requestData['tabella'];
 
@@ -198,7 +198,7 @@ $app->post('/update', function (Request $request, Response $response) {
 
 
 //endpoint /recover (Danilo)
-$app->post('/recover', function (Request $request, Response $response){
+$app->post('/recover', function (Request $request, Response $response) {
 
     $db = new DBQueryManager();
 
@@ -280,15 +280,14 @@ $app->post('/visualizzaprofilostudente', function (Request $request, Response $r
     $responseData = array();
 
 //Controllo la risposta dal DB e compilo i campi della risposta
-    $temp=$db->visualizzaProfiloStudente($matricola);
-    if($temp!=null) {
+    $temp = $db->visualizzaProfiloStudente($matricola);
+    if ($temp != null) {
         $responseData['error'] = false; //Campo errore = false
         $responseData['nome'] = $temp[1];
         $responseData['cognome'] = $temp[2];
         $responseData['email'] = $temp[3];
         $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
-    }
-    else{
+    } else {
         $responseData['error'] = true; //Campo errore = false
         $responseData['message'] = 'Errore imprevisto'; //Messaggio di esiso positivo
     }
@@ -306,15 +305,14 @@ $app->post('/visualizzaprofilodocente', function (Request $request, Response $re
     $responseData = array();
 
 //Controllo la risposta dal DB e compilo i campi della risposta
-    $temp=$db->visualizzaProfiloDocente($matricola);
-    if($temp!=null) {
+    $temp = $db->visualizzaProfiloDocente($matricola);
+    if ($temp != null) {
         $responseData['error'] = false; //Campo errore = false
         $responseData['nome'] = $temp[1];
         $responseData['cognome'] = $temp[2];
         $responseData['email'] = $temp[3];
         $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
-    }
-    else{
+    } else {
         $responseData['error'] = true; //Campo errore = false
         $responseData['message'] = 'Errore imprevisto'; //Messaggio di esiso positivo
     }
@@ -331,13 +329,13 @@ $app->post('/caricadocumento', function (Request $request, Response $response) {
     $codice_docente = $requestData['codice_docente'];
     $codice_studente = $requestData['codice_studente'];
     $codice_materia = $requestData['codice_materia'];
-    $link=$requestData['link'];
+    $link = $requestData['link'];
 
     //Risposta del servizio REST
     $responseData = array(); //La risposta Ã¨ un array di informazioni da compilare
 
     //Controllo la risposta dal DB e compilo i campi della risposta
-    if ($db->caricaDocumento($titolo,$codice_docente,$codice_studente,$codice_materia,$link)) { //Se il caricamento del doc Ã¨ andata a buon fine
+    if ($db->caricaDocumento($titolo, $codice_docente, $codice_studente, $codice_materia, $link)) { //Se il caricamento del doc Ã¨ andata a buon fine
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Caricamento avvenuto con successo'; //Messaggio di esito positivo
 
@@ -373,6 +371,31 @@ $app->post('/downloadDocumento', function (Request $request, Response $response)
 });
 
 
+//contattavenditore by domenico
+$app->post('/contattavenditore', function (Request $request, Response $response) {
+
+    $db = new DBQueryManager();
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $idAnnuncio = $requestData['id'];
+
+//Risposta del servizio REST
+    $responseData = array();
+
+//Controllo la risposta dal DB e compilo i campi della risposta
+    $temp = $db->contattaVenditore($idAnnuncio);
+
+    if ($temp != null) {
+        $responseData['error'] = false; //Campo errore = false
+        $responseData['contatto'] = $temp[1];
+        $responseData['email'] = $temp[2];
+        $responseData['message'] = 'Elementi visualizzati con successo'; //Messaggio di esito positivo
+    } else {
+        $responseData['error'] = true; //Campo errore = false
+        $responseData['message'] = 'Errore imprevisto'; //Messaggio di esito negativo
+    }
+    return $response->withJson($responseData); //Invio la risposta del servizio REST al client
+});
 
 
 // Run app = ho riempito $app e avvio il servizio REST
