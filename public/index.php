@@ -95,6 +95,29 @@ $app->get('/testGetUtenti', function (Request $request, Response $response) {
 });
 
 /**** ENDPOINT DEL PROGETTO ****/
+$app->post('/insertmateria', function (Request $request, Response $response) {
+    $db = new DBQueryManager();
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $id=$requestData['id'];
+    $nome = $requestData['nome'];
+    $cod_doc = $requestData['cod_doc'];
+    $cdl = $requestData['cdl'];
+
+    //Risposta del servizio REST
+    $responseData = array(); //La risposta Ã¨ un array di informazioni da compilare
+
+    //Controllo la risposta dal DB e compilo i campi della risposta
+    if ($db->testInsertMateria($id,$nome,$cod_doc,$cdl)) { //Se la registrazione Ã¨ andata a buon fine
+        $responseData['error'] = false; //Campo errore = false
+        $responseData['message'] = 'Registrazione avvenuta con successo'; //Messaggio di esito positivo
+
+    } else {
+        $responseData['error'] = true; //Campo errore = true
+        $responseData['message'] = 'Email associata a un account giÃ  esistente!'; //Messaggio di esito negativo
+    }
+    return $response->withJson($responseData); //Invio la risposta del servizio REST al client
+});
 
 // endpoint: /login (Andrea)
 $app->post('/login', function (Request $request, Response $response) {

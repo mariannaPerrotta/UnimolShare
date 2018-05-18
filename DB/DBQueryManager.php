@@ -513,6 +513,10 @@ class DBQueryManager
     }
 // Ritorna falso
 /* dovrebbe essere questo l'errore
+L'ho trovato aggiungendo questo
+        if (!$result) {
+            throw new Exception($stmt->error);
+        }
 
 Cannot add or update a child row: a foreign key constraint fails
  (`valeri91_unimolshare`.`documento`, CONSTRAINT `doc_docen` FOREIGN KEY
