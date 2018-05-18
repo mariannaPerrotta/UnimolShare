@@ -31,8 +31,22 @@ if (PHP_SAPI == 'cli-server') {
 $settings = require __DIR__ . '/../src/settings.php';
 $app = new App($settings); //"Contenitore" per gli endpoint da riempire
 
+
+//$app->options('/{routes:.+}', function ($request, $response, $args) {
+//    return $response;
+//});
+//
+//$app->add(function ($req, $res, $next) {
+//    $response = $next($req, $res);
+//    return $response
+//        ->withHeader('Access-Control-Allow-Origin', '*')
+//        ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+//        ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+//});
+
+
 /*  Gli endpoint sono delle richieste http accessibili al Client gestite poi dal nostro Server REST.
-    Tra i tipi di richieste http, le più usate sono:
+    Tra i tipi di richieste http, le piÃ¹ usate sono:
     - get (richiesta dati -> elaborazione server -> risposta server)
     - post (invio dati criptati e richiesta dati -> elaborazione server -> risposta server)
     - delete (invio dato (id di solito) e richiesta eliminazione -> elaborazione server -> risposta server)
@@ -91,11 +105,11 @@ $app->post('/login', function (Request $request, Response $response) {
     $password = $requestData['password'];
 
     //Risposta del servizio REST
-    $responseData = array(); //La risposta è un array di informazioni da compilare
+    $responseData = array(); //La risposta Ã¨ un array di informazioni da compilare
 
     //Controllo la risposta dal DB e compilo i campi della risposta
     $utente = $db->login($email, $password);
-    if ($utente != null) { //Se l'utente esiste ed è corretta la password
+    if ($utente ) { //Se l'utente esiste ed Ã¨ corretta la password
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Accesso effettuato'; //Messaggio di esiso positivo
         $responseData['utente'] = $utente[0];
@@ -119,16 +133,16 @@ $app->post('/registration', function (Request $request, Response $response) {
     $password = $requestData['password'];
 
     //Risposta del servizio REST
-    $responseData = array(); //La risposta è un array di informazioni da compilare
+    $responseData = array(); //La risposta Ã¨ un array di informazioni da compilare
 
     //Controllo la risposta dal DB e compilo i campi della risposta
-    if ($db->registration($matricola,$nome,$cognome,$email,$password)) { //Se la registrazione è andata a buon fine
+    if ($db->registration($matricola,$nome,$cognome,$email,$password)) { //Se la registrazione Ã¨ andata a buon fine
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Registrazione avvenuta con successo'; //Messaggio di esito positivo
 
     } else {
         $responseData['error'] = true; //Campo errore = true
-        $responseData['message'] = 'Email associata a un account già esistente!'; //Messaggio di esito negativo
+        $responseData['message'] = 'Email associata a un account giÃ  esistente!'; //Messaggio di esito negativo
     }
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
@@ -145,7 +159,7 @@ $app->post('/update', function (Request $request, Response $response) {
     $tabella = $requestData['tabella'];
 
     //Risposta del servizio REST
-    $responseData = array(); //La risposta è un array di informazioni da compilare
+    $responseData = array(); //La risposta Ã¨ un array di informazioni da compilare
 
     //Controllo la risposta dal DB e compilo i campi della risposta
     if ($db->updateProfile($matricola, $nome, $cognome, $password, $tabella)) {
@@ -192,17 +206,17 @@ $app->delete('/rimuovidocumento', function (Request $request, Response $response
     $idDocumento = $requestData['idDocumento'];
 
     //Risposta del servizio REST
-    $responseData = array(); //La risposta è un array di informazioni da compilare
+    $responseData = array(); //La risposta Ã¨ un array di informazioni da compilare
 
     //Controllo la risposta dal DB e compilo i campi della risposta
     $esito = $db->rimuoviDocumento($idDocumento);
-    if ($esito) { //Se è stato possibile rimuovere il documento
+    if ($esito) { //Se Ã¨ stato possibile rimuovere il documento
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Documento rimosso'; //Messaggio di esito positivo
 
     } else { //Se le credenziali non sono corrette
         $responseData['error'] = true; //Campo errore = true
-        $responseData['message'] = 'Non è stato possibile rimuovere il documento'; //Messaggio di esito negativo
+        $responseData['message'] = 'Non Ã¨ stato possibile rimuovere il documento'; //Messaggio di esito negativo
     }
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
@@ -215,10 +229,10 @@ $app->delete('/rimuoviAnnuncio', function (Request $request, Response $response)
 
 
     //Risposta del servizio REST
-    $responseData = array(); //La risposta è un array di informazioni da compilare
+    $responseData = array(); //La risposta Ã¨ un array di informazioni da compilare
 
 
-    if ($db->rimuoviAnnuncio($id)) { //Se l'utente esiste ed è corretta la password
+    if ($db->rimuoviAnnuncio($id)) { //Se l'utente esiste ed Ã¨ corretta la password
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Documento eliminato'; //Messaggio di esiso positivo
 
@@ -284,6 +298,7 @@ $app->post('/visualizzaprofilodocente', function (Request $request, Response $re
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
 
+
 // endpoint: /caricaDocumento (Jonathan)
 $app->post('/caricadocumento', function (Request $request, Response $response) {
     $db = new DBQueryManager();
@@ -296,10 +311,10 @@ $app->post('/caricadocumento', function (Request $request, Response $response) {
     $link=$requestData['link'];
 
     //Risposta del servizio REST
-    $responseData = array(); //La risposta è un array di informazioni da compilare
+    $responseData = array(); //La risposta Ã¨ un array di informazioni da compilare
 
     //Controllo la risposta dal DB e compilo i campi della risposta
-    if ($db->caricaDocumento($titolo,$codice_docente,$codice_studente,$codice_materia,$link)) { //Se il caricamento del doc è andata a buon fine
+    if ($db->caricaDocumento($titolo,$codice_docente,$codice_studente,$codice_materia,$link)) { //Se il caricamento del doc Ã¨ andata a buon fine
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Caricamento avvenuto con successo'; //Messaggio di esito positivo
 
@@ -318,11 +333,11 @@ $app->post('/downloadDocumento', function (Request $request, Response $response)
     $id = $requestData['id'];
 
     //Risposta del servizio REST
-    $responseData = array(); //La risposta è un array di informazioni da compilare
+    $responseData = array(); //La risposta Ã¨ un array di informazioni da compilare
 
     //Controllo la risposta dal DB e compilo i campi della risposta
     $link = $db->downloadDocumento($id);
-    if ($link != null) { //Se l'utente esiste ed è corretta la password
+    if ($link != null) { //Se l'utente esiste ed Ã¨ corretta la password
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'In download'; //Messaggio di esiso positivo
         $responseData['link'] = $link;
@@ -334,63 +349,10 @@ $app->post('/downloadDocumento', function (Request $request, Response $response)
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
 
-//----------------------
 
-$app->get('/testGetMateria', function (Request $request, Response $response) {
-    $db = new DBQueryManager();
-
-    $responseData = $db->testGetMateria();//Risposta del DB
-    //metto in un json e lo inserisco nella risposta del servizio REST
-    $response->getBody()->write(json_encode(array("materie" => $responseData)));
-    //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
-    $newResponse = $response->withHeader('Content-type', 'application/json');
-    return $newResponse; //Invio la risposta del servizio REST al client
-});
-
-$app->get('/visualizzamateriapercdl', function (Request $request, Response $response) {
-    $db = new DBQueryManager();
-    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
-    $id = $requestData['id'];
-    $responseData = $db->visualizzaMateriaPerCdl($id);//Risposta del DB
-    //metto in un json e lo inserisco nella risposta del servizio REST
-    $response->getBody()->write(json_encode(array("materie" => $responseData)));
-    //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
-    $newResponse = $response->withHeader('Content-type', 'application/json');
-    return $newResponse; //Invio la risposta del servizio REST al client
-});
 
 
 // Run app = ho riempito $app e avvio il servizio REST
-
-//-------------------------------------------------------- test popolamento
-$app->post('/insertmateria', function (Request $request, Response $response) {
-    $db = new DBQueryManager();
-
-    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
-    $nome = $requestData['nome'];
-    $id=$requestData['id'];
-    $cod_doc= $requestData['cod_doc'];
-    $cdl = $requestData['cdl'];
-
-    //Risposta del servizio REST
-    $responseData = array(); //La risposta è un array di informazioni da compilare
-
-    //Controllo la risposta dal DB e compilo i campi della risposta
-    if ($db->testInsertMateria($id,$nome,$cod_doc,$cdl)) { //Se la registrazione è andata a buon fine
-        $responseData['error'] = false; //Campo errore = false
-        $responseData['message'] = 'Registrazione avvenuta con successo'; //Messaggio di esito positivo
-
-    } else {
-        $responseData['error'] = true; //Campo errore = true
-        $responseData['message'] = 'Email associata a un account già esistente!'; //Messaggio di esito negativo
-    }
-    return $response->withJson($responseData); //Invio la risposta del servizio REST al client
-});
-
-
-
-
-
-
 $app->run();
+
 ?>
