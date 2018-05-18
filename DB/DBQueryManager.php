@@ -272,10 +272,10 @@ class DBQueryManager
         return $stmt->num_rows > 0;
     }
 
-    // Funzione Modifica Profilo (Gigi)
+    // Funzione Modifica Profilo (Gigi) //Fnuzionante
     public function updateProfile($matricola, $nome, $cognome, $password, $tabella)
     {
-        $table = $tabella;
+        $table = $this->tabelleDB[$tabella];
         $campi = $this->campiTabelleDB[$table];
         $query = //query:  "UPDATE TABLE SET nome = ?, cognome = ?, password = ? WHERE matricola = ?"
             "UPDATE " .
@@ -300,7 +300,7 @@ class DBQueryManager
         return $result;
     }
 
-    // Funzione registrazione (Francesco)
+    // Funzione registrazione (Francesco) dovrebbe essere funzionante...non sono certo per quanto riguarda i non studenti che forse ritorna sempre falso
     public function registration($matricola, $nome, $cognome, $email, $password)
     {
 
@@ -437,47 +437,11 @@ class DBQueryManager
         }
         return $documento; //ritorno array Documento riempito con i risultati della query effettuata.
     }
-
+//Funzionante
     public function visualizzaProfiloDocente($matricola )
     {
-        $profilo = array(); //risultato: array bidimensionale
-        $table = $this->tabelleDB[3]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table];
-        $query =//query di matricola nome cognome email
-            "SELECT " .
-            $campi[0] . ", " .
-            $campi[1] . ", " .
-            $campi[2] . ", " .
-            $campi[3] . " " .
-
-            "FROM " .
-            $table . " " .
-            "WHERE " .
-            $campi[0] . " = ?";
-
-        $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("s", $matricola);
-        $stmt->execute();
-        $stmt->store_result();
-        $stmt->bind_result($matricola,  $nome, $cognome, $email);
-        while ($stmt->fetch()) { //Scansiono la risposta della query
-            $temp = array(); //Array temporaneo per l'acquisizione dei dati
-            //Indicizzo con key i dati nell'array
-            $temp[$campi[0]] = $matricola;
-            $temp[$campi[1]] = $nome;
-            $temp[$campi[2]] = $cognome;
-            $temp[$campi[3]] = $email;
-
-            array_push($profilo, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $utenti
-        }
-        //Controllo se ha trovato matching tra dati inseriti e campi del db
-        return $profilo ;
-    }
-//funzione per visualizzare il profilo studenti
-    public function VisualizzaProfiloStudente($matricola)
-    {
         $profilo = array();
-        $table = $this->tabelleDB[8]; //Tabella per la query
+        $table = $this->tabelleDB[3]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
         $query = //query: "SELECT idattore, tipo, nome, cognome FROM attoriNew2 WHERE idattore = ? AND password = ?"
             "SELECT " .
@@ -485,26 +449,60 @@ class DBQueryManager
             $campi[2] . ", " .
             $campi[3] . " " .
             "FROM " .
-            $table . " " .
-            "WHERE " .
-            $campi[0] . " = ? ";
-
-
+            $table .
+            " WHERE ".
+            $campi[0]." = ? ";
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("ss", $matricola); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
+
+        $stmt->bind_param("s", $matricola); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
         $stmt->execute();
         $stmt->store_result();
-        $stmt->bind_result($matricola, $nome, $cognome, $email);
+        $stmt->bind_result( $nome, $cognome, $email);
         if($stmt->num_rows>0) {
             while ($stmt->fetch()) { //Scansiono la risposta della query
                 $temp = array(); //Array temporaneo per l'acquisizione dei dati
                 //Indicizzo con key i dati nell'array
-                $temp[$campi[0]] = $matricola;
-                $temp[$campi[1]] = $nome;
-                $temp[$campi[2]] = $cognome;
-                $temp[$campi[3]] = $email;
+                $profilo[1] =$nome;
+                $profilo[2]="$cognome";
+                $profilo[3]=$email;
 
-                array_push($profilo, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $utenti
+                //array_push($profilo, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $utenti
+            }
+            //Controllo se ha trovato matching tra dati inseriti e campi del db
+            return $profilo;
+        }
+        else return null;
+    }
+//funzione per visualizzare il profilo studenti FUNZIONANTE
+    public function VisualizzaProfiloStudente($matricola)
+    {
+        $profilo = array();
+        $table = $this->tabelleDB[7]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
+        $query = //query: "SELECT idattore, tipo, nome, cognome FROM attoriNew2 WHERE idattore = ? AND password = ?"
+            "SELECT " .
+            $campi[1] . ", " .
+            $campi[2] . ", " .
+            $campi[3] . " " .
+            "FROM " .
+             $table ." ".
+            "WHERE " .
+            $campi[0]. " = ? ";
+        $stmt = $this->connection->prepare($query);
+
+        $stmt->bind_param("i", $matricola);
+        $stmt->execute();
+        $stmt->store_result();
+        $stmt->bind_result( $nome, $cognome, $email);
+        if($stmt->num_rows>0) {
+            while ($stmt->fetch()) { //Scansiono la risposta della query
+                $temp = array(); //Array temporaneo per l'acquisizione dei dati
+                //Indicizzo con key i dati nell'array
+                $profilo[1] =$nome;
+                $profilo[2]=$cognome;
+                $profilo[3]=$email;
+
+                //array_push($profilo, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $utenti
             }
             //Controllo se ha trovato matching tra dati inseriti e campi del db
             return $profilo;
@@ -513,7 +511,13 @@ class DBQueryManager
 //Controllo se ha trovato matching tra dati inseriti e campi del db
 
     }
+// Ritorna falso
+/* dovrebbe essere questo l'errore
 
+Cannot add or update a child row: a foreign key constraint fails
+ (`valeri91_unimolshare`.`documento`, CONSTRAINT `doc_docen` FOREIGN KEY
+(`cod_docente`) REFERENCES `docente` (`matricola`) ON DELETE NO ACTION ON UPDATE NO ACTION)
+*/
     public function caricaDocumento($titolo, $cod_docente, $cod_studente, $cod_materia, $link)
     {
         $table = $this->tabelleDB[4]; //Tabella per la query
@@ -522,17 +526,17 @@ class DBQueryManager
         $query = //query: "INSERT INTO documento (id, titolo, cod_docente, cod_studente, cod_materia,link) VALUES (?,?,?,?,?)"
             "INSERT INTO  " .
             $table." ( ".
-            //$campi[0] .", ". Non setto l'ID del documento perchè è AUTO_INCREMENTALE, si setta in automatico
+            $campi[0] .", ".// Non setto l'ID del documento perchè è AUTO_INCREMENTALE, si setta in automatico
             $campi[1] .", ".
             $campi[2] .", ".
             $campi[3] .", ".
             $campi[4] .", ".
             $campi[5] ." ) ".
 
-            "VALUES (?,?,?,?,?)" ;
+            "VALUES (50,?,?,?,?,?)" ;
 
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("sssss", $titolo, $cod_docente, $cod_studente, $cod_materia, $link);
+        $stmt->bind_param("siiis", $titolo, $cod_docente, $cod_studente, $cod_materia, $link);
         $result = $stmt->execute();
 
         return $result;
@@ -754,23 +758,54 @@ public function testGetMateria()
     }
     return $materie;
 }
-    public function testInsertMateria()
+// ERRORE:  Cannot add or update a child row: a foreign key constraint fails (`valeri91_unimolshare`.`materia`, CONSTRAINT `mat_docen` FOREIGN KEY (`cod_docente`) REFERENCES `docente` (`matricola`) ON DELETE NO ACTION ON UPDATE NO ACTION)
+    public function testInsertMateria($id,$nome,$cod_doc,$cdl)
     {
 
         $table = $this->tabelleDB[6]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
+        $stmt=null;
         $query = //query:
             "INSERT INTO  ".
-            $table. " ( " .
-            $campi[1]." , ".
-            $campi[2]." , ".
-            $campi[3].
-            " ) VALUES (?,?,?)";
-        $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("sii",$nome,$cod_docente,$cdl); //Preparo la query
-        $result= $stmt->execute();//Esegue la query
+            $table. " SET " .
+            $campi[0]." =? ,".
+            $campi[1]."=? , ".
+            $campi[2]."=? , ".
+            $campi[3]."=? ";
 
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("isii",$id,$nome,$cod_doc,$cdl); //Preparo la query
+
+        $result= $stmt->execute();//Esegue la query
+        if (!$result) {
+            throw new Exception($stmt->error);
+        }
         return $result;
     }
-}
+
+public function caricaAnnuncio($titolo, $contatto,$prezzo,$edizione,$casa_editrice,$cod_studente,$autori, $cod_materia, $link)
+{
+    $table = $this->tabelleDB[1]; //Tabella per la query
+    $campi = $this->campiTabelleDB[$table];
+
+    $query = //query: "INSERT INTO annuncio (id, titolo, cod_docente, cod_studente, cod_materia,link) VALUES (?,?,?,?,?)"
+        "INSERT INTO  " .
+        $table . " ( " .
+// Non setto l'ID dell'annuncio perchè è AUTO_INCREMENTALE, si setta in automatico
+        $campi[1] . ", " .
+        $campi[2] . ", " .
+        $campi[3] . ", " .
+        $campi[4] . ", " .
+        $campi[5] . ", ".
+        $campi[6] . ", ".
+        $campi[7] . ", ".
+        $campi[8] ." ) " .
+        "VALUES (?,?,?,?,?,?,?)";
+
+    $stmt = $this->connection->prepare($query);
+    $stmt->bind_param("sssssisi", $titolo, $contatto,$prezzo,$edizione,$casa_editrice, $cod_studente,$autori, $cod_materia, $link);
+    $result = $stmt->execute();
+
+    return $result;
+}}
 ?>
