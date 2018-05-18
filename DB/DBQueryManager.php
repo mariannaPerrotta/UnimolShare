@@ -114,7 +114,7 @@ class DBQueryManager
         $table = $this->tabelleDB[7]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
         $query = //query: "SELECT idattore, tipo, nome, cognome FROM attoriNew2"
-            "SELECT " .$campi[0] . ", " .$campi[1] . ", " .
+            "SELECT " . $campi[0] . ", " . $campi[1] . ", " .
             $campi[2] . ", " .
             $campi[3] . ", " .
             $campi[4] . ", " .
@@ -216,12 +216,12 @@ class DBQueryManager
         $stmt->execute();
         $stmt->store_result();
 
-        if($stmt->num_rows > 0) {
+        if ($stmt->num_rows > 0) {
             $stmt->bind_result($matricola, $nome, $cognome, $email, $table);
             $utente = array(); //risultato: array
             //Indicizzo con key i dati nell'array
 
-            while($stmt->fetch()) {
+            while ($stmt->fetch()) {
                 $temp = array();
                 $temp[$campi[0]] = $matricola;
                 $temp[$campi[1]] = $nome;
@@ -232,8 +232,7 @@ class DBQueryManager
             }
             //Controllo se ha trovato matching tra dati inseriti e campi del db
             return $utente;
-        }
-        else {
+        } else {
             return null;
         }
 
@@ -293,7 +292,7 @@ class DBQueryManager
         try {
             $stmt->execute();
             $stmt->store_result();
-        }catch (Exception $exception){
+        } catch (Exception $exception) {
             $result = false;
         }
         //Controllo se ha trovato matching tra dati inseriti e capi del db
@@ -312,7 +311,7 @@ class DBQueryManager
         $campi = $this->campiTabelleDB[$table];
         $stmt = null;
 
-        if($substr == "studenti") {
+        if ($substr == "studenti") {
             $cds = 1;
             $query = //query: "INSERT INTO TABLE (matricola, nome, cognome, email, password, cod_cds) VALUES (?,?,?,?,?,?)"
                 //INSERT INTO studente (matricola, nome, cognome, email, password, cod_cds) VALUES ('155975', 'Andrea', 'Petrella', 'a.petrella@studenti.unimol.it', 123456, '1')
@@ -330,8 +329,7 @@ class DBQueryManager
             $stmt = $this->connection->prepare($query);
             $stmt->bind_param("issssi", $matricola, $nome, $cognome, $email, $password, $cds); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
 
-        }
-        else {
+        } else {
             $table = $this->tabelleDB[3];
             $query = //query: "INSERT INTO TABLE (matricola, nome, cognome, email, password) VALUES (?,?,?,?,?)"
                 "INSERT INTO " .
@@ -366,16 +364,15 @@ class DBQueryManager
         $campi = $this->campiTabelleDB[$table];
         // N.B. Probabilmente effettuando una query più accurata si può migliorare la logica che serve a filtrare i dati
         $query = //query: "SELECT idattore, tipo, nome, cognome FROM attoriNew2 WHERE idattore = ?"
-            "SELECT ".
-            $campi[0].", ".
-            $campi[1].", ".
-            $campi[2].", ".
-            $campi[3]." ".
-            "FROM ".
-            $table." ".
-            "WHERE ".
-            $campi[0]." = ?"
-        ;
+            "SELECT " .
+            $campi[0] . ", " .
+            $campi[1] . ", " .
+            $campi[2] . ", " .
+            $campi[3] . " " .
+            "FROM " .
+            $table . " " .
+            "WHERE " .
+            $campi[0] . " = ?";
 
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("s", $idattore); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
@@ -439,8 +436,9 @@ class DBQueryManager
         }
         return $documento; //ritorno array Documento riempito con i risultati della query effettuata.
     }
+
 //Funzionante
-    public function visualizzaProfiloDocente($matricola )
+    public function visualizzaProfiloDocente($matricola)
     {
         $profilo = array();
         $table = $this->tabelleDB[3]; //Tabella per la query
@@ -452,29 +450,29 @@ class DBQueryManager
             $campi[3] . " " .
             "FROM " .
             $table .
-            " WHERE ".
-            $campi[0]." = ? ";
+            " WHERE " .
+            $campi[0] . " = ? ";
         $stmt = $this->connection->prepare($query);
 
         $stmt->bind_param("s", $matricola); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
         $stmt->execute();
         $stmt->store_result();
-        $stmt->bind_result( $nome, $cognome, $email);
-        if($stmt->num_rows>0) {
+        $stmt->bind_result($nome, $cognome, $email);
+        if ($stmt->num_rows > 0) {
             while ($stmt->fetch()) { //Scansiono la risposta della query
                 $temp = array(); //Array temporaneo per l'acquisizione dei dati
                 //Indicizzo con key i dati nell'array
-                $profilo[1] =$nome;
-                $profilo[2]="$cognome";
-                $profilo[3]=$email;
+                $profilo[1] = $nome;
+                $profilo[2] = "$cognome";
+                $profilo[3] = $email;
 
                 //array_push($profilo, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $utenti
             }
             //Controllo se ha trovato matching tra dati inseriti e campi del db
             return $profilo;
-        }
-        else return null;
+        } else return null;
     }
+
 //funzione per visualizzare il profilo studenti FUNZIONANTE
     public function VisualizzaProfiloStudente($matricola)
     {
@@ -487,43 +485,42 @@ class DBQueryManager
             $campi[2] . ", " .
             $campi[3] . " " .
             "FROM " .
-             $table ." ".
+            $table . " " .
             "WHERE " .
-            $campi[0]. " = ? ";
+            $campi[0] . " = ? ";
         $stmt = $this->connection->prepare($query);
 
         $stmt->bind_param("i", $matricola);
         $stmt->execute();
         $stmt->store_result();
-        $stmt->bind_result( $nome, $cognome, $email);
-        if($stmt->num_rows>0) {
+        $stmt->bind_result($nome, $cognome, $email);
+        if ($stmt->num_rows > 0) {
             while ($stmt->fetch()) { //Scansiono la risposta della query
                 $temp = array(); //Array temporaneo per l'acquisizione dei dati
                 //Indicizzo con key i dati nell'array
-                $profilo[1] =$nome;
-                $profilo[2]=$cognome;
-                $profilo[3]=$email;
+                $profilo[1] = $nome;
+                $profilo[2] = $cognome;
+                $profilo[3] = $email;
 
                 //array_push($profilo, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $utenti
             }
             //Controllo se ha trovato matching tra dati inseriti e campi del db
             return $profilo;
-        }
-        else return null;
+        } else return null;
 //Controllo se ha trovato matching tra dati inseriti e campi del db
 
     }
 // Ritorna falso
-/* dovrebbe essere questo l'errore
-L'ho trovato aggiungendo questo
-        if (!$result) {
-            throw new Exception($stmt->error);
-        }
+    /* dovrebbe essere questo l'errore
+    L'ho trovato aggiungendo questo
+            if (!$result) {
+                throw new Exception($stmt->error);
+            }
 
-Cannot add or update a child row: a foreign key constraint fails
- (`valeri91_unimolshare`.`documento`, CONSTRAINT `doc_docen` FOREIGN KEY
-(`cod_docente`) REFERENCES `docente` (`matricola`) ON DELETE NO ACTION ON UPDATE NO ACTION)
-*/
+    Cannot add or update a child row: a foreign key constraint fails
+     (`valeri91_unimolshare`.`documento`, CONSTRAINT `doc_docen` FOREIGN KEY
+    (`cod_docente`) REFERENCES `docente` (`matricola`) ON DELETE NO ACTION ON UPDATE NO ACTION)
+    */
     public function caricaDocumento($titolo, $cod_docente, $cod_studente, $cod_materia, $link)
     {
         $table = $this->tabelleDB[4]; //Tabella per la query
@@ -531,15 +528,15 @@ Cannot add or update a child row: a foreign key constraint fails
 
         $query = //query: "INSERT INTO documento (id, titolo, cod_docente, cod_studente, cod_materia,link) VALUES (?,?,?,?,?)"
             "INSERT INTO  " .
-            $table." ( ".
+            $table . " ( " .
 
-            $campi[1] .", ".
-            $campi[2] .", ".
-            $campi[3] .", ".
-            $campi[4] .", ".
-            $campi[5] ." ) ".
+            $campi[1] . ", " .
+            $campi[2] . ", " .
+            $campi[3] . ", " .
+            $campi[4] . ", " .
+            $campi[5] . " ) " .
 
-            "VALUES (?,?,?,?,?)" ;
+            "VALUES (?,?,?,?,?)";
 
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("sssis", $titolo, $cod_docente, $cod_studente, $cod_materia, $link);
@@ -554,11 +551,11 @@ Cannot add or update a child row: a foreign key constraint fails
         $table = $this->tabelleDB[4]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
         /*  query: "SELECT link FROM documento WHERE id = ?" */
-        $query=
+        $query =
             "SELECT " .
             $campi[5] . " " .
             "FROM " .
-            $table . " "  .
+            $table . " " .
             "WHERE " .
             $campi[0] . " = ?";
 
@@ -568,11 +565,10 @@ Cannot add or update a child row: a foreign key constraint fails
         $stmt->execute();
         $stmt->store_result();
 
-        if($stmt->num_rows > 0) {
+        if ($stmt->num_rows > 0) {
             $stmt->bind_result($link);
             return $link;
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -591,7 +587,7 @@ Cannot add or update a child row: a foreign key constraint fails
         $stmt->bind_param("i", $idDocumento);
         $stmt->execute();
         $stmt->store_result();
-        return $stmt->num_rows>0;
+        return $stmt->num_rows > 0;
     }
 
     public function rimuoviAnnuncio($idAnnuncio)
@@ -608,7 +604,7 @@ Cannot add or update a child row: a foreign key constraint fails
         $stmt->bind_param("i", $idAnnuncio);
         $stmt->execute();
         $stmt->store_result();
-        return $stmt->num_rows>0;
+        return $stmt->num_rows > 0;
     }
 
     public function visualizzaDocumentoPerMateria($Materia)
@@ -618,7 +614,7 @@ Cannot add or update a child row: a foreign key constraint fails
         $table = $this->tabelleDB[4]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
         $table2 = $this->tabelleDB[6];
-        $campi2= $this->campitabelleDB[$table2];
+        $campi2 = $this->campitabelleDB[$table2];
         $query = //query: "SELECT id=0, titolo=1, cod_docente=2, cod materia=5,link=6, id_materia=0, FROM documento inner join materie on codmateria = id materia"
             "SELECT " .    //avrei potuto ussare anche
             $campi[0] . ", " .
@@ -628,11 +624,11 @@ Cannot add or update a child row: a foreign key constraint fails
             $campi[6] . ", " .
 
             "FROM " .
-            $table . ", ".
-            $table2. " ".
-            "WHERE". $campi2[2] .'= ? '.
-            "AND ".
-            $campi[0]. " = ".
+            $table . ", " .
+            $table2 . " " .
+            "WHERE" . $campi2[2] . '= ? ' .
+            "AND " .
+            $campi[0] . " = " .
             $campi2[0];
 
         $stmt = $this->connection->prepare($query);
@@ -664,7 +660,7 @@ Cannot add or update a child row: a foreign key constraint fails
         $table = $this->tabelleDB[4]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
         $table2 = $this->tabelleDB[3];
-        $campi2= $this->campitabelleDB[$table2];
+        $campi2 = $this->campitabelleDB[$table2];
         $query = //query: "SELECT id=0, titolo=1, cod_docente=2, cod materia=5,link=6, id_materia=0, FROM documento inner join materie on codmateria = id materia"
             "SELECT " .
             $campi[0] . ", " .
@@ -674,11 +670,11 @@ Cannot add or update a child row: a foreign key constraint fails
             $campi[6] . ", " .
 
             "FROM " .
-            $table . ", ".
-            $table2. " ".
-            "WHERE". $campi2[1] .'= ? '.
-            "AND ".
-            $campi[2]. " = ".
+            $table . ", " .
+            $table2 . " " .
+            "WHERE" . $campi2[1] . '= ? ' .
+            "AND " .
+            $campi[2] . " = " .
             $campi2[0];
 
         $stmt = $this->connection->prepare($query);
@@ -702,10 +698,11 @@ Cannot add or update a child row: a foreign key constraint fails
         }
         return $documento; //ritorno array Documento riempito con i risultati della query effettuata.
     }
+
     //danilo da controllare
     public function visualizzaMateriaPerCdl($cdlid)
     {
-        $materie= array();
+        $materie = array();
         $table = $this->tabelleDB[6]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
         $query = //query: "SELECT nome, FROM materia where cod_cdl=?"
@@ -714,7 +711,7 @@ Cannot add or update a child row: a foreign key constraint fails
             "FROM " .
             $table . " " .
             "WHERE " .
-            $campi[0] . ' = ? ' ;
+            $campi[0] . ' = ? ';
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("i", $cdlid);
         $stmt->execute();
@@ -734,84 +731,116 @@ Cannot add or update a child row: a foreign key constraint fails
     }
 
 //---------------------------
-public function testGetMateria()
-{
-    $materie = array(); //risultato: array bidimensionale
-    $table = $this->tabelleDB[6]; //Tabella per la query
-    $campi = $this->campiTabelleDB[$table];
-    $query = //query: "SELECT idattore, tipo, nome, cognome FROM attoriNew2"
-        "SELECT " .
-        $campi[1] . ", " .
-        $campi[2] . ", " .
-        $campi[3] . " ".
-        "FROM " .
-        $table;
+    public function testGetMateria()
+    {
+        $materie = array(); //risultato: array bidimensionale
+        $table = $this->tabelleDB[6]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
+        $query = //query: "SELECT idattore, tipo, nome, cognome FROM attoriNew2"
+            "SELECT " .
+            $campi[1] . ", " .
+            $campi[2] . ", " .
+            $campi[3] . " " .
+            "FROM " .
+            $table;
 
-    $stmt = $this->connection->prepare($query); //Preparo la query
-    $stmt->execute();//Esegue la query
-    //Salvo il risultato della query in alcune variabili
-    $stmt->bind_result( $campi[1], $campi[2], $campi[3]);
+        $stmt = $this->connection->prepare($query); //Preparo la query
+        $stmt->execute();//Esegue la query
+        //Salvo il risultato della query in alcune variabili
+        $stmt->bind_result($campi[1], $campi[2], $campi[3]);
 
-    while ($stmt->fetch()) { //Scansiono la risposta della query
-        $temp = array(); //Array temporaneo per l'acquisizione dei dati
-        //Indicizzo con key i dati nell'array
+        while ($stmt->fetch()) { //Scansiono la risposta della query
+            $temp = array(); //Array temporaneo per l'acquisizione dei dati
+            //Indicizzo con key i dati nell'array
 
-        $temp[$campi[1]] = $campi[1];
-        $temp[$campi[2]] = $campi[2];
-        $temp[$campi[3]] = $campi[3];
+            $temp[$campi[1]] = $campi[1];
+            $temp[$campi[2]] = $campi[2];
+            $temp[$campi[3]] = $campi[3];
 
-        array_push($materie, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $utenti
+            array_push($materie, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $utenti
+        }
+        return $materie;
     }
-    return $materie;
-}
+
 // ERRORE:  Cannot add or update a child row: a foreign key constraint fails (`valeri91_unimolshare`.`materia`, CONSTRAINT `mat_docen` FOREIGN KEY (`cod_docente`) REFERENCES `docente` (`matricola`) ON DELETE NO ACTION ON UPDATE NO ACTION)
-    public function testInsertMateria($id,$nome,$cod_doc,$cdl)
+    public function testInsertMateria($id, $nome, $cod_doc, $cdl)
     {
 
         $table = $this->tabelleDB[6]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
-        $stmt=null;
+        $stmt = null;
         $query = //query:
-            "INSERT INTO  ".
-            $table. " SET " .
-            $campi[0]." =? ,".
-            $campi[1]."=? , ".
-            $campi[2]."=? , ".
-            $campi[3]."=? ";
+            "INSERT INTO  " .
+            $table . " SET " .
+            $campi[0] . " =? ," .
+            $campi[1] . "=? , " .
+            $campi[2] . "=? , " .
+            $campi[3] . "=? ";
 
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("isii",$id,$nome,$cod_doc,$cdl); //Preparo la query
+        $stmt->bind_param("isii", $id, $nome, $cod_doc, $cdl); //Preparo la query
 
-        $result= $stmt->execute();//Esegue la query
+        $result = $stmt->execute();//Esegue la query
         if (!$result) {
             throw new Exception($stmt->error);
         }
         return $result;
     }
 
-public function caricaAnnuncio($titolo, $contatto,$prezzo,$edizione,$casa_editrice,$cod_studente,$autori, $cod_materia, $link)
-{
-    $table = $this->tabelleDB[1]; //Tabella per la query
-    $campi = $this->campiTabelleDB[$table];
+    public function caricaAnnuncio($titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autori, $cod_materia, $link)
+    {
+        $table = $this->tabelleDB[1]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
 
-    $query = //query: "INSERT INTO annuncio (id, titolo, cod_docente, cod_studente, cod_materia,link) VALUES (?,?,?,?,?)"
-        "INSERT INTO  " .
-        $table . " ( " .
+        $query = //query: "INSERT INTO annuncio (id, titolo, cod_docente, cod_studente, cod_materia,link) VALUES (?,?,?,?,?)"
+            "INSERT INTO  " .
+            $table . " ( " .
 // Non setto l'ID dell'annuncio perchè è AUTO_INCREMENTALE, si setta in automatico
-        $campi[1] . ", " .
-        $campi[2] . ", " .
-        $campi[3] . ", " .
-        $campi[4] . ", " .
-        $campi[5] . ", ".
-        $campi[6] . ", ".
-        $campi[7] . ", ".
-        $campi[8] ." ) " .
-        "VALUES (?,?,?,?,?,?,?)";
+            $campi[1] . ", " .
+            $campi[2] . ", " .
+            $campi[3] . ", " .
+            $campi[4] . ", " .
+            $campi[5] . ", " .
+            $campi[6] . ", " .
+            $campi[7] . ", " .
+            $campi[8] . " ) " .
+            "VALUES (?,?,?,?,?,?,?)";
 
-    $stmt = $this->connection->prepare($query);
-    $stmt->bind_param("sssssisi", $titolo, $contatto,$prezzo,$edizione,$casa_editrice, $cod_studente,$autori, $cod_materia, $link);
-    $result = $stmt->execute();
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("sssssisi", $titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autori, $cod_materia, $link);
+        $result = $stmt->execute();
 
-    return $result;
-}}
+        return $result;
+    }
+
+    public function contattaVenditore($idAnnuncio)
+    {
+        $table1 = $this->tabelleDB[1]; //Tabella per la query (annuncio)
+        $table2 = $this->tabelleDB[7]; //Tabella per la query (studente): per ricavare l'email
+        $campi1 = $this->campiTabelleDB[$table1];
+        $campi2 = $this->campiTabelleDB[$table2];
+
+        /*  query: "SELECT annuncio.contatto, studente.email
+                    FROM studente, annuncio
+                    WHERE annuncio.id = ? AND annuncio.cod_stud = studente.matricola*/
+        $query =
+            "SELECT " .
+            $table1 . "." . $campi1[2] . ", " . $table2 . "." . $campi2[3] . " " .
+            "FROM " .
+            $table1 . ", " . $table2 . " " .
+            "WHERE " .
+            $table1 . "." . $campi1[0] . " = ? " .
+            "AND " . $table1 . "." . $campi1[6] . " = " . $table2 . "." . $campi2[0];
+
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("s", $idAnnuncio);
+        $stmt->execute();
+        $stmt->store_result();
+        //Controllo se ha trovato matching tra dati inseriti e campi del db
+        return $stmt->num_rows > 0;
+    }
+
+
+}
+
 ?>
