@@ -846,7 +846,7 @@ class DBQueryManager
                 // Indicizzo con key i dati nell'array
                 $venditore[1] = $contatto;
                 $venditore[2] = $email;
-                // array_push($venditore, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $documento
+                // array_push($venditore, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $venditore
             }
             return $venditore; //ritorno array Documento riempito con i risultati della query effettuata.
         } else return null;
