@@ -446,7 +446,7 @@ class DBQueryManager
         $table = $this->tabelleDB[4]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
         $query = //query: "SELECT id, titolo, cod_docente, cod_studente, cod_materia, link FROM documento WHERE id = ?"
-            "SELECT " .    //avrei potuto ussare anche
+            "SELECT " .
             $campi[0] . ", " .
             $campi[1] . ", " .
             $campi[2] . ", " .
@@ -651,7 +651,7 @@ class DBQueryManager
         $table2 = $this->tabelleDB[6];
         $campi2 = $this->campiTabelleDB[$table2];
         $query = //query: "SELECT id=0, titolo=1, cod_docente=2, cod materia=5,link=6, id_materia=0, FROM documento inner join materie on codmateria = id materia"
-            "SELECT " .    //avrei potuto ussare anche
+            "SELECT " .
             $campi[0] . ", " .
             $campi[1] . ", " .
             $campi[2] . ", " .
@@ -671,7 +671,7 @@ class DBQueryManager
         $stmt->execute();
         $stmt->store_result();
 
-        //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp //
+        //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp
         $stmt->bind_result($idDocumento, $titolo, $cod_docente, $cod_materia, $link);
 
         while ($stmt->fetch()) { //Scansiono la risposta della query
