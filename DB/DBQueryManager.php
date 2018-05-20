@@ -299,6 +299,41 @@ class DBQueryManager
         return $result;
     }
 
+    // Funzione Modifica Password (Andrea)
+    public function updatePassword($email, $password)
+    {
+        //Controllare il discorso del cds, va discusso sul come fare
+
+        $stringHelper = new StringHelper();
+        $substr = $stringHelper->subString($email);
+        $tabella = $this->tabelleDB[7];
+        $stmt = null;
+        if ($substr == "unimol") {
+            $tabella = $this->tabelleDB[3];
+        }
+
+        $campi = $this->campiTabelleDB[$tabella];
+        $query = //query:  "UPDATE TABLE SET password = ? WHERE email = ?"
+            "UPDATE " .
+            $tabella . " " .
+            "SET " .
+            $campi[4] . " = ? " .
+            "WHERE " .
+            $campi[3] . " = ?";
+
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("ss", $password, $email); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
+        $result = true;
+        try {
+            $stmt->execute();
+            $stmt->store_result();
+        } catch (Exception $exception) {
+            $result = false;
+        }
+        //Controllo se ha trovato matching tra dati inseriti e capi del db
+        return $result;
+    }
+
     // Funzione registrazione (Francesco) dovrebbe essere funzionante...non sono certo per quanto riguarda i non studenti che forse ritorna sempre falso
     public function registration($matricola, $nome, $cognome, $email, $password)
     {

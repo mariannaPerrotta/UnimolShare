@@ -17,6 +17,7 @@ require_once '../vendor/autoload.php';
 require '../DB/DBConnectionManager.php';
 require '../DB/DBQueryManager.php';
 require '../Helper/EmailHelper/EmailHelper.php';
+require '../Helper/RandomPasswordHelper/RandomPasswordHelper.php';
 
 if (PHP_SAPI == 'cli-server') {
     // To help the built-in PHP dev server, check if the request was actually for
@@ -214,16 +215,26 @@ $app->post('/recover', function (Request $request, Response $response) {
     //Risposta del servizio REST
     $responseData = array();
     $emailSender = new EmailHelper();
+    $randomizerPassword = new RandomPasswordHelper();
 
     //Controllo la risposta dal DB e compilo i campi della risposta
     if ($db->recover($email)) { //Se l'email viene trovata
-        if($emailSender->sendEmail("Messaggio di prova")) {
-            $responseData['error'] = false; //Campo errore = false
-            $responseData['message'] = "Invio email di recupero"; //Messaggio di esito positivo
+        $nuovaPassword = $randomizerPassword->generatePassword(4);
+
+        if($db->updatePassword($email, $nuovaPassword)) {
+            $messaggio = "Usa questa password temporanea";
+
+            if ($emailSender->sendEmail($messaggio, $email, $nuovaPassword)) {
+                $responseData['error'] = false; //Campo errore = false
+                $responseData['message'] = "Email di recupero password inviata"; //Messaggio di esito positivo
+            } else {
+                $responseData['error'] = true; //Campo errore = true
+                $responseData['message'] = "Impossibile inviare l'email di recupero"; //Messaggio di esito negativo
+            }
         }
-        else{
+        else { //Se le credenziali non sono corrette
             $responseData['error'] = true; //Campo errore = true
-            $responseData['message'] = "Impossibile inviare l'email di recupero"; //Messaggio di esito negativo
+            $responseData['message'] = 'Impossibile comunicare col Database'; //Messaggio di esito negativo
         }
 
 
