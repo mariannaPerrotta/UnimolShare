@@ -6,7 +6,7 @@
  * Time: 20:01
  */
 
-require '../StringHelper/StringHelper.php';
+require '../Helper/StringHelper/StringHelper.php';
 
 class DBQueryManager
 {

@@ -11,7 +11,6 @@ class StringHelper
 
     /**
      * StringHelper constructor.
-     * @param string $char
      */
     public function __construct()
     {
