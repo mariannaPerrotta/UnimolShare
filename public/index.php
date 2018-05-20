@@ -233,7 +233,7 @@ $app->post('/recover', function (Request $request, Response $response) {
     }
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
-//endpoint rimuovi by jo dom e danilo
+//endpoint rimuovi by jo dom
 $app->delete('/rimuovidocumento', function (Request $request, Response $response) {
     $db = new DBQueryManager();
 
@@ -305,7 +305,7 @@ $app->post('/visualizzaprofilostudente', function (Request $request, Response $r
     }
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
-//visualizza profilo docente by danilo
+//visualizza profilo docente by daniloe michela
 $app->post('/visualizzaprofilodocente', function (Request $request, Response $response) {
 
     $db = new DBQueryManager();
