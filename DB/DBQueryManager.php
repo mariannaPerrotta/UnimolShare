@@ -438,7 +438,7 @@ class DBQueryManager
     }
 
     //------------ NUOVI DA CONTROLLARE --------------
-
+//gigi
     public function visualizzaDocumento($idDocumento)
     {
         $documento = array();
@@ -480,7 +480,7 @@ class DBQueryManager
         return $documento; //ritorno array Documento riempito con i risultati della query effettuata.
     }
 
-//Funzionante
+//Funzionante michela
     public function visualizzaProfiloDocente($matricola)
     {
         $profilo = array();
@@ -516,7 +516,7 @@ class DBQueryManager
         } else return null;
     }
 
-//funzione per visualizzare il profilo studenti FUNZIONANTE
+//funzione per visualizzare il profilo studenti FUNZIONANTE michela e danilo
     public function VisualizzaProfiloStudente($matricola)
     {
         $profilo = array();
@@ -553,17 +553,7 @@ class DBQueryManager
 //Controllo se ha trovato matching tra dati inseriti e campi del db
 
     }
-// Ritorna falso
-    /* dovrebbe essere questo l'errore
-    L'ho trovato aggiungendo questo
-            if (!$result) {
-                throw new Exception($stmt->error);
-            }
-
-    Cannot add or update a child row: a foreign key constraint fails
-     (`valeri91_unimolshare`.`documento`, CONSTRAINT `doc_docen` FOREIGN KEY
-    (`cod_docente`) REFERENCES `docente` (`matricola`) ON DELETE NO ACTION ON UPDATE NO ACTION)
-    */
+//jonathan
     public function caricaDocumento($titolo, $cod_docente, $cod_studente, $cod_materia, $link)
     {
         $table = $this->tabelleDB[4]; //Tabella per la query
@@ -651,7 +641,7 @@ class DBQueryManager
         $stmt->store_result();
         return $stmt->num_rows > 0;
     }
-
+//danilo
     public function visualizzaDocumentoPerMateria($Materia)
     {
         $documento = array();
@@ -697,7 +687,7 @@ class DBQueryManager
         }
         return $documento; //ritorno array Documento riempito con i risultati della query effettuata.
     }
-
+//danilo
     public function visualizzaDocumentoPerDocente($nomeDocente)
     {
         $documento = array();
@@ -807,7 +797,6 @@ class DBQueryManager
         return $materie;
     }
 
-// ERRORE:  Cannot add or update a child row: a foreign key constraint fails (`valeri91_unimolshare`.`materia`, CONSTRAINT `mat_docen` FOREIGN KEY (`cod_docente`) REFERENCES `docente` (`matricola`) ON DELETE NO ACTION ON UPDATE NO ACTION)
     public function testInsertMateria($id, $nome, $cod_doc, $cdl)
     {
 
@@ -831,7 +820,8 @@ class DBQueryManager
         }
         return $result;
     }
-
+    //------------------------------------------------- sopra Danilo
+    //jonathan e danilo
     public function caricaAnnuncio($titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autori, $cod_materia, $link)
     {
         $table = $this->tabelleDB[1]; //Tabella per la query
