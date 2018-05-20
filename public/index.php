@@ -16,6 +16,7 @@ use Slim\Http\Response;
 require_once '../vendor/autoload.php';
 require '../DB/DBConnectionManager.php';
 require '../DB/DBQueryManager.php';
+require '../Helper/EmailHelper/EmailHelper.php';
 
 if (PHP_SAPI == 'cli-server') {
     // To help the built-in PHP dev server, check if the request was actually for
@@ -212,13 +213,19 @@ $app->post('/recover', function (Request $request, Response $response) {
 
     //Risposta del servizio REST
     $responseData = array();
+    $emailSender = new EmailHelper();
 
     //Controllo la risposta dal DB e compilo i campi della risposta
     if ($db->recover($email)) { //Se l'email viene trovata
-        $responseData['error'] = false; //Campo errore = false
-        $responseData['message'] = "Invio email di recupero"; //Messaggio di esito positivo
+        if($emailSender->sendEmail("Messaggio di prova")) {
+            $responseData['error'] = false; //Campo errore = false
+            $responseData['message'] = "Invio email di recupero"; //Messaggio di esito positivo
+        }
+        else{
+            $responseData['error'] = true; //Campo errore = true
+            $responseData['message'] = "Impossibile inviare l'email di recupero"; //Messaggio di esito negativo
+        }
 
-        //Funzione di invio email
 
     } else { //Se le credenziali non sono corrette
         $responseData['error'] = true; //Campo errore = true
