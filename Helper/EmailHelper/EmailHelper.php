@@ -39,7 +39,6 @@ class EmailHelper
             //Recipients
             $mail->setFrom('unimolshare@gmail.com', 'UnimolShare - Automatic Password Recovery');
             $mail->addAddress('andreacb94@gmail.com', 'TEST Andrea');     // Add a recipient
-            $mail->addAddress('danilo.sprovieri9@gmail.com', 'TEST Danilo');     // Add a recipient
 
             /*** LEVARE DAI COMMENTI UNA VOLTA FINITI I TEST ***
              * $mail->addAddress($email);               // Name is optional

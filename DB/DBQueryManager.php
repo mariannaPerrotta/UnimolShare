@@ -740,7 +740,7 @@ class DBQueryManager
         $materie = array();
         $table = $this->tabelleDB[6]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
-        $query = //query: "SELECT nome, FROM materia where cod_cdl=?"
+        $query = //query: "SELECT nome, FROM materia WHERE cod_cdl = ? "
             "SELECT " .
             $campi[1] . " " .
             "FROM " .
@@ -906,6 +906,64 @@ class DBQueryManager
 
         return $result;
     }
+
+    //Funzione per ricercare tra documenti, libri e annunci (Andrea)
+    public function ricerca($key)
+    {
+        $risultato = array(); //risultato: array bidimensionale
+        $annunci = $this->tabelleDB[1];
+        $docs = $this->tabelleDB[4];
+        $libri = $this->tabelleDB[5];
+        $campi = $this->campiTabelleDB[$annunci];
+        /*query: "  SELECT id, titolo, tabella FROM annuncio WHERE titolo LIKE '%?%'
+                    UNION
+                    SELECT id, titolo, tabella FROM documento WHERE titolo LIKE '%?%'
+                    UNION
+                    SELECT id, titolo, tabella FROM libro WHERE titolo LIKE '%?%' */
+        $query =
+            "SELECT " .
+            $campi[0] . ", " .
+            $campi[1] . ", " .
+            "'" . $annunci . "' as tabella " .
+            "FROM " .
+            $annunci . " " .
+            "WHERE " .
+            $campi[1] . " LIKE"." '%".$key."%' " .
+            "UNION " .
+            "SELECT " .
+            $campi[0] . ", " .
+            $campi[1] . ", " .
+            "'" . $docs . "' as tabella " .
+            "FROM " .
+            $docs . " " .
+            "WHERE " .
+            $campi[1] . " LIKE"." '%".$key."%' " .
+            "UNION " .
+            "SELECT " .
+            $campi[0] . ", " .
+            $campi[1] . ", " .
+            "'" . $libri . "' as tabella " .
+            "FROM " .
+            $libri . " " .
+            "WHERE " .
+            $campi[1] . " LIKE"." '%".$key."%'";
+        $stmt = $this->connection->prepare($query); //Preparo la query
+        $stmt->execute();//Esegue la query
+
+        //Salvo il risultato della query in alcune variabili
+        $stmt->bind_result($id, $titolo, $tabella);
+
+        while ($stmt->fetch()) { //Scansiono la risposta della query
+            $temp = array(); //Array temporaneo per l'acquisizione dei dati
+            //Indicizzo con key i dati nell'array
+            $temp[$campi[0]] = $id;
+            $temp[$campi[1]] = $titolo;
+            $temp['tabella'] = $tabella;
+            array_push($risultato, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $utenti
+        }
+        return $risultato;
+    }
+
 
 
 }

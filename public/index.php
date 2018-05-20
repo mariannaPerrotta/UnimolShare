@@ -444,6 +444,23 @@ $app->post('/valutaizonedocumento', function (Request $request, Response $respon
 });
 
 
+// endpoint: /ricerca (Andrea)
+$app->post('/ricerca', function (Request $request, Response $response) {
+    $db = new DBQueryManager();
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $key = $requestData['key'];
+
+    $responseData = $db->ricerca($key);//Risposta del DB
+    //metto in un json e lo inserisco nella risposta del servizio REST
+    $response->getBody()->write(json_encode(array("lista" => $responseData)));
+    //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
+    $newResponse = $response->withHeader('Content-type', 'application/json');
+    return $newResponse; //Invio la risposta del servizio REST al client
+});
+
+
+
 // Run app = ho riempito $app e avvio il servizio REST
 $app->run();
 
