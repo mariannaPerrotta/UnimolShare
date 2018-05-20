@@ -159,13 +159,18 @@ $app->post('/registration', function (Request $request, Response $response) {
     $responseData = array(); //La risposta Ã¨ un array di informazioni da compilare
 
     //Controllo la risposta dal DB e compilo i campi della risposta
-    if ($db->registration($matricola, $nome, $cognome, $email, $password)) { //Se la registrazione Ã¨ andata a buon fine
+    $responseDB = $db->registration($matricola, $nome, $cognome, $email, $password);
+    if ($responseDB == 1) { //Se la registrazione è andata a buon fine
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Registrazione avvenuta con successo'; //Messaggio di esito positivo
 
-    } else {
+    } else if ($responseDB == 2){ //Se l'email è già presente nel DB
         $responseData['error'] = true; //Campo errore = true
-        $responseData['message'] = 'Email associata a un account giÃ  esistente!'; //Messaggio di esito negativo
+        $responseData['message'] = 'Account già  esistente!'; //Messaggio di esito negativo
+    }
+    else{//Se l'email non è istituzionale
+        $responseData['error'] = true; //Campo errore = true
+        $responseData['message'] = "Email non valida! Usare un'email istituzionale."; //Messaggio di esito negativo
     }
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });

@@ -329,7 +329,7 @@ class DBQueryManager
             $stmt = $this->connection->prepare($query);
             $stmt->bind_param("issssi", $matricola, $nome, $cognome, $email, $password, $cds); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
 
-            $result = $stmt->execute();
+            $result = ($stmt->execute()) ? 1 : 2;
 
         } else if ($substr == "unimol"){
             $table = $this->tabelleDB[3];
@@ -347,15 +347,18 @@ class DBQueryManager
             $stmt = $this->connection->prepare($query);
             $stmt->bind_param("issss", $matricola, $nome, $cognome, $email, $password); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
 
-            $result = $stmt->execute();
+            $result = ($stmt->execute()) ? 1 : 2;
         }
         else {
-            $result = false;
+            $result = 0;
         }
 
-        if (!$result) {
+        /* OK per debug ma a regime vanno tolte queste righe di codice altrimenti ci manda in crash l'applicativo
+        if ($result == 2) {
             throw new Exception($stmt->error);
         }
+        */
+
         return $result;
     }
 
