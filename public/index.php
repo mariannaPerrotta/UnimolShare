@@ -397,6 +397,29 @@ $app->post('/contattavenditore', function (Request $request, Response $response)
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
 
+// endpoint: /valutaizonedocumento (Andrea)
+$app->post('/valutaizonedocumento', function (Request $request, Response $response) {
+    $db = new DBQueryManager();
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $valutazione = $requestData['valutazione'];
+    $cod_documento = $requestData['cod_documento'];
+
+    //Risposta del servizio REST
+    $responseData = array();
+
+    //Controllo la risposta dal DB
+    if ($db->valutazioneDocumento($valutazione, $cod_documento)) { //Se il caricamento della valutaizone è andato a buon fine
+        $responseData['error'] = false; //Campo errore = false
+        $responseData['message'] = 'Valutazione avvenuta con successo'; //Messaggio di esito positivo
+
+    } else {
+        $responseData['error'] = true; //Campo errore = true
+        $responseData['message'] = 'Valutaizone non effettuata'; //Messaggio di esito negativo
+    }
+    return $response->withJson($responseData); //Invio la risposta del servizio REST al client
+});
+
 
 // Run app = ho riempito $app e avvio il servizio REST
 $app->run();

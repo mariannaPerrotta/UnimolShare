@@ -107,7 +107,7 @@ class DBQueryManager
 
     /*********** FUNZIONE DI ESEMPIO ***********/
 
-    //Funzione per recuperare la lista degli utenti presenti del DB
+    //Funzione per recuperare la lista degli utenti presenti del DB (Andrea)
     public function testGetStudenti()
     {
         $utenti = array(); //risultato: array bidimensionale
@@ -141,7 +141,7 @@ class DBQueryManager
         return $utenti;
     }
 
-    //Funzione per recuperare la lista degli utenti presenti del DB
+    //Funzione per recuperare la lista degli utenti presenti del DB (Andrea)
     public function getUtenti()
     {
         $utenti = array(); //risultato: array bidimensionale
@@ -329,7 +329,9 @@ class DBQueryManager
             $stmt = $this->connection->prepare($query);
             $stmt->bind_param("issssi", $matricola, $nome, $cognome, $email, $password, $cds); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
 
-        } else {
+            $result = $stmt->execute();
+
+        } else if ($substr == "unimol"){
             $table = $this->tabelleDB[3];
             $query = //query: "INSERT INTO TABLE (matricola, nome, cognome, email, password) VALUES (?,?,?,?,?)"
                 "INSERT INTO " .
@@ -345,9 +347,12 @@ class DBQueryManager
             $stmt = $this->connection->prepare($query);
             $stmt->bind_param("issss", $matricola, $nome, $cognome, $email, $password); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
 
+            $result = $stmt->execute();
+        }
+        else {
+            $result = false;
         }
 
-        $result = $stmt->execute();
         if (!$result) {
             throw new Exception($stmt->error);
         }
@@ -614,7 +619,7 @@ class DBQueryManager
         $table = $this->tabelleDB[4]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
         $table2 = $this->tabelleDB[6];
-        $campi2 = $this->campitabelleDB[$table2];
+        $campi2 = $this->campiTabelleDB[$table2];
         $query = //query: "SELECT id=0, titolo=1, cod_docente=2, cod materia=5,link=6, id_materia=0, FROM documento inner join materie on codmateria = id materia"
             "SELECT " .    //avrei potuto ussare anche
             $campi[0] . ", " .
@@ -851,6 +856,29 @@ class DBQueryManager
             return $venditore; //ritorno array Documento riempito con i risultati della query effettuata.
         } else return null;
     }
+
+    //Funzione per la valutazione dei documenti (Andrea)
+    public function valutazioneDocumento($valutaizone, $cod_documento)
+    {
+        $table = $this->tabelleDB[8]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
+
+        $query = //query: "INSERT INTO valutazione (valutazione, cod_documento) VALUES (?,?)"
+            "INSERT INTO  " .
+            $table . " ( " .
+// Non setto l'ID dell'annuncio perchè è AUTO_INCREMENTALE, si setta in automatico
+            $campi[1] . ", " .
+            $campi[2] . " ) " .
+            "VALUES (?,?)";
+
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("ii", $valutaizone, $cod_documento);
+        $result = $stmt->execute();
+
+        return $result;
+    }
+
+
 }
 
 ?>
