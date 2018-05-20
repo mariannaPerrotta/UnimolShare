@@ -241,11 +241,11 @@ $app->delete('/rimuovidocumento', function (Request $request, Response $response
     $idDocumento = $requestData['idDocumento'];
 
     //Risposta del servizio REST
-    $responseData = array(); //La risposta Ã¨ un array di informazioni da compilare
+    $responseData = array(); //La risposta è un array di informazioni da compilare
 
     //Controllo la risposta dal DB e compilo i campi della risposta
     $esito = $db->rimuoviDocumento($idDocumento);
-    if ($esito) { //Se Ã¨ stato possibile rimuovere il documento
+    if ($esito) { //Se è stato possibile rimuovere il documento
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Documento rimosso'; //Messaggio di esito positivo
 
@@ -264,10 +264,10 @@ $app->delete('/rimuoviAnnuncio', function (Request $request, Response $response)
 
 
     //Risposta del servizio REST
-    $responseData = array(); //La risposta Ã¨ un array di informazioni da compilare
+    $responseData = array(); //La risposta è un array di informazioni da compilare
 
 
-    if ($db->rimuoviAnnuncio($id)) { //Se l'utente esiste ed Ã¨ corretta la password
+    if ($db->rimuoviAnnuncio($id)) { //Se l'utente esiste ed è corretta la password
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Documento eliminato'; //Messaggio di esiso positivo
 

@@ -581,6 +581,7 @@ class DBQueryManager
         }
     }
 
+    // domenico e jo
     public function rimuoviDocumento($idDocumento)
     {
         $table = $this->tabelleDB[4]; //Tabella per la query
@@ -598,6 +599,7 @@ class DBQueryManager
         return $stmt->num_rows > 0;
     }
 
+    //domenico e jo
     public function rimuoviAnnuncio($idAnnuncio)
     {
         $table = $this->tabelleDB[1]; //Tabella per la query
@@ -821,6 +823,7 @@ class DBQueryManager
         return $result;
     }
 
+    //domenico, da controllare
     public function contattaVenditore($idAnnuncio)
     {
         $table1 = $this->tabelleDB[1]; //Tabella per la query (annuncio)
@@ -850,11 +853,9 @@ class DBQueryManager
 
         if ($stmt->num_rows > 0) {
             while ($stmt->fetch()) { // Scansiono la risposta della query
-                // $temp = array(); //Array temporaneo per l'acquisizione dei dati
-                // Indicizzo con key i dati nell'array
+                // Indicizzo i dati nell'array
                 $venditore[1] = $contatto;
                 $venditore[2] = $email;
-                // array_push($venditore, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $venditore
             }
             return $venditore; //ritorno array Documento riempito con i risultati della query effettuata.
         } else return null;
