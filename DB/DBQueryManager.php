@@ -758,11 +758,11 @@ class DBQueryManager
         while ($stmt->fetch()) { //Scansiono la risposta della query
             $temp = array(); //Array temporaneo per l'acquisizione dei dati
 //Indicizzo con key i dati nell'array
-            $temp[$campi[0]] = $nome_materia;
+            $temp[$campi[1]] = $materie;
 
             array_push($materie, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $documento
         }
-        return $nome_materia; //ritorno array Documento riempito con i risultati della query effettuata.
+        return $materie; //ritorno array Documento riempito con i risultati della query effettuata.
     }
 
 //---------------------------
