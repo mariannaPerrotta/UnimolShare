@@ -963,6 +963,10 @@ class DBQueryManager
         }
         return $risultato;
     }
+
+    //------------------------ FIN QUI REVISIONA ANDREA ------------------------------------------------
+
+
 //Danilo serve per vedere i propri annunci
     public function visualizzaAnnuncioPerId($Matricola,$cds)
     {

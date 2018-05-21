@@ -515,6 +515,8 @@ $app->post('/ricerca', function (Request $request, Response $response) {
     return $newResponse; //Invio la risposta del servizio REST al client
 });
 
+//------------------------ FIN QUI REVISIONA ANDREA ------------------------------------------------
+
 
 
 // Run app = ho riempito $app e avvio il servizio REST
