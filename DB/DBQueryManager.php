@@ -92,7 +92,7 @@ class DBQueryManager
         $this->connection = $db->runConnection();
     }
 
-    //Metodi per effettuare le query
+    //---- METODI PER GESTIRE LE QUERY ----
 
     //Funzione di accesso (Andrea)
     public function login($email, $password)
@@ -155,6 +155,7 @@ class DBQueryManager
         }
 
     }
+
     //danilo
     public function VisualizzaCDL()
     {

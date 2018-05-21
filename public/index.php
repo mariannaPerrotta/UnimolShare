@@ -224,7 +224,7 @@ $app->post('/recover', function (Request $request, Response $response) {
         if($db->modificaPassword($email, $nuovaPassword)) {
             $messaggio = "Usa questa password temporanea";
 
-            if ($emailSender->sendEmail($messaggio, $email, $nuovaPassword)) {
+            if ($emailSender->sendResetPasswordEmail($messaggio, $email, $nuovaPassword)) {
                 $responseData['error'] = false; //Campo errore = false
                 $responseData['message'] = "Email di recupero password inviata"; //Messaggio di esito positivo
             } else {

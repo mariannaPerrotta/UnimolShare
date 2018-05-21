@@ -21,13 +21,13 @@ class EmailHelper
     {
     }
 
-    function sendEmail($messaggio, $email, $password){
+    //Funzione per inviare un'email con la nuova password
+    function sendResetPasswordEmail($messaggio, $email, $password){
 
-        $link = 'https://www.unimolshare.it/login.php';
+        $linkLogin = 'https://www.unimolshare.it/login.php';
         $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
         try {
             //Server settings
-            //$mail->SMTPDebug = 2;                                 // Enable verbose debug output
             $mail->isSMTP();                                      // Set mailer to use SMTP
             $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
             $mail->SMTPAuth = true;                               // Enable SMTP authentication
@@ -39,34 +39,19 @@ class EmailHelper
             //Recipients
             $mail->setFrom('unimolshare@gmail.com', 'UnimolShare - Automatic Password Recovery');
             $mail->addAddress('andreacb94@gmail.com', 'TEST Andrea');     // Add a recipient
-
-            /*** LEVARE DAI COMMENTI UNA VOLTA FINITI I TEST ***
-             * $mail->addAddress($email);               // Name is optional
-             */
-
-            //$mail->addReplyTo('unimolshare2@gmail.com', 'Information');
-            /*$mail->addCC('cc@example.com');
-            $mail->addBCC('bcc@example.com');*/
-
-            //Attachments
-            //$mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
-            //$mail->addAttachment('img/logo.png');    // Optional name
-
             $mail->Subject = 'UnimolShare - Recupero credenziali';
 
             //Content
-            $mail->isHTML(true);                               // Set email format to HTML
+            $mail->isHTML(true); // Setto il formato dell'email in HTML
             $mail->AddEmbeddedImage("/img/logo.jpg", "logo-img", "logo.jpg");
             $mail->Body    = '<!doctype html><html lang = "it"><header><meta charset="UTF-8"></header>';
             $mail->Body   .= '<body><h1>UnimolShare</h1><div>';
-            $mail->Body   .= $messaggio.':<br/><br/><b>'.$password.'</div><br/><div>Vai su '.$link.' per entrare.</div></body></html>';
-            $mail->AltBody = $messaggio.': '.$password.' --- Vai su '.$link.' per entrare.';
+            $mail->Body   .= $messaggio.':<br/><br/><b>'.$password.'</div><br/><div>Vai su '.$linkLogin.' per entrare.</div></body></html>';
+            $mail->AltBody = $messaggio.': '.$password.' --- Vai su '.$linkLogin.' per entrare.';
             $mail->send();
             return true;
         } catch (Exception $e) {
             return false;
         }
-
     }
-
 }
