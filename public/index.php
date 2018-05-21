@@ -523,7 +523,7 @@ $app->post('/visualizzadocumentoperid', function (Request $request, Response $re
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $matricola = $requestData['matricola'];
-    $tabella_utente=$requestData['$tabella_utente']
+    $tabella_utente=$requestData['$tabella_utente'];
 
 //Controllo la risposta dal DB e compilo i campi della risposta
     $responseData = $db->visualizzaDocumentoPerId($matricola,$tabella_utente);
