@@ -155,6 +155,34 @@ class DBQueryManager
         }
 
     }
+    //danilo
+    public function VisualizzaCDL()
+    {
+        $CDL = array();
+        $table = $this->tabelleDB[1]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
+        $query = //query: "SELECT idattore, tipo, nome, cognome FROM attoriNew2 WHERE idattore = ? AND password = ?"
+            "SELECT " .
+            $campi[0] . ", " .
+            $campi[1] . ", " .
+            "FROM " .
+            $table;
+        $stmt = $this->connection->prepare($query);
+        $stmt->execute();
+        $stmt->store_result();
+        $stmt->bind_result($id,$nome);
+
+
+        while ($stmt->fetch()) { //Scansiono la risposta della query
+            $temp = array(); //Array temporaneo per l'acquisizione dei dati
+//Indicizzo con key i dati nell'array
+            $temp[$campi[0]] = $id;
+            $temp[$campi[1]] = $nome;
+            array_push($CDL, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $documento
+        }
+        return $CDL;
+
+    }
 
     //Funzione di recupero (Danilo)
     public function recupero($email)
