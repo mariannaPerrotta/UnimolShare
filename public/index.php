@@ -477,7 +477,7 @@ $app->post('/contattavenditore', function (Request $request, Response $response)
 });
 
 // endpoint: /valutaizonedocumento (Andrea)
-$app->post('/valutaizonedocumento', function (Request $request, Response $response) {
+$app->post('/valutazionedocumento', function (Request $request, Response $response) {
     $db = new DBQueryManager();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
@@ -517,7 +517,33 @@ $app->post('/ricerca', function (Request $request, Response $response) {
 
 //------------------------ FIN QUI REVISIONA ANDREA ------------------------------------------------
 
+$app->post('/visualizzadocumentoperid', function (Request $request, Response $response) {
 
+    $db = new DBQueryManager();
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $matricola = $requestData['matricola'];
+    $tabella_utente=$requestData['$tabella_utente']
+
+//Controllo la risposta dal DB e compilo i campi della risposta
+    $responseData = $db->visualizzaDocumentoPerId($matricola,$tabella_utente);
+    if ($responseData != null) {
+        $responseData['error'] = false; //Campo errore = false
+
+        $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
+        $response->getBody()->write(json_encode(array("documenti" => $responseData)));
+        //metto in un json e lo inserisco nella risposta del servizio REST
+
+        //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
+        $newResponse = $response->withHeader('Content-type', 'application/json');
+        return $newResponse; //Invio la risposta del servizio REST al client
+    } else {
+        $responseData['error'] = true; //Campo errore = false
+        $responseData['message'] = 'Errore imprevisto';
+        return $response->withJson($responseData);
+    }
+
+});
 
 // Run app = ho riempito $app e avvio il servizio REST
 $app->run();

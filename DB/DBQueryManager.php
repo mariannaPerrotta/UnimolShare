@@ -960,41 +960,47 @@ class DBQueryManager
 
 
 //Danilo serve per vedere i propri annunci
-    public function visualizzaAnnuncioPerId($Matricola,$cds)
+    public function visualizzaDocumentoPerId($Matricola,$tabella)
     {
-        $annunci = array();
+        $documento = array();
 
-        $table = $this->tabelleDB[1]; //Tabella per la query
+        $table = $this->tabelleDB[3]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
-        $query = //query: "SELECT nome, FROM materia WHERE cod_cdl = ? "
+        if($tabella==2){
+        $query =
             "SELECT " .
             $campi[1] . ", " .
-            $campi[2] . ", " .
-            $campi[3] . ", " .
-            $campi[4] . ", " .
-            $campi[5] . ", " .
-            $campi[7] . " " .
-
+            $campi[5] . " " .
             "FROM " .
             $table . " " .
             "WHERE " .
-            $campi[6] . ' = ? ';
+            $campi[2] . ' = ? ';
+        }
+            else{$query =
+                "SELECT " .
+                $campi[1] . ", " .
+                $campi[5] . " " .
+                "FROM " .
+                $table . " " .
+                "WHERE " .
+                $campi[3] . ' = ? ';
+            }
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("i", $Matricola);
         $stmt->execute();
         $stmt->store_result();
 
 //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp //
-        $stmt->bind_result($annunci);
+        $stmt->bind_result($documento);
 
         while ($stmt->fetch()) { //Scansiono la risposta della query
             $temp = array(); //Array temporaneo per l'acquisizione dei dati
 //Indicizzo con key i dati nell'array
-            $temp[$campi[1]] = $annunci;
+            $temp[$campi[1]] = $documento;
 
-            array_push($annunci, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
+            array_push($documento, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
         }
-        return $annunci; //ritorno array Documento riempito con i risultati della query effettuata.
+        return $documento; //ritorno array Documento riempito con i risultati della query effettuata.
     }
 
 }
