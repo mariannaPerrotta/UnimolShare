@@ -209,15 +209,10 @@ class DBQueryManager
         //Invio la query
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("ssss", $nome, $cognome, $password, $matricola); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
-        $result = true;
-        //Tento la modifica nel DB
-        try {
-            $stmt->execute();
-            $stmt->store_result();
-        } catch (Exception $exception) {
-            $result = false;
-        }
-        return $result; //Restituisco l'esito
+        $stmt->execute();
+        $stmt->store_result();
+        //Controllo se ha trovato matching tra dati inseriti e campi del db
+        return $stmt->num_rows > 0;
     }
 
     // Funzione Modifica Password (Andrea)
@@ -242,15 +237,10 @@ class DBQueryManager
         //Invio la query
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("ss", $password, $email); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
-        $result = true;
-        //Tento la modifica nel DB
-        try {
-            $stmt->execute();
-            $stmt->store_result();
-        } catch (Exception $exception) {
-            $result = false;
-        }
-        return $result; //Restituisco l'esito
+        $stmt->execute();
+        $stmt->store_result();
+        //Controllo se ha trovato matching tra dati inseriti e campi del db
+        return $stmt->num_rows > 0;
     }
 
     // Funzione registrazione (Francesco)
@@ -258,14 +248,14 @@ class DBQueryManager
     {
         $stringHelper = new StringHelper();
         $substr = $stringHelper->subString($email);
-        $table = $this->tabelleDB[6];
-        $campi = $this->campiTabelleDB[$table];
+        $tabella = $this->tabelleDB[6];
+        $campi = $this->campiTabelleDB[$tabella];
 
         if ($substr == "studenti") {
             //query: "INSERT INTO TABLE (matricola, nome, cognome, email, password, cod_cds) VALUES (?,?,?,?,?,?)"
             $query = (
                 "INSERT INTO " .
-                $table . " (" .
+                $tabella . " (" .
                 $campi[0] . ", " .
                 $campi[1] . ", " .
                 $campi[2] . ", " .
@@ -278,13 +268,12 @@ class DBQueryManager
             $stmt = $this->connection->prepare($query);
             $stmt->bind_param("sssssi", $matricola, $nome, $cognome, $email, $password, $cds); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
             $result = ($stmt->execute()) ? 1 : 2;
-
         } else if ($substr == "unimol"){
-            $table = $this->tabelleDB[2];
+            $tabella = $this->tabelleDB[2];
             //query: "INSERT INTO TABLE (matricola, nome, cognome, email, password) VALUES (?,?,?,?,?)"
             $query = (
                 "INSERT INTO " .
-                $table . " (" .
+                $tabella . " (" .
                 $campi[0] . ", " .
                 $campi[1] . ", " .
                 $campi[2] . ", " .
@@ -294,7 +283,7 @@ class DBQueryManager
                 "VALUES (?,?,?,?,?)"
             );
             $stmt = $this->connection->prepare($query);
-            $stmt->bind_param("issss", $matricola, $nome, $cognome, $email, $password); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
+            $stmt->bind_param("sssss", $matricola, $nome, $cognome, $email, $password); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
             $result = ($stmt->execute()) ? 1 : 2;
         } else {
             $result = 0;
@@ -302,57 +291,13 @@ class DBQueryManager
         return $result;
     }
 
-
-    //------------ 21/05/18 22:55 FIN QUI OK ------------------
-
-
-    /**** COMMENTO DI ANDREA: FORSE NON SERVE NEL NOSTRO PROGETTO ****/
-    //Funzione che restituisce il tipo attore in base al suo id (serve per la specializzazione degli utenti)
-    public function getTypeByIdAttore($idattore)
-    {
-        $table = $this->tabelleDB[0]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table];
-        // N.B. Probabilmente effettuando una query più accurata si può migliorare la logica che serve a filtrare i dati
-        $query = //query: "SELECT idattore, tipo, nome, cognome FROM attoriNew2 WHERE idattore = ?"
-            "SELECT " .
-            $campi[0] . ", " .
-            $campi[1] . ", " .
-            $campi[2] . ", " .
-            $campi[3] . " " .
-            "FROM " .
-            $table . " " .
-            "WHERE " .
-            $campi[0] . " = ?";
-
-        $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("s", $idattore); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
-        $stmt->execute();
-        //Salvo il risultato della query in alcune variabili
-        $stmt->bind_result($idattore, $tipo, $nome, $cognome);
-        $stmt->fetch();
-
-        $tipoUtente = $tipo;
-        /* N.B. posso passare anche tutti i restanti dati dell'attore utilizzando un array
-         *
-         * $utente['idattore'] = $idattore;
-         * $utente['tipo'] = $tipo;
-         * $utente['nome'] = $nome;
-         * $utente['cognome'] = $cognome;
-         * ecc...
-         *
-         * */
-        return $tipoUtente;
-    }
-
-    //------------ NUOVI DA CONTROLLARE --------------
-//gigi
+    // Funzione visualizza documento (Gigi)
     public function visualizzaDocumento($idDocumento)
     {
-        $documento = array();
-
-        $table = $this->tabelleDB[4]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table];
-        $query = //query: "SELECT id, titolo, cod_docente, cod_studente, cod_materia, link FROM documento WHERE id = ?"
+        $tabelal = $this->tabelleDB[3]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$tabelal];
+        //query: "SELECT id, titolo, cod_docente, cod_studente, cod_materia, link FROM documento WHERE id = ?"
+        $query = (
             "SELECT " .
             $campi[0] . ", " .
             $campi[1] . ", " .
@@ -361,114 +306,118 @@ class DBQueryManager
             $campi[4] . " " .
             $campi[5] . " " .
             "FROM " .
-            $table . " " .
+            $tabelal . " " .
             "WHERE " .
-            $campi[0] . " = ?";
-
+            $campi[0] . " = ?"
+        );
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("s", $idDocumento);
+        $stmt->bind_param("i", $idDocumento);
         $stmt->execute();
         $stmt->store_result();
-
-        //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp //
-        $stmt->bind_result($idDocumento, $titolo, $cod_docente, $cod_studente, $cod_materia, $link);
-
-        while ($stmt->fetch()) { //Scansiono la risposta della query
-            $temp = array(); //Array temporaneo per l'acquisizione dei dati
-            //Indicizzo con key i dati nell'array
-            $temp[$campi[0]] = $idDocumento;
-            $temp[$campi[1]] = $titolo;
-            $temp[$campi[2]] = $cod_docente;
-            $temp[$campi[3]] = $cod_studente;
-            $temp[$campi[4]] = $cod_materia;
-            $temp[$campi[5]] = $link;
-            array_push($documento, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $documento
+        if ($stmt->num_rows > 0) {
+            $stmt->bind_result($idDocumento, $titolo, $cod_docente, $cod_studente, $cod_materia, $link);
+            $documento = array();
+            while ($stmt->fetch()) { //Scansiono la risposta della query
+                $temp = array();
+                //Indicizzo con key i dati nell'array
+                $temp[$campi[0]] = $idDocumento;
+                $temp[$campi[1]] = $titolo;
+                $temp[$campi[2]] = $cod_docente;
+                $temp[$campi[3]] = $cod_studente;
+                $temp[$campi[4]] = $cod_materia;
+                $temp[$campi[5]] = $link;
+                array_push($documento, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $documento
+            }
+            return $documento; //ritorno array Documento riempito con i risultati della query effettuata.
+        } else {
+            return null;
         }
-        return $documento; //ritorno array Documento riempito con i risultati della query effettuata.
     }
 
-//Funzionante michela
+    //Funzionante visualizza profilo docente (Michela)
     public function visualizzaProfiloDocente($matricola)
     {
-        $profilo = array();
-        $table = $this->tabelleDB[3]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table];
-        $query = //query: "SELECT idattore, tipo, nome, cognome FROM attoriNew2 WHERE idattore = ? AND password = ?"
+        $tabella = $this->tabelleDB[2];
+        $campi = $this->campiTabelleDB[$tabella];
+        //query: "SELECT nome, cognome, email FROM docente WHERE matricola = ?"
+        $query = (
             "SELECT " .
             $campi[1] . ", " .
             $campi[2] . ", " .
             $campi[3] . " " .
             "FROM " .
-            $table .
+            $tabella .
             " WHERE " .
-            $campi[0] . " = ? ";
+            $campi[0] . " = ? "
+        );
         $stmt = $this->connection->prepare($query);
-
-        $stmt->bind_param("s", $matricola); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
+        $stmt->bind_param("i", $matricola); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
         $stmt->execute();
         $stmt->store_result();
-        $stmt->bind_result($nome, $cognome, $email);
         if ($stmt->num_rows > 0) {
+            $stmt->bind_result($nome, $cognome, $email);
+            $profilo = array();
             while ($stmt->fetch()) { //Scansiono la risposta della query
-                $temp = array(); //Array temporaneo per l'acquisizione dei dati
+                $temp = array();
                 //Indicizzo con key i dati nell'array
-                $profilo[1] = $nome;
-                $profilo[2] = "$cognome";
-                $profilo[3] = $email;
+                $temp[$campi[1]] = $nome;
+                $temp[$campi[2]] = "$cognome";
+                $temp[$campi[3]] = $email;
 
-                //array_push($profilo, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $utenti
+                array_push($profilo, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $profilo
             }
-            //Controllo se ha trovato matching tra dati inseriti e campi del db
             return $profilo;
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
-//funzione per visualizzare il profilo studenti FUNZIONANTE michela e danilo
+    //Funzione visualizzare profilo studente (Michela e Danilo)
     public function VisualizzaProfiloStudente($matricola)
     {
-        $profilo = array();
-        $table = $this->tabelleDB[7]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table];
-        $query = //query: "SELECT idattore, tipo, nome, cognome FROM attoriNew2 WHERE idattore = ? AND password = ?"
+        $tabella = $this->tabelleDB[6]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$tabella];
+        //query: "SELECT nome, cognome, email FROM studente WHERE matricola = ?"
+        $query = (
             "SELECT " .
             $campi[1] . ", " .
             $campi[2] . ", " .
             $campi[3] . " " .
             "FROM " .
-            $table . " " .
+            $tabella . " " .
             "WHERE " .
-            $campi[0] . " = ? ";
+            $campi[0] . " = ? "
+        );
         $stmt = $this->connection->prepare($query);
-
         $stmt->bind_param("i", $matricola);
         $stmt->execute();
         $stmt->store_result();
-        $stmt->bind_result($nome, $cognome, $email);
         if ($stmt->num_rows > 0) {
+            $stmt->bind_result($nome, $cognome, $email);
+            $profilo = array();
             while ($stmt->fetch()) { //Scansiono la risposta della query
-                $temp = array(); //Array temporaneo per l'acquisizione dei dati
+                $temp = array();
                 //Indicizzo con key i dati nell'array
-                $profilo[1] = $nome;
-                $profilo[2] = $cognome;
-                $profilo[3] = $email;
-
-                //array_push($profilo, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $utenti
+                $temp[$campi[1]] = $nome;
+                $temp[$campi[2]] = $cognome;
+                $temp[$campi[3]] = $email;
+                array_push($profilo, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $profilo
             }
-            //Controllo se ha trovato matching tra dati inseriti e campi del db
             return $profilo;
-        } else return null;
-//Controllo se ha trovato matching tra dati inseriti e campi del db
-
+        } else {
+            return null;
+        }
     }
-//jonathan
+
+    //Funzione carica documento (Jonathan)
     public function caricaDocumento($titolo, $cod_docente, $cod_studente, $cod_materia, $link)
     {
-        $table = $this->tabelleDB[4]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table];
-
-        $query = //query: "INSERT INTO documento (id, titolo, cod_docente, cod_studente, cod_materia,link) VALUES (?,?,?,?,?)"
+        $tabella = $this->tabelleDB[3]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$tabella];
+        //query: "INSERT INTO documento (id, titolo, cod_docente, cod_studente, cod_materia,link) VALUES (?,?,?,?,?)"
+        $query = (
             "INSERT INTO  " .
-            $table . " ( " .
+            $tabella . " ( " .
 
             $campi[1] . ", " .
             $campi[2] . ", " .
@@ -476,54 +425,61 @@ class DBQueryManager
             $campi[4] . ", " .
             $campi[5] . " ) " .
 
-            "VALUES (?,?,?,?,?)";
+            "VALUES (?,?,?,?,?)"
+        );
 
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("sssis", $titolo, $cod_docente, $cod_studente, $cod_materia, $link);
-        $result = $stmt->execute();
-
-        return $result;
+        $stmt->bind_param("isssis", $titolo, $cod_docente, $cod_studente, $cod_materia, $link);
+        $stmt->execute();
+        $stmt->store_result();
+        //Controllo se ha trovato matching tra dati inseriti e campi del db
+        return $stmt->num_rows > 0;
     }
 
     //Funzione per scaricare un documento (Andrea)
     public function downloadDocumento($id)
     {
-        $table = $this->tabelleDB[4]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table];
+        $tabella = $this->tabelleDB[3]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$tabella];
         /*  query: "SELECT link FROM documento WHERE id = ?" */
-        $query =
+        $query = (
             "SELECT " .
             $campi[5] . " " .
             "FROM " .
-            $table . " " .
+            $tabella . " " .
             "WHERE " .
-            $campi[0] . " = ?";
-
+            $campi[0] . " = ?"
+        );
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("s", $id);
-
+        $stmt->bind_param("i", $id);
         $stmt->execute();
         $stmt->store_result();
-
         if ($stmt->num_rows > 0) {
             $stmt->bind_result($link);
-            return $link;
+            $url = array();
+            while ($stmt->fetch()) { //Scansiono la risposta della query
+                $temp = array();
+                //Indicizzo con key i dati nell'array
+                $temp[$campi[0]] = $link;
+                array_push($url, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $profilo
+            }
+            return $url;
         } else {
             return null;
         }
     }
 
-    // domenico e jo
+    //Funzione rimuovi documento (Domenico e Jonathan)
     public function rimuoviDocumento($idDocumento)
     {
-        $table = $this->tabelleDB[4]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table];
-
-        $query = //query:  " DELETE FROM DOCUMENTO WHERE ID = $idDocumento"
+        $tabella = $this->tabelleDB[3]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$tabella];
+        //query:  " DELETE FROM DOCUMENTO WHERE ID = $idDocumento"
+        $query = (
             "DELETE FROM" .
-            $table . "WHERE " .
-            $campi[0] . " = ? ";
-
+            $tabella . "WHERE " .
+            $campi[0] . " = ? "
+        );
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("i", $idDocumento);
         $stmt->execute();
@@ -531,16 +487,17 @@ class DBQueryManager
         return $stmt->num_rows > 0;
     }
 
-    //domenico e jo
+    //Funzione rimuovi annuncio (Domenico e Jonathan)
     public function rimuoviAnnuncio($idAnnuncio)
     {
-        $table = $this->tabelleDB[1]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table];
-
-        $query = //query:  " DELETE FROM ANNUNCIO WHERE ID = $idAnnuncio"
+        $tabella = $this->tabelleDB[1]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$tabella];
+        //query:  " DELETE FROM ANNUNCIO WHERE ID = $idAnnuncio"
+        $query = (
             "DELETE FROM" .
-            $table . "WHERE " .
-            $campi[0] . " = ? ";
+            $tabella . "WHERE " .
+            $campi[0] . " = ? "
+        );
 
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("i", $idAnnuncio);
@@ -548,130 +505,280 @@ class DBQueryManager
         $stmt->store_result();
         return $stmt->num_rows > 0;
     }
-//danilo
+
+    //Funzione visualizza documento per materia (Danilo)
     public function visualizzaDocumentoPerMateria($Materia)
     {
-        $documento = array();
-
-        $table = $this->tabelleDB[4]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table];
-        $table2 = $this->tabelleDB[6];
-        $campi2 = $this->campiTabelleDB[$table2];
-        $query = //query: "SELECT id=0, titolo=1, cod_docente=2, cod materia=5,link=6, id_materia=0, FROM documento inner join materie on codmateria = id materia"
+        $documentiTab = $this->tabelleDB[3];
+        $campiDocumento = $this->campiTabelleDB[$documentiTab];
+        $materieTab = $this->tabelleDB[5];
+        $campiMateria = $this->campiTabelleDB[$materieTab];
+        //query: "SELECT id=0, titolo=1, cod_docente=2, cod materia=5,link=6, id_materia=0, FROM documento inner join materie on codmateria = id materia"
+        $query = (
             "SELECT " .
-            $campi[0] . ", " .
-            $campi[1] . ", " .
-            $campi[2] . ", " .
-            $campi[5] . ", " .
-            $campi[6] . ", " .
+            $campiDocumento[0] . ", " .
+            $campiDocumento[1] . ", " .
+            $campiDocumento[2] . ", " .
+            $campiDocumento[5] . ", " .
+            $campiDocumento[6] . ", " .
 
             "FROM " .
-            $table . ", " .
-            $table2 . " " .
-            "WHERE" . $campi2[1] . '= ? ' .
+            $documentiTab . ", " .
+            $materieTab . " " .
+            "WHERE" . $campiMateria[1] . '= ? ' .
             "AND " .
-            $campi[4] . " = " .
-            $campi2[0];
+            $campiDocumento[4] . " = " .
+            $campiMateria[0]
+        );
 
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("s", $Materia);
         $stmt->execute();
         $stmt->store_result();
-
-        //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp
-        $stmt->bind_result($idDocumento, $titolo, $cod_docente, $cod_materia, $link);
-
-        while ($stmt->fetch()) { //Scansiono la risposta della query
-            $temp = array(); //Array temporaneo per l'acquisizione dei dati
-            //Indicizzo con key i dati nell'array
-            $temp[$campi[0]] = $idDocumento;
-            $temp[$campi[1]] = $titolo;
-            $temp[$campi[2]] = $cod_docente;
-
-            $temp[$campi[5]] = $cod_materia;
-            $temp[$campi[6]] = $link;
-            array_push($documento, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $documento
+        if ($stmt->num_rows > 0) {
+            $stmt->bind_result($idDocumento, $titolo, $cod_docente, $cod_materia, $link);
+            $documento = array();
+            while ($stmt->fetch()) { //Scansiono la risposta della query
+                $temp = array();
+                //Indicizzo con key i dati nell'array
+                $temp[$campiDocumento[0]] = $idDocumento;
+                $temp[$campiDocumento[1]] = $titolo;
+                $temp[$campiDocumento[2]] = $cod_docente;
+                $temp[$campiDocumento[5]] = $cod_materia;
+                $temp[$campiDocumento[6]] = $link;
+                array_push($documento, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $documento
+            }
+            return $documento; //ritorno array $documento riempito con i risultati della query effettuata.
+        } else {
+            return null;
         }
-        return $documento; //ritorno array Documento riempito con i risultati della query effettuata.
     }
 
-//danilo
+    //Funzione visualizza documento per docente (Danilo)
     public function visualizzaDocumentoPerDocente($nomeDocente)
     {
-        $documento = array();
-
-        $table = $this->tabelleDB[4]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table];
-        $table2 = $this->tabelleDB[3];
-        $campi2 = $this->campitabelleDB[$table2];
+        $documentiTab = $this->tabelleDB[3]; //Tabella per la query
+        $campiDocumento = $this->campiTabelleDB[$documentiTab];
+        $docentiTab = $this->tabelleDB[2];
+        $campiDocente = $this->campiTabelleDB[$docentiTab];
         $query = //query: "SELECT id=0, titolo=1, cod_docente=2, cod materia=5,link=6, id_materia=0, FROM documento inner join materie on codmateria = id materia"
             "SELECT " .
-            $campi[0] . ", " .
-            $campi[1] . ", " .
-            $campi[2] . ", " .
-            $campi[5] . ", " .
-            $campi[6] . ", " .
+            $campiDocumento[0] . ", " .
+            $campiDocumento[1] . ", " .
+            $campiDocumento[2] . ", " .
+            $campiDocumento[5] . ", " .
+            $campiDocumento[6] . ", " .
 
             "FROM " .
-            $table . ", " .
-            $table2 . " " .
-            "WHERE" . $campi2[1] . '= ? ' .
+            $documentiTab . ", " .
+            $docentiTab . " " .
+            "WHERE" . $campiDocente[1] . '= ? ' .
             "AND " .
-            $campi[2] . " = " .
-            $campi2[0];
+            $campiDocumento[2] . " = " .
+            $campiDocente[0];
 
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("s", $nomeDocente);
         $stmt->execute();
         $stmt->store_result();
-
-        //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp //
-        $stmt->bind_result($idDocumento, $titolo, $cod_docente, $cod_materia, $link);
-
-        while ($stmt->fetch()) { //Scansiono la risposta della query
-            $temp = array(); //Array temporaneo per l'acquisizione dei dati
-            //Indicizzo con key i dati nell'array
-            $temp[$campi[0]] = $idDocumento;
-            $temp[$campi[1]] = $titolo;
-            $temp[$campi[2]] = $cod_docente;
-
-            $temp[$campi[5]] = $cod_materia;
-            $temp[$campi[6]] = $link;
-            array_push($documento, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $documento
+        if ($stmt->num_rows > 0) {
+            $stmt->bind_result($idDocumento, $titolo, $cod_docente, $cod_materia, $link);
+            $documento = array();
+            while ($stmt->fetch()) { //Scansiono la risposta della query
+                $temp = array();
+                //Indicizzo con key i dati nell'array
+                $temp[$campiDocumento[0]] = $idDocumento;
+                $temp[$campiDocumento[1]] = $titolo;
+                $temp[$campiDocumento[2]] = $cod_docente;
+                $temp[$campiDocumento[5]] = $cod_materia;
+                $temp[$campiDocumento[6]] = $link;
+                array_push($documento, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $documento
+            }
+            return $documento; //ritorno array $documento riempito con i risultati della query effettuata.
+        } else {
+            return null;
         }
-        return $documento; //ritorno array Documento riempito con i risultati della query effettuata.
     }
 
-    //danilo da controllare
+    //Funzione visualizza materia per cdl (Danilo)
     public function visualizzaMateriaPerCdl($cdlid)
     {
-        $materie = array();
-        $table = $this->tabelleDB[6]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table];
+        $tabella = $this->tabelleDB[5]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$tabella];
         $query = //query: "SELECT nome, FROM materia WHERE cod_cdl = ? "
             "SELECT " .
             $campi[1] . " " .
             "FROM " .
-            $table . " " .
+            $tabella . " " .
             "WHERE " .
             $campi[0] . ' = ? ';
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("i", $cdlid);
         $stmt->execute();
         $stmt->store_result();
-
-//Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp //
-        $stmt->bind_result($nome_materia);
-
-        while ($stmt->fetch()) { //Scansiono la risposta della query
-            $temp = array(); //Array temporaneo per l'acquisizione dei dati
-//Indicizzo con key i dati nell'array
-            $temp[$campi[1]] = $materie;
-
-            array_push($materie, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $documento
+        if ($stmt->num_rows > 0) {
+            $stmt->bind_result($nome_materia);
+            $materie = array();
+            while ($stmt->fetch()) { //Scansiono la risposta della query
+                $temp = array();
+                //Indicizzo con key i dati nell'array
+                $temp[$campi[1]] = $materie;
+                array_push($materie, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $materie
+            }
+            return $materie; //ritorno array $materie riempito con i risultati della query effettuata.
+        } else {
+            return null;
         }
-        return $materie; //ritorno array Documento riempito con i risultati della query effettuata.
     }
+
+    //Funzione carica annuncio (Jonathan e Danilo)
+    public function caricaAnnuncio($titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autori, $cod_materia, $link)
+    {
+        $tabella = $this->tabelleDB[0];
+        $campi = $this->campiTabelleDB[$tabella];
+        //query: "INSERT INTO annuncio (id, titolo, contatto, prezzo, edizione, casa_editrice, cod_studente, autori, cod_materia, link) VALUES (?,?,?,?,?,?,?,?)"
+        $query = ("INSERT INTO  " .
+            $tabella . " ( " .
+            $campi[1] . ", " .
+            $campi[2] . ", " .
+            $campi[3] . ", " .
+            $campi[4] . ", " .
+            $campi[5] . ", " .
+            $campi[6] . ", " .
+            $campi[7] . ", " .
+            $campi[8] . " ) " .
+            "VALUES (?,?,?,?,?,?,?)"
+        );
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("sssssisi", $titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autori, $cod_materia, $link);
+        $stmt->execute();
+        $stmt->store_result();
+        //Controllo se ha trovato matching tra dati inseriti e campi del db
+        return $stmt->num_rows > 0;
+    }
+
+    //Funzione contatta venditore (Domenico)
+    public function contattaVenditore($idAnnuncio)
+    {
+        $annunciTab = $this->tabelleDB[0]; //Tabella per la query (annuncio)
+        $studentiTab = $this->tabelleDB[6]; //Tabella per la query (studente): per ricavare l'email
+        $campiAnnuncio = $this->campiTabelleDB[$annunciTab];
+        $campiStudente = $this->campiTabelleDB[$studentiTab];
+        /*  query: "SELECT annuncio.contatto, studente.email
+                    FROM studente, annuncio
+                    WHERE annuncio.id = ? AND annuncio.cod_stud = studente.matricola*/
+        $query = (
+            "SELECT " .
+            $annunciTab . "." . $campiAnnuncio[2] . ", " . $studentiTab . "." . $campiStudente[3] . " " .
+            "FROM " .
+            $annunciTab . ", " . $studentiTab . " " .
+            "WHERE " .
+            $annunciTab . "." . $campiAnnuncio[0] . " = ? " .
+            "AND " . $annunciTab . "." . $campiAnnuncio[6] . " = " . $studentiTab . "." . $campiStudente[0]
+        );
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("i", $idAnnuncio);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows > 0) {
+            $stmt->bind_result($contatto, $email);
+            $venditore = array();
+            while ($stmt->fetch()) { // Scansiono la risposta della query
+                $temp = array();
+                $temp[$campiAnnuncio[2]] = $contatto;
+                $temp[$campiStudente[3]] = $email;
+                array_push($venditore, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $profilo
+            }
+            return $venditore; //ritorno array Documento riempito con i risultati della query effettuata.
+        } else{
+            return null;
+        }
+    }
+
+    //Funzione valutazione documenti (Andrea)
+    public function valutazioneDocumento($valutazione, $cod_documento)
+    {
+        $tabella = $this->tabelleDB[7]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$tabella];
+        //query: "INSERT INTO valutazione (valutazione, cod_documento) VALUES (?,?)"
+        $query = (
+            "INSERT INTO  " .
+            $tabella . " ( " .
+            $campi[1] . ", " .
+            $campi[2] . " ) " .
+            "VALUES (?,?)"
+        );
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("ii", $valutazione, $cod_documento);
+        $stmt->execute();
+        $stmt->store_result();
+        //Controllo se ha trovato matching tra dati inseriti e campi del db
+        return $stmt->num_rows > 0;
+    }
+
+    //Funzione per ricercare tra documenti, libri e annunci (Andrea)
+    public function ricerca($key)
+    {
+        $annunci = $this->tabelleDB[1];
+        $docs = $this->tabelleDB[4];
+        $libri = $this->tabelleDB[5];
+        $campi = $this->campiTabelleDB[$annunci];
+        /*query: "  SELECT id, titolo, tabella FROM annuncio WHERE titolo LIKE '%?%'
+                    UNION
+                    SELECT id, titolo, tabella FROM documento WHERE titolo LIKE '%?%'
+                    UNION
+                    SELECT id, titolo, tabella FROM libro WHERE titolo LIKE '%?%' */
+        $query = (
+            "SELECT " .
+            $campi[0] . ", " .
+            $campi[1] . ", " .
+            "'" . $annunci . "' as tabella " .
+            "FROM " .
+            $annunci . " " .
+            "WHERE " .
+            $campi[1] . " LIKE"." '%".$key."%' " .
+            "UNION " .
+            "SELECT " .
+            $campi[0] . ", " .
+            $campi[1] . ", " .
+            "'" . $docs . "' as tabella " .
+            "FROM " .
+            $docs . " " .
+            "WHERE " .
+            $campi[1] . " LIKE"." '%".$key."%' " .
+            "UNION " .
+            "SELECT " .
+            $campi[0] . ", " .
+            $campi[1] . ", " .
+            "'" . $libri . "' as tabella " .
+            "FROM " .
+            $libri . " " .
+            "WHERE " .
+            $campi[1] . " LIKE"." '%".$key."%'"
+        );
+        $stmt = $this->connection->prepare($query); //Preparo la query
+        $stmt->execute();//Esegue la query
+        $stmt->store_result();
+        if ($stmt->num_rows > 0) {
+            $stmt->bind_result($id, $titolo, $tabella);
+            $risultato = array();
+            while ($stmt->fetch()) { //Scansiono la risposta della query
+                $temp = array(); //Array temporaneo per l'acquisizione dei dati
+                //Indicizzo con key i dati nell'array
+                $temp[$campi[0]] = $id;
+                $temp[$campi[1]] = $titolo;
+                $temp['tabella'] = $tabella;
+                array_push($risultato, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $utenti
+            }
+            return $risultato;
+        } else {
+            return null;
+        }
+    }
+
+    //------------ 22/05/18 00:20 FIN QUI OK ------------------
+
+//------------------- SERVONO ANCORA QUESTI 2 SOTTO? ----------------
 
 //---------------------------
     public function testGetMateria()
@@ -729,148 +836,9 @@ class DBQueryManager
         return $result;
     }
     //------------------------------------------------- sopra Danilo
-    //jonathan e danilo
-    public function caricaAnnuncio($titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autori, $cod_materia, $link)
-    {
-        $table = $this->tabelleDB[1]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table];
 
-        $query = //query: "INSERT INTO annuncio (id, titolo, cod_docente, cod_studente, cod_materia,link) VALUES (?,?,?,?,?)"
-            "INSERT INTO  " .
-            $table . " ( " .
-// Non setto l'ID dell'annuncio perchè è AUTO_INCREMENTALE, si setta in automatico
-            $campi[1] . ", " .
-            $campi[2] . ", " .
-            $campi[3] . ", " .
-            $campi[4] . ", " .
-            $campi[5] . ", " .
-            $campi[6] . ", " .
-            $campi[7] . ", " .
-            $campi[8] . " ) " .
-            "VALUES (?,?,?,?,?,?,?)";
 
-        $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("sssssisi", $titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autori, $cod_materia, $link);
-        $result = $stmt->execute();
 
-        return $result;
-    }
-
-    //domenico, da controllare
-    public function contattaVenditore($idAnnuncio)
-    {
-        $table1 = $this->tabelleDB[1]; //Tabella per la query (annuncio)
-        $table2 = $this->tabelleDB[7]; //Tabella per la query (studente): per ricavare l'email
-        $campi1 = $this->campiTabelleDB[$table1];
-        $campi2 = $this->campiTabelleDB[$table2];
-
-        /*  query: "SELECT annuncio.contatto, studente.email
-                    FROM studente, annuncio
-                    WHERE annuncio.id = ? AND annuncio.cod_stud = studente.matricola*/
-        $query =
-            "SELECT " .
-            $table1 . "." . $campi1[2] . ", " . $table2 . "." . $campi2[3] . " " .
-            "FROM " .
-            $table1 . ", " . $table2 . " " .
-            "WHERE " .
-            $table1 . "." . $campi1[0] . " = ? " .
-            "AND " . $table1 . "." . $campi1[6] . " = " . $table2 . "." . $campi2[0];
-
-        $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("s", $idAnnuncio);
-        $stmt->execute();
-        $stmt->store_result();
-
-        //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp //
-        $stmt->bind_result($contatto, $email);
-
-        if ($stmt->num_rows > 0) {
-            while ($stmt->fetch()) { // Scansiono la risposta della query
-                // Indicizzo i dati nell'array
-                $venditore[1] = $contatto;
-                $venditore[2] = $email;
-            }
-            return $venditore; //ritorno array Documento riempito con i risultati della query effettuata.
-        } else return null;
-    }
-
-    //Funzione per la valutazione dei documenti (Andrea)
-    public function valutazioneDocumento($valutaizone, $cod_documento)
-    {
-        $table = $this->tabelleDB[8]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table];
-
-        $query = //query: "INSERT INTO valutazione (valutazione, cod_documento) VALUES (?,?)"
-            "INSERT INTO  " .
-            $table . " ( " .
-// Non setto l'ID dell'annuncio perchè è AUTO_INCREMENTALE, si setta in automatico
-            $campi[1] . ", " .
-            $campi[2] . " ) " .
-            "VALUES (?,?)";
-
-        $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("ii", $valutaizone, $cod_documento);
-        $result = $stmt->execute();
-
-        return $result;
-    }
-
-    //Funzione per ricercare tra documenti, libri e annunci (Andrea)
-    public function ricerca($key)
-    {
-        $risultato = array(); //risultato: array bidimensionale
-        $annunci = $this->tabelleDB[1];
-        $docs = $this->tabelleDB[4];
-        $libri = $this->tabelleDB[5];
-        $campi = $this->campiTabelleDB[$annunci];
-        /*query: "  SELECT id, titolo, tabella FROM annuncio WHERE titolo LIKE '%?%'
-                    UNION
-                    SELECT id, titolo, tabella FROM documento WHERE titolo LIKE '%?%'
-                    UNION
-                    SELECT id, titolo, tabella FROM libro WHERE titolo LIKE '%?%' */
-        $query =
-            "SELECT " .
-            $campi[0] . ", " .
-            $campi[1] . ", " .
-            "'" . $annunci . "' as tabella " .
-            "FROM " .
-            $annunci . " " .
-            "WHERE " .
-            $campi[1] . " LIKE"." '%".$key."%' " .
-            "UNION " .
-            "SELECT " .
-            $campi[0] . ", " .
-            $campi[1] . ", " .
-            "'" . $docs . "' as tabella " .
-            "FROM " .
-            $docs . " " .
-            "WHERE " .
-            $campi[1] . " LIKE"." '%".$key."%' " .
-            "UNION " .
-            "SELECT " .
-            $campi[0] . ", " .
-            $campi[1] . ", " .
-            "'" . $libri . "' as tabella " .
-            "FROM " .
-            $libri . " " .
-            "WHERE " .
-            $campi[1] . " LIKE"." '%".$key."%'";
-        $stmt = $this->connection->prepare($query); //Preparo la query
-        $stmt->execute();//Esegue la query
-
-        //Salvo il risultato della query in alcune variabili
-        $stmt->bind_result($id, $titolo, $tabella);
-
-        while ($stmt->fetch()) { //Scansiono la risposta della query
-            $temp = array(); //Array temporaneo per l'acquisizione dei dati
-            //Indicizzo con key i dati nell'array
-            $temp[$campi[0]] = $id;
-            $temp[$campi[1]] = $titolo;
-            $temp['tabella'] = $tabella;
-            array_push($risultato, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $utenti
-        }
-        return $risultato;
-    }
 
     //------------------------ FIN QUI REVISIONA ANDREA ------------------------------------------------
 
