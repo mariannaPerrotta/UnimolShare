@@ -15,7 +15,6 @@ class DBQueryManager
 
     //DA MODIFICARE IN BASE AL DB DEL SOTTOGRUPPO DI DORO
     private $tabelleDB = [ //Array di tabelle del db
-        "attoriNew2", //E' per dei test verrà eliminato
         "annuncio",
         "cdl",
         "docente",
@@ -28,13 +27,6 @@ class DBQueryManager
 
     //DA MODIFICARE ANCHE QUESTO IN BASE AL DB
     private $campiTabelleDB = [ //Ogni tabella ha i suoi campi e li salvo in un array bidimensionale indicizzato con key
-        "attoriNew2" => [ //E' per dei test verrà eliminato
-            "idattore",
-            "tipo",
-            "nome",
-            "cognome",
-            "password"
-        ],
         "annuncio" => [
             "id",
             "titolo",
