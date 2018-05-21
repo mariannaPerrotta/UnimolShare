@@ -621,6 +621,110 @@ $app->post('/visualizzaannunciopermatricola', function (Request $request, Respon
     }
 
 });
+$app->post('/visualizzalibripermatricola', function (Request $request, Response $response) {
+
+    $db = new DBQueryManager();
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $matricola = $requestData['matricola'];
+
+//Controllo la risposta dal DB e compilo i campi della risposta
+    $responseData = $db->visualizzaLibroPerCodiceDocente($matricola);
+    if ($responseData != null) {
+        $responseData['error'] = false; //Campo errore = false
+
+        $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
+        $response->getBody()->write(json_encode(array("libri" => $responseData)));
+        //metto in un json e lo inserisco nella risposta del servizio REST
+
+        //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
+        $newResponse = $response->withHeader('Content-type', 'application/json');
+        return $newResponse; //Invio la risposta del servizio REST al client
+    } else {
+        $responseData['error'] = true; //Campo errore = false
+        $responseData['message'] = 'Errore imprevisto';
+        return $response->withJson($responseData);
+    }
+
+});
+$app->post('/visualizzalibripermateria', function (Request $request, Response $response) {
+
+    $db = new DBQueryManager();
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $materia = $requestData['materia'];
+
+//Controllo la risposta dal DB e compilo i campi della risposta
+    $responseData = $db->visualizzaLibroPerMateria($materia);
+    if ($responseData != null) {
+        $responseData['error'] = false; //Campo errore = false
+
+        $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
+        $response->getBody()->write(json_encode(array("libri" => $responseData)));
+        //metto in un json e lo inserisco nella risposta del servizio REST
+
+        //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
+        $newResponse = $response->withHeader('Content-type', 'application/json');
+        return $newResponse; //Invio la risposta del servizio REST al client
+    } else {
+        $responseData['error'] = true; //Campo errore = false
+        $responseData['message'] = 'Errore imprevisto';
+        return $response->withJson($responseData);
+    }
+
+});
+$app->post('/visualizzalibripercodicedocente', function (Request $request, Response $response) {
+
+    $db = new DBQueryManager();
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $cod_doc= $requestData['cod_doc'];
+
+//Controllo la risposta dal DB e compilo i campi della risposta
+    $responseData = $db->visualizzaLibroPerCodiceDocente($cod_doc);
+    if ($responseData != null) {
+        $responseData['error'] = false; //Campo errore = false
+
+        $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
+        $response->getBody()->write(json_encode(array("libri" => $responseData)));
+        //metto in un json e lo inserisco nella risposta del servizio REST
+
+        //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
+        $newResponse = $response->withHeader('Content-type', 'application/json');
+        return $newResponse; //Invio la risposta del servizio REST al client
+    } else {
+        $responseData['error'] = true; //Campo errore = false
+        $responseData['message'] = 'Errore imprevisto';
+        return $response->withJson($responseData);
+    }
+
+});
+$app->post('/visualizzalibripernomestudente', function (Request $request, Response $response) {
+
+    $db = new DBQueryManager();
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $nome = $requestData['nome'];
+
+//Controllo la risposta dal DB e compilo i campi della risposta
+    $responseData = $db->visualizzaLibroPerNomeDocente($nome);
+    if ($responseData != null) {
+        $responseData['error'] = false; //Campo errore = false
+
+        $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
+        $response->getBody()->write(json_encode(array("libri" => $responseData)));
+        //metto in un json e lo inserisco nella risposta del servizio REST
+
+        //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
+        $newResponse = $response->withHeader('Content-type', 'application/json');
+        return $newResponse; //Invio la risposta del servizio REST al client
+    } else {
+        $responseData['error'] = true; //Campo errore = false
+        $responseData['message'] = 'Errore imprevisto';
+        return $response->withJson($responseData);
+    }
+
+});
 // Run app = ho riempito $app e avvio il servizio REST
 $app->run();
 

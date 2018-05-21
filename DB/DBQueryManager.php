@@ -972,14 +972,19 @@ public function visualizzaAnnuncioPerId($Matricola)
     $stmt->store_result();
 
 //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp //
-    $stmt->bind_result($annunci);
+    $stmt->bind_result( $titolo, $contatto, $prezzo,$edizione,$casaeditrice, $autore);
 
     while ($stmt->fetch()) { //Scansiono la risposta della query
         $temp = array(); //Array temporaneo per l'acquisizione dei dati
-//Indicizzo con key i dati nell'array
-        $temp[$campi[1]] = $annunci;
+        //Indicizzo con key i dati nell'array
 
-        array_push($annunci, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
+        $temp[$campi[1]] = $titolo;
+        $temp[$campi[2]] = $contatto;
+        $temp[$campi[3]] = $prezzo;
+        $temp[$campi[4]] = $edizione;
+        $temp[$campi[5]] = $casaeditrice;
+        $temp[$campi[7]] = $autore;
+        array_push($annunci, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $documento
     }
     return $annunci; //ritorno array Documento riempito con i risultati della query effettuata.
 }
@@ -1014,20 +1019,152 @@ public function visualizzaAnnuncioPerId($Matricola)
         $stmt->store_result();
 
         //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp
-        $stmt->bind_result($idDocumento, $titolo, $cod_docente, $cod_materia, $link);
+        $stmt->bind_result( $titolo, $contatto, $prezzo,$edizione,$casaeditrice, $autore);
 
         while ($stmt->fetch()) { //Scansiono la risposta della query
             $temp = array(); //Array temporaneo per l'acquisizione dei dati
             //Indicizzo con key i dati nell'array
-            $temp[$campi[0]] = $idDocumento;
-            $temp[$campi[1]] = $titolo;
-            $temp[$campi[2]] = $cod_docente;
 
-            $temp[$campi[5]] = $cod_materia;
-            $temp[$campi[6]] = $link;
+            $temp[$campi[1]] = $titolo;
+            $temp[$campi[2]] = $contatto;
+            $temp[$campi[3]] = $prezzo;
+            $temp[$campi[4]] = $edizione;
+            $temp[$campi[5]] = $casaeditrice;
+            $temp[$campi[7]] = $autore;
             array_push($annunci, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $documento
         }
         return $annunci; //ritorno array Documento riempito con i risultati della query effettuata.
+    }
+    public function visualizzaLibroPerCodiceDocente($matricola)
+    {
+        $libri = array();
+        $table = $this->tabelleDB[4]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
+        $query = //query: "SELECT nome, FROM materia WHERE cod_cdl = ? "
+            "SELECT " .
+            $campi[1] . ", " .
+            $campi[2] . ", " .
+            $campi[3] . ", " .
+            $campi[4] . ", " .
+            $campi[7] . " " .
+
+            "FROM " .
+            $table . " " .
+            "WHERE " .
+            $campi[6] . ' = ? ';
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("i", $Matricola);
+        $stmt->execute();
+        $stmt->store_result();
+
+//Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp //
+        $stmt->bind_result($titolo,$autore,$casaeditrice,$edizione,$link);
+
+        while ($stmt->fetch()) { //Scansiono la risposta della query
+            $temp = array(); //Array temporaneo per l'acquisizione dei dati
+//Indicizzo con key i dati nell'array
+            $temp[$campi[1]] = $titolo;
+            $temp[$campi[2]] = $autore;
+            $temp[$campi[3]] = $casaeditrice;
+            $temp[$campi[4]] = $edizione;
+
+            $temp[$campi[7]] = $link;
+            array_push($libri, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
+        }
+        return $libri; //ritorno array Documento riempito con i risultati della query effettuata.
+
+    }
+    public function visualizzaLibroPerNomeDocente($nomedocente)
+    {
+        $libri = array();
+
+        $table = $this->tabelleDB[4]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
+        $table2 = $this->tabelleDB[2];
+        $campi2 = $this->campiTabelleDB[$table2];
+        $query = //query: "SELECT id=0, titolo=1, cod_docente=2, cod materia=5,link=6, id_materia=0, FROM documento inner join materie on codmateria = id materia"
+            "SELECT " .
+            $campi[1] . ", " .
+            $campi[2] . ", " .
+            $campi[3] . ", " .
+            $campi[4] . ", " .
+            $campi[7] . ", " .
+
+            "FROM " .
+            $table . ", " .
+            $table2 . " " .
+            "WHERE" . $campi2[1] . '= ? ' .
+            "AND " .
+            $campi[5] . " = " .
+            $campi2[0];
+
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("s", $nomedocente);
+        $stmt->execute();
+        $stmt->store_result();
+
+        //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp
+        $stmt->bind_result($titolo,$autore,$casaeditrice,$edizione,$link);
+
+        while ($stmt->fetch()) { //Scansiono la risposta della query
+            $temp = array(); //Array temporaneo per l'acquisizione dei dati
+//Indicizzo con key i dati nell'array
+            $temp[$campi[1]] = $titolo;
+            $temp[$campi[2]] = $autore;
+            $temp[$campi[3]] = $casaeditrice;
+            $temp[$campi[4]] = $edizione;
+
+            $temp[$campi[7]] = $link;
+            array_push($libri, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
+        }
+        return $libri; //ritorno array Documento riempito con i risultati della query effettuata.
+
+    }
+    public function visualizzaLibroPerMateria($materia)
+    {
+        $libri = array();
+
+        $table = $this->tabelleDB[4]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
+        $table2 = $this->tabelleDB[5];
+        $campi2 = $this->campiTabelleDB[$table2];
+        $query = //query: "SELECT id=0, titolo=1, cod_docente=2, cod materia=5,link=6, id_materia=0, FROM documento inner join materie on codmateria = id materia"
+            "SELECT " .
+            $campi[1] . ", " .
+            $campi[2] . ", " .
+            $campi[3] . ", " .
+            $campi[4] . ", " .
+            $campi[7] . ", " .
+
+            "FROM " .
+            $table . ", " .
+            $table2 . " " .
+            "WHERE" . $campi2[1] . '= ? ' .
+            "AND " .
+            $campi[5] . " = " .
+            $campi2[0];
+
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("s", $materia);
+        $stmt->execute();
+        $stmt->store_result();
+
+        //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp
+        $stmt->bind_result($titolo,$autore,$casaeditrice,$edizione,$link);
+
+        while ($stmt->fetch()) { //Scansiono la risposta della query
+            $temp = array(); //Array temporaneo per l'acquisizione dei dati
+//Indicizzo con key i dati nell'array
+            $temp[$campi[1]] = $titolo;
+            $temp[$campi[2]] = $autore;
+            $temp[$campi[3]] = $casaeditrice;
+            $temp[$campi[4]] = $edizione;
+
+            $temp[$campi[7]] = $link;
+            array_push($libri, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
+        }
+        return $libri; //ritorno array Documento riempito con i risultati della query effettuata.
+
     }
 }
 ?>
