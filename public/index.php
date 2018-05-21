@@ -161,7 +161,7 @@ $app->post('/registration', function (Request $request, Response $response) {
     $responseData = array(); //La risposta Ã¨ un array di informazioni da compilare
 
     //Controllo la risposta dal DB e compilo i campi della risposta
-    $responseDB = $db->registration($matricola, $nome, $cognome, $email, $password);
+    $responseDB = $db->registrazione($matricola, $nome, $cognome, $email, $password);
     if ($responseDB == 1) { //Se la registrazione è andata a buon fine
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Registrazione avvenuta con successo'; //Messaggio di esito positivo
@@ -192,7 +192,7 @@ $app->post('/update', function (Request $request, Response $response) {
     $responseData = array(); //La risposta Ã¨ un array di informazioni da compilare
 
     //Controllo la risposta dal DB e compilo i campi della risposta
-    if ($db->updateProfile($matricola, $nome, $cognome, $password, $tabella)) {
+    if ($db->modificaProfilo($matricola, $nome, $cognome, $password, $tabella)) {
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Update effettuato'; //Messaggio di esiso positivo
 
@@ -218,10 +218,10 @@ $app->post('/recover', function (Request $request, Response $response) {
     $randomizerPassword = new RandomPasswordHelper();
 
     //Controllo la risposta dal DB e compilo i campi della risposta
-    if ($db->recover($email)) { //Se l'email viene trovata
+    if ($db->recupero($email)) { //Se l'email viene trovata
         $nuovaPassword = $randomizerPassword->generatePassword(4);
 
-        if($db->updatePassword($email, $nuovaPassword)) {
+        if($db->modificaPassword($email, $nuovaPassword)) {
             $messaggio = "Usa questa password temporanea";
 
             if ($emailSender->sendEmail($messaggio, $email, $nuovaPassword)) {

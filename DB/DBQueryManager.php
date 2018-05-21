@@ -12,8 +12,6 @@ class DBQueryManager
 {
     //Variabili di classe
     private $connection;
-
-    //DA MODIFICARE IN BASE AL DB DEL SOTTOGRUPPO DI DORO
     private $tabelleDB = [ //Array di tabelle del db
         "annuncio",
         "cdl",
@@ -24,9 +22,7 @@ class DBQueryManager
         "studente",
         "valutazione"
     ];
-
-    //DA MODIFICARE ANCHE QUESTO IN BASE AL DB
-    private $campiTabelleDB = [ //Ogni tabella ha i suoi campi e li salvo in un array bidimensionale indicizzato con key
+    private $campiTabelleDB = [ //Campi delle tabelle (array bidimensionale indicizzato con key)
         "annuncio" => [
             "id",
             "titolo",
@@ -86,105 +82,36 @@ class DBQueryManager
             "valutazione",
             "cod_documento"
         ]
-
     ];
 
     //Costruttore
     public function __construct()
     {
-        //Setup del DB
+        //Setup della connessione col DB
         $db = new DBConnectionManager();
         $this->connection = $db->runConnection();
     }
 
-    /*********** FUNZIONE DI ESEMPIO ***********/
-
-    //Funzione per recuperare la lista degli utenti presenti del DB (Andrea)
-    public function testGetStudenti()
-    {
-        $utenti = array(); //risultato: array bidimensionale
-        $table = $this->tabelleDB[7]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table];
-        $query = //query: "SELECT idattore, tipo, nome, cognome FROM attoriNew2"
-            "SELECT " . $campi[0] . ", " . $campi[1] . ", " .
-            $campi[2] . ", " .
-            $campi[3] . ", " .
-            $campi[4] . ", " .
-            $campi[5] . " " .
-            "FROM " .
-            $table;
-
-        $stmt = $this->connection->prepare($query); //Preparo la query
-        $stmt->execute();//Esegue la query
-        //Salvo il risultato della query in alcune variabili
-        $stmt->bind_result($codice, $nome, $cognome, $email, $psw, $cds);
-
-        while ($stmt->fetch()) { //Scansiono la risposta della query
-            $temp = array(); //Array temporaneo per l'acquisizione dei dati
-            //Indicizzo con key i dati nell'array
-            $temp[$campi[0]] = $codice;
-            $temp[$campi[1]] = $nome;
-            $temp[$campi[2]] = $cognome;
-            $temp[$campi[3]] = $email;
-            $temp[$campi[4]] = $psw;
-            $temp[$campi[5]] = $cds;
-            array_push($utenti, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $utenti
-        }
-        return $utenti;
-    }
-
-    //Funzione per recuperare la lista degli utenti presenti del DB (Andrea)
-    public function getUtenti()
-    {
-        $utenti = array(); //risultato: array bidimensionale
-        $table = $this->tabelleDB[0]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table];
-        $query = //query: "SELECT idattore, tipo, nome, cognome FROM attoriNew2"
-            "SELECT " .
-            $campi[0] . ", " .
-            $campi[1] . ", " .
-            $campi[2] . ", " .
-            $campi[3] . " " .
-            "FROM " .
-            $table;
-
-        $stmt = $this->connection->prepare($query); //Preparo la query
-        $stmt->execute();//Esegue la query
-        //Salvo il risultato della query in alcune variabili
-        $stmt->bind_result($idattore, $tipo, $nome, $cognome);
-
-        while ($stmt->fetch()) { //Scansiono la risposta della query
-            $temp = array(); //Array temporaneo per l'acquisizione dei dati
-            //Indicizzo con key i dati nell'array
-            $temp[$campi[0]] = $idattore;
-            $temp[$campi[1]] = $tipo;
-            $temp[$campi[2]] = $nome;
-            $temp[$campi[3]] = $cognome;
-            array_push($utenti, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $utenti
-        }
-        return $utenti;
-    }
-
-    /*********** FUNZIONI DEL PROGETTO ***********/
+    //Metodi per effettuare le query
 
     //Funzione di accesso (Andrea)
     public function login($email, $password)
     {
-        $table1 = $this->tabelleDB[7]; //Tabella per la query
-        $table2 = $this->tabelleDB[3]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table1];
+        $studenteTab = $this->tabelleDB[6];
+        $docenteTab = $this->tabelleDB[2];
+        $campi = $this->campiTabelleDB[$studenteTab];
         /*  query: "SELECT matricola, nome, cognome, email, 'studente' as tabella FROM studente WHERE email = ? AND password = ?
                     UNION
                     SELECT matricola, nome, cognome, email, 'docente' as tabella FROM docente WHERE email = ? AND password = ?" */
-        $query =
+        $query = (
             "SELECT " .
             $campi[0] . ", " .
             $campi[1] . ", " .
             $campi[2] . ", " .
             $campi[3] . ", " .
-            "'" . $table1 . "' as tabella " .
+            "'" . $studenteTab . "' as tabella " .
             "FROM " .
-            $table1 . " " .
+            $studenteTab . " " .
             "WHERE " .
             $campi[3] . " = ? AND " .
             $campi[4] . " = ? " .
@@ -194,24 +121,23 @@ class DBQueryManager
             $campi[1] . ", " .
             $campi[2] . ", " .
             $campi[3] . ", " .
-            "'" . $table2 . "' as tabella " .
+            "'" . $docenteTab . "' as tabella " .
             "FROM " .
-            $table2 . " " .
+            $docenteTab . " " .
             "WHERE " .
             $campi[3] . " = ? AND " .
-            $campi[4] . " = ?";
+            $campi[4] . " = ?"
+        );
 
+        //Invio la query
         $stmt = $this->connection->prepare($query);
-        //$stmt->bind_param("ss", $email, $password); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
         $stmt->bind_param("ssss", $email, $password, $email, $password); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
-
         $stmt->execute();
+        //Ricevo la risposta del DB
         $stmt->store_result();
-
         if ($stmt->num_rows > 0) {
             $stmt->bind_result($matricola, $nome, $cognome, $email, $table);
-            $utente = array(); //risultato: array
-            //Indicizzo con key i dati nell'array
+            $utente = array();
 
             while ($stmt->fetch()) {
                 $temp = array();
@@ -222,7 +148,7 @@ class DBQueryManager
                 $temp["tabella"] = $table;
                 array_push($utente, $temp);
             }
-            //Controllo se ha trovato matching tra dati inseriti e campi del db
+
             return $utente;
         } else {
             return null;
@@ -231,117 +157,113 @@ class DBQueryManager
     }
 
     //Funzione di recupero (Danilo)
-    public function recover($email)
+    public function recupero($email)
     {
-        $table1 = $this->tabelleDB[7]; //Tabella per la query
-        $table2 = $this->tabelleDB[3]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table1];
-
+        $studenteTab = $this->tabelleDB[6]; //Tabella per la query
+        $docenteTab = $this->tabelleDB[2]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$studenteTab];
         /*  query: "SELECT email FROM studente WHERE email = ?
                     UNION
                     SELECT email FROM docente WHERE email = ?" */
-        $query =
+        $query = (
             "SELECT " .
             $campi[3] . " " .
             "FROM " .
-            $table1 . " " .
+            $studenteTab . " " .
             "WHERE " .
             $campi[3] . " = ? " .
             "UNION " .
             "SELECT " .
             $campi[3] . " " .
             "FROM " .
-            $table2 . " " .
+            $docenteTab . " " .
             "WHERE " .
-            $campi[3] . " = ?";
-
+            $campi[3] . " = ?"
+        );
+        //Invio la query
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("ss", $email, $email);
         $stmt->execute();
+        //Ricevo la risposta del DB
         $stmt->store_result();
         //Controllo se ha trovato matching tra dati inseriti e campi del db
         return $stmt->num_rows > 0;
     }
 
-    // Funzione Modifica Profilo (Gigi) //Fnuzionante
-    public function updateProfile($matricola, $nome, $cognome, $password, $tabella)
+    // Funzione Modifica Profilo (Gigi)
+    public function modificaProfilo($matricola, $nome, $cognome, $password, $tab)
     {
-        $table = $this->tabelleDB[$tabella];
-        $campi = $this->campiTabelleDB[$table];
-        $query = //query:  "UPDATE TABLE SET nome = ?, cognome = ?, password = ? WHERE matricola = ?"
+        $tabella = $this->tabelleDB[$tab];
+        $campi = $this->campiTabelleDB[$tabella];
+        //query:  "UPDATE TABLE SET nome = ?, cognome = ?, password = ? WHERE matricola = ?"
+        $query = (
             "UPDATE " .
-            $table . " " .
+            $tabella . " " .
             "SET " .
             $campi[1] . " = ?, " .
             $campi[2] . " = ?, " .
             $campi[4] . " = ? " .
             "WHERE " .
-            $campi[0] . " = ?";
-
+            $campi[0] . " = ?"
+        );
+        //Invio la query
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("ssss", $nome, $cognome, $password, $matricola); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
         $result = true;
+        //Tento la modifica nel DB
         try {
             $stmt->execute();
             $stmt->store_result();
         } catch (Exception $exception) {
             $result = false;
         }
-        //Controllo se ha trovato matching tra dati inseriti e capi del db
-        return $result;
+        return $result; //Restituisco l'esito
     }
 
     // Funzione Modifica Password (Andrea)
-    public function updatePassword($email, $password)
+    public function modificaPassword($email, $password)
     {
-        //Controllare il discorso del cds, va discusso sul come fare
-
         $stringHelper = new StringHelper();
         $substr = $stringHelper->subString($email);
-        $tabella = $this->tabelleDB[7];
-        $stmt = null;
+        $tabella = $this->tabelleDB[6];
         if ($substr == "unimol") {
-            $tabella = $this->tabelleDB[3];
+            $tabella = $this->tabelleDB[2];
         }
-
         $campi = $this->campiTabelleDB[$tabella];
-        $query = //query:  "UPDATE TABLE SET password = ? WHERE email = ?"
+        //query:  "UPDATE TABLE SET password = ? WHERE email = ?"
+        $query = (
             "UPDATE " .
             $tabella . " " .
             "SET " .
             $campi[4] . " = ? " .
             "WHERE " .
-            $campi[3] . " = ?";
-
+            $campi[3] . " = ?"
+        );
+        //Invio la query
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("ss", $password, $email); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
         $result = true;
+        //Tento la modifica nel DB
         try {
             $stmt->execute();
             $stmt->store_result();
         } catch (Exception $exception) {
             $result = false;
         }
-        //Controllo se ha trovato matching tra dati inseriti e capi del db
-        return $result;
+        return $result; //Restituisco l'esito
     }
 
-    // Funzione registrazione (Francesco) dovrebbe essere funzionante...non sono certo per quanto riguarda i non studenti che forse ritorna sempre falso
-    public function registration($matricola, $nome, $cognome, $email, $password)
+    // Funzione registrazione (Francesco)
+    public function registrazione($matricola, $nome, $cognome, $email, $password, $cds)
     {
-
-        //Controllare il discorso del cds, va discusso sul come fare
-
         $stringHelper = new StringHelper();
         $substr = $stringHelper->subString($email);
-        $table = $this->tabelleDB[7];
+        $table = $this->tabelleDB[6];
         $campi = $this->campiTabelleDB[$table];
-        $stmt = null;
 
         if ($substr == "studenti") {
-            $cds = 1;
-            $query = //query: "INSERT INTO TABLE (matricola, nome, cognome, email, password, cod_cds) VALUES (?,?,?,?,?,?)"
-                //INSERT INTO studente (matricola, nome, cognome, email, password, cod_cds) VALUES ('155975', 'Andrea', 'Petrella', 'a.petrella@studenti.unimol.it', 123456, '1')
+            //query: "INSERT INTO TABLE (matricola, nome, cognome, email, password, cod_cds) VALUES (?,?,?,?,?,?)"
+            $query = (
                 "INSERT INTO " .
                 $table . " (" .
                 $campi[0] . ", " .
@@ -351,16 +273,16 @@ class DBQueryManager
                 $campi[4] . ", " .
                 $campi[5] . ") " .
 
-                "VALUES (?,?,?,?,?,?)";
-
+                "VALUES (?,?,?,?,?,?)"
+            );
             $stmt = $this->connection->prepare($query);
-            $stmt->bind_param("issssi", $matricola, $nome, $cognome, $email, $password, $cds); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
-
+            $stmt->bind_param("sssssi", $matricola, $nome, $cognome, $email, $password, $cds); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
             $result = ($stmt->execute()) ? 1 : 2;
 
         } else if ($substr == "unimol"){
-            $table = $this->tabelleDB[3];
-            $query = //query: "INSERT INTO TABLE (matricola, nome, cognome, email, password) VALUES (?,?,?,?,?)"
+            $table = $this->tabelleDB[2];
+            //query: "INSERT INTO TABLE (matricola, nome, cognome, email, password) VALUES (?,?,?,?,?)"
+            $query = (
                 "INSERT INTO " .
                 $table . " (" .
                 $campi[0] . ", " .
@@ -369,27 +291,20 @@ class DBQueryManager
                 $campi[3] . ", " .
                 $campi[4] . ") " .
 
-                "VALUES (?,?,?,?,?)";
-
+                "VALUES (?,?,?,?,?)"
+            );
             $stmt = $this->connection->prepare($query);
             $stmt->bind_param("issss", $matricola, $nome, $cognome, $email, $password); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
-
             $result = ($stmt->execute()) ? 1 : 2;
-        }
-        else {
+        } else {
             $result = 0;
         }
-
-        /* OK per debug ma a regime vanno tolte queste righe di codice altrimenti ci manda in crash l'applicativo
-        if ($result == 2) {
-            throw new Exception($stmt->error);
-        }
-        */
-
         return $result;
     }
 
-    //------------ OK ------------
+
+    //------------ 21/05/18 22:55 FIN QUI OK ------------------
+
 
     /**** COMMENTO DI ANDREA: FORSE NON SERVE NEL NOSTRO PROGETTO ****/
     //Funzione che restituisce il tipo attore in base al suo id (serve per la specializzazione degli utenti)
