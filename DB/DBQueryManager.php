@@ -661,9 +661,9 @@ class DBQueryManager
             "FROM " .
             $table . ", " .
             $table2 . " " .
-            "WHERE" . $campi2[2] . '= ? ' .
+            "WHERE" . $campi2[1] . '= ? ' .
             "AND " .
-            $campi[0] . " = " .
+            $campi[4] . " = " .
             $campi2[0];
 
         $stmt = $this->connection->prepare($query);
@@ -963,8 +963,43 @@ class DBQueryManager
         }
         return $risultato;
     }
+//Danilo serve per vedere i propri annunci
+    public function visualizzaAnnuncioPerId($Matricola,$cds)
+    {
+        $annunci = array();
 
+        $table = $this->tabelleDB[1]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
+        $query = //query: "SELECT nome, FROM materia WHERE cod_cdl = ? "
+            "SELECT " .
+            $campi[1] . ", " .
+            $campi[2] . ", " .
+            $campi[3] . ", " .
+            $campi[4] . ", " .
+            $campi[5] . ", " .
+            $campi[7] . " " .
 
+            "FROM " .
+            $table . " " .
+            "WHERE " .
+            $campi[6] . ' = ? ';
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("i", $Matricola);
+        $stmt->execute();
+        $stmt->store_result();
+
+//Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp //
+        $stmt->bind_result($annunci);
+
+        while ($stmt->fetch()) { //Scansiono la risposta della query
+            $temp = array(); //Array temporaneo per l'acquisizione dei dati
+//Indicizzo con key i dati nell'array
+            $temp[$campi[1]] = $annunci;
+
+            array_push($annunci, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
+        }
+        return $annunci; //ritorno array Documento riempito con i risultati della query effettuata.
+    }
 
 }
 
