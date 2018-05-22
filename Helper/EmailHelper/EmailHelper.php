@@ -54,4 +54,37 @@ class EmailHelper
             return false;
         }
     }
+
+
+
+    function sendSegnalazione($nome,$cognome,$motivo,$matricola){
+
+        $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
+        try {
+            //Server settings
+            $mail->isSMTP();                                      // Set mailer to use SMTP
+            $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
+            $mail->SMTPAuth = true;                               // Enable SMTP authentication
+            $mail->Username = 'unimolshare@gmail.com';                 // SMTP username
+            $mail->Password = 'projectUnimol300518';                           // SMTP password
+            $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+            $mail->Port = 587;                                    // TCP port to connect to
+
+            //Recipients
+            $mail->setFrom('unimolshare@gmail.com', 'UnimolShare - Segnalazione');
+            $mail->addAddress('unimolshare@gmail.com', 'Segnalazione');     // Add a recipient
+            $mail->Subject = 'UnimolShare - Segnalazione';
+
+            //Content
+            $mail->isHTML(true); // Setto il formato dell'email in HTML
+            $mail->Body    = '<!doctype html><html lang = "it"><header><meta charset="UTF-8"></header>';
+            $mail->Body   .= '<body><h1>Segnalazione</h1><div>';
+            $mail->Body   .= $nome.', '.$cognome.'</div><br/><div>il motivo è: '.$motivo.'segnalo lo studente con matricola '.$matricola.'.</div></body></html>';
+            $mail->AltBody = $nome.', '.$cognome.'il motivo è: '.$motivo.' segnalo lo studente con matricola '.$matricola;
+            $mail->send();
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
 }

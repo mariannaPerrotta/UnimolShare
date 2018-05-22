@@ -156,13 +156,13 @@ class DBQueryManager
 
     }
 
-    //danilo
+    //danilo per visualizzare il corso di studio
     public function VisualizzaCDL()
     {
         $CDL = array();
         $table = $this->tabelleDB[1]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
-        $query = //query: "SELECT idattore, tipo, nome, cognome FROM attoriNew2 WHERE idattore = ? AND password = ?"
+        $query = //query: "SELECT id, nome FROM cdl"
             "SELECT " .
             $campi[0] . ", " .
             $campi[1] . ", " .
@@ -176,10 +176,10 @@ class DBQueryManager
 
         while ($stmt->fetch()) { //Scansiono la risposta della query
             $temp = array(); //Array temporaneo per l'acquisizione dei dati
-//Indicizzo con key i dati nell'array
+            //Indicizzo con key i dati nell'array
             $temp[$campi[0]] = $id;
             $temp[$campi[1]] = $nome;
-            array_push($CDL, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $documento
+            array_push($CDL, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $cdl
         }
         return $CDL;
 
@@ -380,7 +380,7 @@ class DBQueryManager
             $campi[0] . " = ? "
         );
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("i", $matricola); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
+        $stmt->bind_param("s", $matricola); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
         $stmt->execute();
         $stmt->store_result();
         if ($stmt->num_rows > 0) {
@@ -418,7 +418,7 @@ class DBQueryManager
             $campi[0] . " = ? "
         );
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("i", $matricola);
+        $stmt->bind_param("s", $matricola);
         $stmt->execute();
         $stmt->store_result();
         if ($stmt->num_rows > 0) {
@@ -458,7 +458,7 @@ class DBQueryManager
         );
 
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("isssis", $titolo, $cod_docente, $cod_studente, $cod_materia, $link);
+        $stmt->bind_param("sssis", $titolo, $cod_docente, $cod_studente, $cod_materia, $link);
         $stmt->execute();
         $stmt->store_result();
         //Controllo se ha trovato matching tra dati inseriti e campi del db
@@ -542,7 +542,7 @@ class DBQueryManager
         $campiDocumento = $this->campiTabelleDB[$documentiTab];
         $materieTab = $this->tabelleDB[5];
         $campiMateria = $this->campiTabelleDB[$materieTab];
-        //query: "SELECT id=0, titolo=1, cod_docente=2, cod materia=5,link=6, id_materia=0, FROM documento inner join materie on codmateria = id materia"
+        //query: "SELECT id=0, titolo=1, cod_docente=2, cod materia=5,link=6, id_materia=0, FROM documento,materia WHERE nomemateria= ? AND id_materia=cod_materia"
         $query = (
             "SELECT " .
             $campiDocumento[0] . ", " .
@@ -590,7 +590,7 @@ class DBQueryManager
         $campiDocumento = $this->campiTabelleDB[$documentiTab];
         $docentiTab = $this->tabelleDB[2];
         $campiDocente = $this->campiTabelleDB[$docentiTab];
-        $query = //query: "SELECT id=0, titolo=1, cod_docente=2, cod materia=5,link=6, id_materia=0, FROM documento inner join materie on codmateria = id materia"
+        $query =  //query: "SELECT id=0, titolo=1, cod_docente=2, cod materia=5,link=6, id_materia=0, FROM documento,docenti WHERE nomedocente = ? AND matricoladocente=cod_docente"
             "SELECT " .
             $campiDocumento[0] . ", " .
             $campiDocumento[1] . ", " .
@@ -679,7 +679,7 @@ class DBQueryManager
             "VALUES (?,?,?,?,?,?,?)"
         );
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("sssssisi", $titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autori, $cod_materia, $link);
+        $stmt->bind_param("sssssssis", $titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autori, $cod_materia, $link);
         $stmt->execute();
         $stmt->store_result();
         //Controllo se ha trovato matching tra dati inseriti e campi del db
@@ -856,7 +856,7 @@ class DBQueryManager
             $campi[3] . "=? ";
 
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("isii", $id, $nome, $cod_doc, $cdl); //Preparo la query
+        $stmt->bind_param("issi", $id, $nome, $cod_doc, $cdl); //Preparo la query
 
         $result = $stmt->execute();//Esegue la query
         if (!$result) {
@@ -879,8 +879,8 @@ class DBQueryManager
 
         $table = $this->tabelleDB[3]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
-        if($tabella==2){
-        $query =
+        if($tabella==2){//controllo per vedere se cercarlo secondo il campo cod_studente o cod_materia
+        $query =//SELECT nome,link FROM documento WHERE cod_studente/cod_docente=$matricols
             "SELECT " .
             $campi[1] . ", " .
             $campi[5] . " " .
@@ -899,7 +899,7 @@ class DBQueryManager
                 $campi[3] . ' = ? ';
             }
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("i", $Matricola);
+        $stmt->bind_param("s", $Matricola);
         $stmt->execute();
         $stmt->store_result();
 
@@ -922,7 +922,7 @@ public function visualizzaAnnuncioPerId($Matricola)
     $annunci = array();
     $table = $this->tabelleDB[6]; //Tabella per la query
     $campi = $this->campiTabelleDB[$table];
-    $query = //query: "SELECT nome, FROM materia WHERE cod_cdl = ? "
+    $query =  //query: "SELECT titolo, contatto, prezzo,edizione, casaeditrice,autore FROM annunci WHERE cod_stud=$matricola"
         "SELECT " .
         $campi[1] . ", " .
         $campi[2] . ", " .
@@ -936,7 +936,7 @@ public function visualizzaAnnuncioPerId($Matricola)
         "WHERE " .
         $campi[6] . ' = ? ';
     $stmt = $this->connection->prepare($query);
-    $stmt->bind_param("i", $Matricola);
+    $stmt->bind_param("s", $Matricola);
     $stmt->execute();
     $stmt->store_result();
 
@@ -965,7 +965,7 @@ public function visualizzaAnnuncioPerId($Matricola)
         $campi = $this->campiTabelleDB[$table];
         $table2 = $this->tabelleDB[5];
         $campi2 = $this->campiTabelleDB[$table2];
-        $query = //query: "SELECT id=0, titolo=1, cod_docente=2, cod materia=5,link=6, id_materia=0, FROM documento inner join materie on codmateria = id materia"
+        $query = //query: "SELECT titolo, contatto, prezzo,edizione, casaeditrice,autore FROM annunci,materie WHERE nome_materia=$materia AND cod_materia=idmateria"
             "SELECT " .
             $campi[1] . ", " .
             $campi[2] . ", " .
@@ -1009,7 +1009,7 @@ public function visualizzaAnnuncioPerId($Matricola)
         $libri = array();
         $table = $this->tabelleDB[4]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
-        $query = //query: "SELECT nome, FROM materia WHERE cod_cdl = ? "
+        $query = //query: "SELECT titolo,autore,casaeditrice,edizione,link FROM libri WHERE cod_docente = $matricola "
             "SELECT " .
             $campi[1] . ", " .
             $campi[2] . ", " .
@@ -1022,7 +1022,7 @@ public function visualizzaAnnuncioPerId($Matricola)
             "WHERE " .
             $campi[6] . ' = ? ';
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("i", $Matricola);
+        $stmt->bind_param("s", $Matricola);
         $stmt->execute();
         $stmt->store_result();
 
@@ -1051,7 +1051,7 @@ public function visualizzaAnnuncioPerId($Matricola)
         $campi = $this->campiTabelleDB[$table];
         $table2 = $this->tabelleDB[2];
         $campi2 = $this->campiTabelleDB[$table2];
-        $query = //query: "SELECT id=0, titolo=1, cod_docente=2, cod materia=5,link=6, id_materia=0, FROM documento inner join materie on codmateria = id materia"
+        $query = //query: "SELECT titolo,autore,casaeditrice,edizione,link FROM libri,docenti WHERE nome=$nomedocente AND cod_docente=iddocente "
             "SELECT " .
             $campi[1] . ", " .
             $campi[2] . ", " .
@@ -1097,7 +1097,7 @@ public function visualizzaAnnuncioPerId($Matricola)
         $campi = $this->campiTabelleDB[$table];
         $table2 = $this->tabelleDB[5];
         $campi2 = $this->campiTabelleDB[$table2];
-        $query = //query: "SELECT id=0, titolo=1, cod_docente=2, cod materia=5,link=6, id_materia=0, FROM documento inner join materie on codmateria = id materia"
+        $query = //"SELECT titolo,autore,casaeditrice,edizione,link FROM libri,materie where nome=$materia AND cod_materia=idmateria"
             "SELECT " .
             $campi[1] . ", " .
             $campi[2] . ", " .
