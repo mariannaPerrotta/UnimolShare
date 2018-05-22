@@ -955,7 +955,7 @@ public function visualizzaAnnuncioPerId($Matricola)
         $temp[$campi[7]] = $autore;
         array_push($annunci, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $documento
     }
-    return $annunci; //ritorno array Documento riempito con i risultati della query effettuata.
+    return $annunci; //ritorno array annunci riempito con i risultati della query effettuata.
 }
     public function visualizzaAnnuncioPerMateria($Materia)
     {
@@ -1002,7 +1002,7 @@ public function visualizzaAnnuncioPerId($Matricola)
             $temp[$campi[7]] = $autore;
             array_push($annunci, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $documento
         }
-        return $annunci; //ritorno array Documento riempito con i risultati della query effettuata.
+        return $annunci; //ritorno array annunci riempito con i risultati della query effettuata.
     }
     public function visualizzaLibroPerCodiceDocente($matricola)
     {
@@ -1040,7 +1040,7 @@ public function visualizzaAnnuncioPerId($Matricola)
             $temp[$campi[7]] = $link;
             array_push($libri, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
         }
-        return $libri; //ritorno array Documento riempito con i risultati della query effettuata.
+        return $libri; //ritorno array libri riempito con i risultati della query effettuata.
 
     }
     public function visualizzaLibroPerNomeDocente($nomedocente)
@@ -1086,7 +1086,7 @@ public function visualizzaAnnuncioPerId($Matricola)
             $temp[$campi[7]] = $link;
             array_push($libri, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
         }
-        return $libri; //ritorno array Documento riempito con i risultati della query effettuata.
+        return $libri; //ritorno array libri riempito con i risultati della query effettuata.
 
     }
     public function visualizzaLibroPerMateria($materia)
@@ -1132,7 +1132,7 @@ public function visualizzaAnnuncioPerId($Matricola)
             $temp[$campi[7]] = $link;
             array_push($libri, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
         }
-        return $libri; //ritorno array Documento riempito con i risultati della query effettuata.
+        return $libri; //ritorno array libri riempito con i risultati della query effettuata.
 
     }
 }
