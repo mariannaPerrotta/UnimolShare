@@ -79,7 +79,7 @@ class EmailHelper
             $mail->isHTML(true); // Setto il formato dell'email in HTML
             $mail->Body    = '<!doctype html><html lang = "it"><header><meta charset="UTF-8"></header>';
             $mail->Body   .= '<body><h1>Segnalazione</h1><div>';
-            $mail->Body   .= $nome.', '.$cognome.'</div><br/><div>il motivo è: '.$motivo.'segnalo lo studente con matricola '.$matricola.'.</div></body></html>';
+            $mail->Body   .= $nome.', '.$cognome.'</div><br/><div>il motivo è: '.$motivo.' segnalo lo studente con matricola '.$matricola.'.</div></body></html>';
             $mail->AltBody = $nome.', '.$cognome.'il motivo è: '.$motivo.' segnalo lo studente con matricola '.$matricola;
             $mail->send();
             return true;
