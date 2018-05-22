@@ -43,7 +43,8 @@ class DBQueryManager
             "nome",
             "cognome",
             "email",
-            "password"
+            "password",
+            "attivo"
         ],
         "documento" => [
             "id",
@@ -75,7 +76,8 @@ class DBQueryManager
             "cognome",
             "email",
             "password",
-            "cod_cds"
+            "cod_cds",
+            "attivo"
         ],
         "valutazione" => [
             "id",
