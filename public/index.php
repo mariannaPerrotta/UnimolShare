@@ -727,11 +727,12 @@ $app->post('/segnalazione', function (Request $request, Response $response) {
     $nome = $requestData['email'];
     $cognome = $requestData['cognome'];
     $motivo = $requestData['motivo'];
-    $matricola = $requestData['matricola'];
+    $contatto = $requestData['contatto'];
+    $email = $requestData['email'];
     //Risposta del servizio REST
     $responseData = array();
     $emailSender = new EmailHelper();
-    if($emailSender->sendSegnalazione($nome,$cognome,$motivo,$matricola)){
+    if($emailSender->sendSegnalazione($nome,$cognome,$motivo,$contatto,$email)){
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = "Segnalazione inviata"; //Messaggio di esito positivo
     }else{
