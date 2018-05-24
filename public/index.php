@@ -98,7 +98,7 @@ $app->post('/login', function (Request $request, Response $response) {
 });
 
 // endpoint: /registration (Francesco)
-$app->post('/registration', function (Request $request, Response $response) {
+$app->post('/registrazione', function (Request $request, Response $response) {
     $db = new DBQueryManager();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
