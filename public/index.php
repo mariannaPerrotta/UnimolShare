@@ -444,7 +444,6 @@ $app->post('/downloadDocumento', function (Request $request, Response $response)
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
 
-
 //contattavenditore by domenico
 $app->post('/contattavenditore', function (Request $request, Response $response) {
 
@@ -711,6 +710,27 @@ $app->post('/insertmateria', function (Request $request, Response $response) {
         $responseData['message'] = 'Email associata a un account giÃ  esistente!'; //Messaggio di esito negativo
     }
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
+});
+$app->post('/visualizzadocumentistudenti', function (Request $request, Response $response) {
+
+    $db = new DBQueryManager();
+
+//Controllo la risposta dal DB e compilo i campi della risposta
+    $responseData = $db->visualizzaDocumentistudenti();
+    if ($responseData != null) {
+        $responseData['error'] = false; //Campo errore = false
+        $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
+
+        $response->getBody()->write(json_encode(array("documenti" => $responseData)));
+        //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
+        $newResponse = $response->withHeader('Content-type', 'application/json');
+        return $newResponse; //Invio la risposta del servizio REST al client
+    } else {
+        $responseData['error'] = true; //Campo errore = false
+        $responseData['message'] = 'Errore imprevisto';
+        return $response->withJson($responseData);
+    }
+
 });
 $app->run();
 
