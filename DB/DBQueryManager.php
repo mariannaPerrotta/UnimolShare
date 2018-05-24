@@ -807,7 +807,289 @@ class DBQueryManager
         }
     }
 
-    //------------ 22/05/18 00:20 FIN QUI OK ------------------
+    //Funzione visualizza documento per id (Danilo)
+    public function visualizzaDocumentoPerId($Matricola,$tabella)
+    {
+        $tabella = $this->tabelleDB[3]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$tabella];
+        if ($tabella == 2) {//controllo per vedere se cercarlo secondo il campo cod_studente o cod_materia
+            //query= SELECT nome,link FROM documento WHERE cod_studente/cod_docente=$matricols
+            $query = (
+                "SELECT " .
+                $campi[1] . ", " .
+                $campi[5] . " " .
+                "FROM " .
+                $tabella . " " .
+                "WHERE " .
+                $campi[2] . ' = ? '
+            );
+        } else {
+            $query = (
+                "SELECT " .
+                $campi[1] . ", " .
+                $campi[5] . " " .
+                "FROM " .
+                $tabella . " " .
+                "WHERE " .
+                $campi[3] . ' = ? '
+            );
+        }
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("s", $Matricola);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows > 0) {
+            //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp //
+            $stmt->bind_result($documento);
+            $documento = array();
+            while ($stmt->fetch()) { //Scansiono la risposta della query
+                $temp = array(); //Array temporaneo per l'acquisizione dei dati
+                //Indicizzo con key i dati nell'array
+                $temp[$campi[1]] = $documento;
+
+                array_push($documento, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
+            }
+            return $documento; //ritorno array Documento riempito con i risultati della query effettuata.
+        } else {
+            return null;
+        }
+    }
+
+    //Funzione visualizza documento per id (Danilo)
+    public function visualizzaAnnuncioPerId($Matricola)
+    {
+        $tabella = $this->tabelleDB[6]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$tabella];
+        //query: "SELECT titolo, contatto, prezzo,edizione, casaeditrice,autore FROM annunci WHERE cod_stud= $matricola"
+        $query = (
+            "SELECT " .
+            $campi[1] . ", " .
+            $campi[2] . ", " .
+            $campi[3] . ", " .
+            $campi[4] . ", " .
+            $campi[5] . ", " .
+            $campi[7] . " " .
+
+            "FROM " .
+            $tabella . " " .
+            "WHERE " .
+            $campi[6] . ' = ? '
+        );
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("s", $Matricola);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows > 0) {
+            //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp //
+            $stmt->bind_result($titolo, $contatto, $prezzo, $edizione, $casaeditrice, $autore);
+            $annunci = array();
+            while ($stmt->fetch()) { //Scansiono la risposta della query
+                $temp = array(); //Array temporaneo per l'acquisizione dei dati
+                //Indicizzo con key i dati nell'array
+
+                $temp[$campi[1]] = $titolo;
+                $temp[$campi[2]] = $contatto;
+                $temp[$campi[3]] = $prezzo;
+                $temp[$campi[4]] = $edizione;
+                $temp[$campi[5]] = $casaeditrice;
+                $temp[$campi[7]] = $autore;
+                array_push($annunci, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $documento
+            }
+            return $annunci; //ritorno array annunci riempito con i risultati della query effettuata.
+        }
+        else {
+            return null;
+        }
+    }
+
+    //Funzione visualizza annuncio per materia (Danilo)
+    public function visualizzaAnnuncioPerMateria($Materia)
+    {
+        $annuncioTabella = $this->tabelleDB[0]; //Tabella per la query
+        $campiAnnuncio = $this->campiTabelleDB[$annuncioTabella];
+        $materiaTabella = $this->tabelleDB[5];
+        $campiMateria = $this->campiTabelleDB[$materiaTabella];
+        //query: "SELECT titolo, contatto, prezzo,edizione, casaeditrice,autore FROM annuncio,materia WHERE nome_materia=$materia AND cod_materia=idmateria"
+        $query = (
+            "SELECT " .
+            $campiAnnuncio[1] . ", " .
+            $campiAnnuncio[2] . ", " .
+            $campiAnnuncio[3] . ", " .
+            $campiAnnuncio[4] . ", " .
+            $campiAnnuncio[5] . ", " .
+            $campiAnnuncio[7] . ", " .
+
+            "FROM " .
+            $annuncioTabella . ", " .
+            $materiaTabella . " " .
+            "WHERE" . $campiMateria[1] . '= ? ' .
+            "AND " .
+            $campiAnnuncio[8] . " = " .
+            $campiMateria[0]
+        );
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("s", $Materia);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows > 0) {
+            //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp
+            $stmt->bind_result($titolo, $contatto, $prezzo, $edizione, $casaeditrice, $autore);
+            $annunci = array();
+            while ($stmt->fetch()) { //Scansiono la risposta della query
+                $temp = array(); //Array temporaneo per l'acquisizione dei dati
+                //Indicizzo con key i dati nell'array
+                $temp[$campiAnnuncio[1]] = $titolo;
+                $temp[$campiAnnuncio[2]] = $contatto;
+                $temp[$campiAnnuncio[3]] = $prezzo;
+                $temp[$campiAnnuncio[4]] = $edizione;
+                $temp[$campiAnnuncio[5]] = $casaeditrice;
+                $temp[$campiAnnuncio[7]] = $autore;
+                array_push($annunci, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $documento
+            }
+            return $annunci; //ritorno array annunci riempito con i risultati della query effettuata.
+        }
+        else {
+            return null;
+        }
+    }
+
+    //Funzione visualizza libro per codice docente (Danilo)
+    public function visualizzaLibroPerCodiceDocente($matricola)
+    {
+        $tabella = $this->tabelleDB[4]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$tabella];
+        //query: "SELECT titolo,autore,casaeditrice,edizione,link FROM libri WHERE cod_docente = $matricola "
+        $query = (
+            "SELECT " .
+            $campi[1] . ", " .
+            $campi[2] . ", " .
+            $campi[3] . ", " .
+            $campi[4] . ", " .
+            $campi[7] . " " .
+
+            "FROM " .
+            $tabella . " " .
+            "WHERE " .
+            $campi[6] . ' = ? '
+        );
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("s", $Matricola);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows > 0) {
+            $stmt->bind_result($titolo, $autore, $casaeditrice, $edizione, $link);
+            $libri = array();
+            while ($stmt->fetch()) { //Scansiono la risposta della query
+                $temp = array();
+                //Indicizzo con key i dati nell'array
+                $temp[$campi[1]] = $titolo;
+                $temp[$campi[2]] = $autore;
+                $temp[$campi[3]] = $casaeditrice;
+                $temp[$campi[4]] = $edizione;
+                $temp[$campi[7]] = $link;
+                array_push($libri, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
+            }
+            return $libri; //ritorno array libri riempito con i risultati della query effettuata.
+        } else {
+            return null;
+        }
+    }
+
+    //Funzione visualizza libro per nome docente (Danilo)
+    public function visualizzaLibroPerNomeDocente($nomedocente)
+    {
+        $libroTabella = $this->tabelleDB[4]; //Tabella per la query
+        $campiLibro = $this->campiTabelleDB[$libroTabella];
+        $docenteTabella = $this->tabelleDB[2];
+        $campiDocente = $this->campiTabelleDB[$docenteTabella];
+        //query: "SELECT titolo,autore,casaeditrice,edizione,link FROM libri,docenti WHERE nome=$nomedocente AND cod_docente=iddocente "
+        $query = (
+            "SELECT " .
+            $campiLibro[1] . ", " .
+            $campiLibro[2] . ", " .
+            $campiLibro[3] . ", " .
+            $campiLibro[4] . ", " .
+            $campiLibro[7] . ", " .
+
+            "FROM " .
+            $libroTabella . ", " .
+            $docenteTabella . " " .
+            "WHERE" . $campiDocente[1] . '= ? ' .
+            "AND " .
+            $campiLibro[5] . " = " .
+            $campiDocente[0]
+        );
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("s", $nomedocente);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows > 0) {
+            $stmt->bind_result($titolo, $autore, $casaeditrice, $edizione, $link);
+            $libri = array();
+            while ($stmt->fetch()) { //Scansiono la risposta della query
+                $temp = array();
+                //Indicizzo con key i dati nell'array
+                $temp[$campiLibro[1]] = $titolo;
+                $temp[$campiLibro[2]] = $autore;
+                $temp[$campiLibro[3]] = $casaeditrice;
+                $temp[$campiLibro[4]] = $edizione;
+
+                $temp[$campiLibro[7]] = $link;
+                array_push($libri, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
+            }
+            return $libri; //ritorno array libri riempito con i risultati della query effettuata.
+        } else {
+            return null;
+        }
+    }
+
+    //Funzione visualizza libro per materia (Danilo)
+    public function visualizzaLibroPerMateria($materia)
+    {
+        $libroTabella = $this->tabelleDB[4]; //Tabella per la query
+        $campiLibro = $this->campiTabelleDB[$libroTabella];
+        $materiaTabella = $this->tabelleDB[5];
+        $campiMateria = $this->campiTabelleDB[$materiaTabella];
+        //"SELECT titolo,autore,casaeditrice,edizione,link FROM libri,materie where nome=$materia AND cod_materia=idmateria"
+        $query = (
+            "SELECT " .
+            $campiLibro[1] . ", " .
+            $campiLibro[2] . ", " .
+            $campiLibro[3] . ", " .
+            $campiLibro[4] . ", " .
+            $campiLibro[7] . ", " .
+
+            "FROM " .
+            $libroTabella . ", " .
+            $materiaTabella . " " .
+            "WHERE" . $campiMateria[1] . '= ? ' .
+            "AND " .
+            $campiLibro[5] . " = " .
+            $campiMateria[0]
+        );
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("s", $materia);
+        $stmt->execute();
+        $stmt->store_result();
+        if($stmt->num_rows > 0) {
+            $stmt->bind_result($titolo, $autore, $casaeditrice, $edizione, $link);
+            $libri = array();
+            while ($stmt->fetch()) { //Scansiono la risposta della query
+                $temp = array();
+                //Indicizzo con key i dati nell'array
+                $temp[$campiLibro[1]] = $titolo;
+                $temp[$campiLibro[2]] = $autore;
+                $temp[$campiLibro[3]] = $casaeditrice;
+                $temp[$campiLibro[4]] = $edizione;
+
+                $temp[$campiLibro[7]] = $link;
+                array_push($libri, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
+            }
+            return $libri; //ritorno array libri riempito con i risultati della query effettuata.
+        } else {
+            return null;
+        }
+    }
 
 //------------------- SERVONO ANCORA QUESTI 2 SOTTO? ----------------
 
@@ -868,311 +1150,5 @@ class DBQueryManager
     }
     //------------------------------------------------- sopra Danilo
 
-
-
-
-    //------------------------ FIN QUI REVISIONA ANDREA ------------------------------------------------
-
-
-//Danilo serve per vedere i propri annunci/documenti
-    public function visualizzaDocumentoPerId($Matricola,$tabella)
-    {
-        $documento = array();
-
-        $table = $this->tabelleDB[3]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table];
-        if($tabella==2){//controllo per vedere se cercarlo secondo il campo cod_studente o cod_materia
-        $query =//SELECT nome,link FROM documento WHERE cod_studente/cod_docente=$matricols
-            "SELECT " .
-            $campi[1] . ", " .
-            $campi[5] . " " .
-            "FROM " .
-            $table . " " .
-            "WHERE " .
-            $campi[2] . ' = ? ';
-        }
-            else{$query =
-                "SELECT " .
-                $campi[1] . ", " .
-                $campi[5] . " " .
-                "FROM " .
-                $table . " " .
-                "WHERE " .
-                $campi[3] . ' = ? ';
-            }
-        $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("s", $Matricola);
-        $stmt->execute();
-        $stmt->store_result();
-
-//Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp //
-        $stmt->bind_result($documento);
-
-        while ($stmt->fetch()) { //Scansiono la risposta della query
-            $temp = array(); //Array temporaneo per l'acquisizione dei dati
-//Indicizzo con key i dati nell'array
-            $temp[$campi[1]] = $documento;
-
-            array_push($documento, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
-        }
-        return $documento; //ritorno array Documento riempito con i risultati della query effettuata.
-    }
-
-
-public function visualizzaAnnuncioPerId($Matricola)
-{
-    $annunci = array();
-    $table = $this->tabelleDB[6]; //Tabella per la query
-    $campi = $this->campiTabelleDB[$table];
-    $query =  //query: "SELECT titolo, contatto, prezzo,edizione, casaeditrice,autore FROM annunci WHERE cod_stud=$matricola"
-        "SELECT " .
-        $campi[1] . ", " .
-        $campi[2] . ", " .
-        $campi[3] . ", " .
-        $campi[4] . ", " .
-        $campi[5] . ", " .
-        $campi[7] . " " .
-
-        "FROM " .
-        $table . " " .
-        "WHERE " .
-        $campi[6] . ' = ? ';
-    $stmt = $this->connection->prepare($query);
-    $stmt->bind_param("s", $Matricola);
-    $stmt->execute();
-    $stmt->store_result();
-
-//Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp //
-    $stmt->bind_result( $titolo, $contatto, $prezzo,$edizione,$casaeditrice, $autore);
-
-    while ($stmt->fetch()) { //Scansiono la risposta della query
-        $temp = array(); //Array temporaneo per l'acquisizione dei dati
-        //Indicizzo con key i dati nell'array
-
-        $temp[$campi[1]] = $titolo;
-        $temp[$campi[2]] = $contatto;
-        $temp[$campi[3]] = $prezzo;
-        $temp[$campi[4]] = $edizione;
-        $temp[$campi[5]] = $casaeditrice;
-        $temp[$campi[7]] = $autore;
-        array_push($annunci, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $documento
-    }
-    return $annunci; //ritorno array annunci riempito con i risultati della query effettuata.
-}
-    public function visualizzaAnnuncioPerMateria($Materia)
-    {
-        $annunci = array();
-
-        $table = $this->tabelleDB[0]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table];
-        $table2 = $this->tabelleDB[5];
-        $campi2 = $this->campiTabelleDB[$table2];
-        $query = //query: "SELECT titolo, contatto, prezzo,edizione, casaeditrice,autore FROM annunci,materie WHERE nome_materia=$materia AND cod_materia=idmateria"
-            "SELECT " .
-            $campi[1] . ", " .
-            $campi[2] . ", " .
-            $campi[3] . ", " .
-            $campi[4] . ", " .
-            $campi[5] . ", " .
-            $campi[7] . " " .
-
-            "FROM " .
-            $table . ", " .
-            $table2 . " " .
-            "WHERE" . $campi2[1] . '= ? ' .
-            "AND " .
-            $campi[8] . " = " .
-            $campi2[0];
-
-        $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("s", $Materia);
-        $stmt->execute();
-        $stmt->store_result();
-
-        //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp
-        $stmt->bind_result( $titolo, $contatto, $prezzo,$edizione,$casaeditrice, $autore);
-
-        while ($stmt->fetch()) { //Scansiono la risposta della query
-            $temp = array(); //Array temporaneo per l'acquisizione dei dati
-            //Indicizzo con key i dati nell'array
-
-            $temp[$campi[1]] = $titolo;
-            $temp[$campi[2]] = $contatto;
-            $temp[$campi[3]] = $prezzo;
-            $temp[$campi[4]] = $edizione;
-            $temp[$campi[5]] = $casaeditrice;
-            $temp[$campi[7]] = $autore;
-            array_push($annunci, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $documento
-        }
-        return $annunci; //ritorno array annunci riempito con i risultati della query effettuata.
-    }
-    public function visualizzaLibroPerCodiceDocente($matricola)
-    {
-        $libri = array();
-        $table = $this->tabelleDB[4]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table];
-        $query = //query: "SELECT titolo,autore,casaeditrice,edizione,link FROM libri WHERE cod_docente = $matricola "
-            "SELECT " .
-            $campi[1] . ", " .
-            $campi[2] . ", " .
-            $campi[3] . ", " .
-            $campi[4] . ", " .
-            $campi[7] . " " .
-
-            "FROM " .
-            $table . " " .
-            "WHERE " .
-            $campi[6] . ' = ? ';
-        $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("s", $Matricola);
-        $stmt->execute();
-        $stmt->store_result();
-
-//Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp //
-        $stmt->bind_result($titolo,$autore,$casaeditrice,$edizione,$link);
-
-        while ($stmt->fetch()) { //Scansiono la risposta della query
-            $temp = array(); //Array temporaneo per l'acquisizione dei dati
-//Indicizzo con key i dati nell'array
-            $temp[$campi[1]] = $titolo;
-            $temp[$campi[2]] = $autore;
-            $temp[$campi[3]] = $casaeditrice;
-            $temp[$campi[4]] = $edizione;
-
-            $temp[$campi[7]] = $link;
-            array_push($libri, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
-        }
-        return $libri; //ritorno array libri riempito con i risultati della query effettuata.
-
-    }
-    public function visualizzaLibroPerNomeDocente($nomedocente)
-    {
-        $libri = array();
-
-        $table = $this->tabelleDB[4]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table];
-        $table2 = $this->tabelleDB[2];
-        $campi2 = $this->campiTabelleDB[$table2];
-        $query = //query: "SELECT titolo,autore,casaeditrice,edizione,link FROM libri,docenti WHERE nome=$nomedocente AND cod_docente=iddocente "
-            "SELECT " .
-            $campi[1] . ", " .
-            $campi[2] . ", " .
-            $campi[3] . ", " .
-            $campi[4] . ", " .
-            $campi[7] . " " .
-
-            "FROM " .
-            $table . ", " .
-            $table2 . " " .
-            "WHERE" . $campi2[1] . '= ? ' .
-            "AND " .
-            $campi[5] . " = " .
-            $campi2[0];
-
-        $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("s", $nomedocente);
-        $stmt->execute();
-        $stmt->store_result();
-
-        //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp
-        $stmt->bind_result($titolo,$autore,$casaeditrice,$edizione,$link);
-
-        while ($stmt->fetch()) { //Scansiono la risposta della query
-            $temp = array(); //Array temporaneo per l'acquisizione dei dati
-//Indicizzo con key i dati nell'array
-            $temp[$campi[1]] = $titolo;
-            $temp[$campi[2]] = $autore;
-            $temp[$campi[3]] = $casaeditrice;
-            $temp[$campi[4]] = $edizione;
-
-            $temp[$campi[7]] = $link;
-            array_push($libri, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
-        }
-        return $libri; //ritorno array libri riempito con i risultati della query effettuata.
-
-    }
-    public function visualizzaLibroPerMateria($materia)
-    {
-        $libri = array();
-
-        $table = $this->tabelleDB[4]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table];
-        $table2 = $this->tabelleDB[5];
-        $campi2 = $this->campiTabelleDB[$table2];
-        $query = //"SELECT titolo,autore,casaeditrice,edizione,link FROM libri,materie where nome=$materia AND cod_materia=idmateria"
-            "SELECT " .
-            $campi[1] . ", " .
-            $campi[2] . ", " .
-            $campi[3] . ", " .
-            $campi[4] . ", " .
-            $campi[7] . " " .
-
-            "FROM " .
-            $table . ", " .
-            $table2 . " " .
-            "WHERE" . $campi2[1] . '= ? ' .
-            "AND " .
-            $campi[5] . " = " .
-            $campi2[0];
-
-        $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("s", $materia);
-        $stmt->execute();
-        $stmt->store_result();
-
-        //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp
-        $stmt->bind_result($titolo,$autore,$casaeditrice,$edizione,$link);
-
-        while ($stmt->fetch()) { //Scansiono la risposta della query
-            $temp = array(); //Array temporaneo per l'acquisizione dei dati
-//Indicizzo con key i dati nell'array
-            $temp[$campi[1]] = $titolo;
-            $temp[$campi[2]] = $autore;
-            $temp[$campi[3]] = $casaeditrice;
-            $temp[$campi[4]] = $edizione;
-
-            $temp[$campi[7]] = $link;
-            array_push($libri, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
-        }
-        return $libri; //ritorno array libri riempito con i risultati della query effettuata.
-
-    }
-    public function visualizzaDocumentistudenti()
-    {
-        $documenti = array();
-
-        $table = $this->tabelleDB[3]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table];
-        $table2 = $this->tabelleDB[6];
-        $campi2 = $this->campiTabelleDB[$table2];
-        $query = //"SELECT titolo,autore,casaeditrice,edizione,link FROM libri,materie where nome=$materia AND cod_materia=idmateria"
-            "SELECT " .
-            $campi[1] . ", " .
-            $campi[5] . " " .
-            "FROM " .
-            $table . ", " .
-            $table2 . " " .
-            "WHERE" .
-            $campi[3] . '= '.
-            $campi2[0] ;
-
-
-        $stmt = $this->connection->prepare($query);
-        $stmt->execute();
-        $stmt->store_result();
-
-        //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp
-        $stmt->bind_result($titolo,$link);
-
-        while ($stmt->fetch()) { //Scansiono la risposta della query
-            $temp = array(); //Array temporaneo per l'acquisizione dei dati
-            //Indicizzo con key i dati nell'array
-            $temp[$campi[1]] = $titolo;
-            $temp[$campi[5]] = $link;
-            array_push($documenti, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
-        }
-        return $documenti; //ritorno array libri riempito con i risultati della query effettuata.
-
-    }
 }
 ?>
