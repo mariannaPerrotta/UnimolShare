@@ -69,57 +69,8 @@ $app->add(function ($req, $res, $next) {
 /*************** LISTA DI ENDPOINT ***************/
 
 /* aggiungo ad $app tutta la lista di endpoint che voglio */
-
-/**** ENDPOINT DI TEST ****/
-
-// endpoint: /listaUtenti (Andrea)
-$app->get('/listaUtenti', function (Request $request, Response $response) {
-    $db = new DBQueryManager();
-
-    $responseData = $db->getUtenti();//Risposta del DB
-    //metto in un json e lo inserisco nella risposta del servizio REST
-    $response->getBody()->write(json_encode(array("utenti" => $responseData)));
-    //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
-    $newResponse = $response->withHeader('Content-type', 'application/json');
-    return $newResponse; //Invio la risposta del servizio REST al client
-});
-
-// endpoint: /testGetStudenti (Andrea)
-$app->get('/testGetUtenti', function (Request $request, Response $response) {
-    $db = new DBQueryManager();
-
-    $responseData = $db->testGetStudenti();//Risposta del DB
-    //metto in un json e lo inserisco nella risposta del servizio REST
-    $response->getBody()->write(json_encode(array("studenti" => $responseData)));
-    //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
-    $newResponse = $response->withHeader('Content-type', 'application/json');
-    return $newResponse; //Invio la risposta del servizio REST al client
-});
-
 /**** ENDPOINT DEL PROGETTO ****/
-$app->post('/insertmateria', function (Request $request, Response $response) {
-    $db = new DBQueryManager();
 
-    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
-    $id = $requestData['id'];
-    $nome = $requestData['nome'];
-    $cod_doc = $requestData['cod_doc'];
-    $cdl = $requestData['cdl'];
-
-    //Risposta del servizio REST
-    $responseData = array(); //La risposta e' un array di informazioni da compilare
-
-    //Controllo la risposta dal DB e compilo i campi della risposta
-    if ($db->testInsertMateria($id, $nome, $cod_doc, $cdl)) { //Se l'inserimento e' andata a buon fine
-        $responseData['error'] = false; //Campo errore = false
-        $responseData['message'] = 'Registrazione avvenuta con successo'; //Messaggio di esito positivo
-
-    } else {
-        $responseData['error'] = true; //Campo errore = true
-        $responseData['message'] = 'Email associata a un account giÃ  esistente!'; //Messaggio di esito negativo
-    }
-    return $response->withJson($responseData); //Invio la risposta del servizio REST al client
-});
 
 // endpoint: /login (Andrea)
 $app->post('/login', function (Request $request, Response $response) {
@@ -156,12 +107,12 @@ $app->post('/registration', function (Request $request, Response $response) {
     $cognome = $requestData['cognome'];
     $email = $requestData['email'];
     $password = $requestData['password'];
-
+    $cds = $requestData['cds'];
     //Risposta del servizio REST
     $responseData = array(); //La risposta e' un array di informazioni da compilare
 
     //Controllo la risposta dal DB e compilo i campi della risposta
-    $responseDB = $db->registrazione($matricola, $nome, $cognome, $email, $password);
+    $responseDB = $db->registrazione($matricola, $nome, $cognome, $email, $password,$cds);
     if ($responseDB == 1) { //Se la registrazione è andata a buon fine
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Registrazione avvenuta con successo'; //Messaggio di esito positivo
@@ -203,7 +154,6 @@ $app->post('/update', function (Request $request, Response $response) {
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
 
-
 //endpoint /recover (Danilo)
 $app->post('/recupero', function (Request $request, Response $response) {
 
@@ -244,6 +194,7 @@ $app->post('/recupero', function (Request $request, Response $response) {
     }
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
+
 //endpoint /visualizzamateriapercdl (danilo)
 $app->post('/visualizzamateriapercdl', function (Request $request, Response $response) {
 
@@ -252,7 +203,7 @@ $app->post('/visualizzamateriapercdl', function (Request $request, Response $res
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $cod_cdl = $requestData['cod_cdl'];
 
-//Controllo la risposta dal DB e compilo i campi della risposta
+    //Controllo la risposta dal DB e compilo i campi della risposta
     $responseData = $db->visualizzaMateriaPerCdl($cod_cdl);
     if ($responseData != null) {
         $responseData['error'] = false; //Campo errore = false
@@ -269,6 +220,7 @@ $app->post('/visualizzamateriapercdl', function (Request $request, Response $res
     }
     //Invio la risposta del servizio REST al client
 });
+
 //endpoint /visualizzadocumentopermateria (Danilo)
 $app->post('/visualizzadocumentopermateria', function (Request $request, Response $response) {
 
@@ -281,11 +233,8 @@ $app->post('/visualizzadocumentopermateria', function (Request $request, Respons
     $responseData = $db->visualizzaDocumentoPerMateria($materia);
     if ($responseData != null) {
         $responseData['error'] = false; //Campo errore = false
-
         $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
         $response->getBody()->write(json_encode(array("documenti" => $responseData)));
-        //metto in un json e lo inserisco nella risposta del servizio REST
-
         //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
         $newResponse = $response->withHeader('Content-type', 'application/json');
         return $newResponse; //Invio la risposta del servizio REST al client
@@ -296,6 +245,7 @@ $app->post('/visualizzadocumentopermateria', function (Request $request, Respons
     }
 
 });
+
 //endpoint /VisualizzaCDL (Danilo)
 $app->post('/VisualizzaCDL', function (Request $request, Response $response) {
 
@@ -321,6 +271,7 @@ $app->post('/VisualizzaCDL', function (Request $request, Response $response) {
     }
 
 });
+
 //endpoint /visualizzaannunciopermateria (danilo)
 $app->post('/visualizzaannunciopermateria', function (Request $request, Response $response) {
 
@@ -333,11 +284,9 @@ $app->post('/visualizzaannunciopermateria', function (Request $request, Response
     $responseData = $db->visualizzaAnnuncioPerMateria($materia);
     if ($responseData != null) {
         $responseData['error'] = false; //Campo errore = false
-
         $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
-        $response->getBody()->write(json_encode(array("annunci" => $responseData)));
-        //metto in un json e lo inserisco nella risposta del servizio REST
 
+        $response->getBody()->write(json_encode(array("annunci" => $responseData)));
         //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
         $newResponse = $response->withHeader('Content-type', 'application/json');
         return $newResponse; //Invio la risposta del servizio REST al client
@@ -352,10 +301,8 @@ $app->post('/visualizzaannunciopermateria', function (Request $request, Response
 //endpoint rimuovi by jo dom
 $app->delete('/rimuovidocumento', function (Request $request, Response $response) {
     $db = new DBQueryManager();
-
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $idDocumento = $requestData['idDocumento'];
-
     //Risposta del servizio REST
     $responseData = array(); //La risposta è un array di informazioni da compilare
 
@@ -394,7 +341,7 @@ $app->delete('/rimuoviAnnuncio', function (Request $request, Response $response)
     }
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
-//-----
+
 
 //endpoint /visualizzaprofilostudente (Michela)
 $app->post('/visualizzaprofilostudente', function (Request $request, Response $response) {
@@ -404,17 +351,17 @@ $app->post('/visualizzaprofilostudente', function (Request $request, Response $r
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $matricola = $requestData['matricola'];
 
-//Risposta del servizio REST
-    $responseData = array();
-
 //Controllo la risposta dal DB e compilo i campi della risposta
-    $temp = $db->visualizzaProfiloStudente($matricola);
-    if ($temp != null) {
+    $responseData = $db->visualizzaProfiloStudente($matricola);
+    if ($responseData != null) {
         $responseData['error'] = false; //Campo errore = false
-        $responseData['nome'] = $temp[1];
-        $responseData['cognome'] = $temp[2];
-        $responseData['email'] = $temp[3];
         $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
+
+        $response->getBody()->write(json_encode(array("Studente" => $responseData)));
+        //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
+        $newResponse = $response->withHeader('Content-type', 'application/json');
+        return $newResponse; //Invio la risposta del servizio REST al client
+
     } else {
         $responseData['error'] = true; //Campo errore = true
         $responseData['message'] = 'Errore imprevisto'; //Messaggio di esiso negativo
@@ -429,17 +376,16 @@ $app->post('/visualizzaprofilodocente', function (Request $request, Response $re
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $matricola = $requestData['matricola'];
 
-//Risposta del servizio REST
-    $responseData = array();
-
 //Controllo la risposta dal DB e compilo i campi della risposta
-    $temp = $db->visualizzaProfiloDocente($matricola);
-    if ($temp != null) {
+    $responseData = $db->visualizzaProfiloDocente($matricola);
+    if ($responseData != null) {
         $responseData['error'] = false; //Campo errore = false
-        $responseData['nome'] = $temp[1];
-        $responseData['cognome'] = $temp[2];
-        $responseData['email'] = $temp[3];
-        $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
+        $responseData['message'] = 'Elemento visualizzato con successo';//Messaggio di esiso positivo
+
+        $response->getBody()->write(json_encode(array("annunci" => $responseData)));
+        //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
+        $newResponse = $response->withHeader('Content-type', 'application/json');
+        return $newResponse; //Invio la risposta del servizio REST al client
     } else {
         $responseData['error'] = true; //Campo errore = true
         $responseData['message'] = 'Errore imprevisto'; //Messaggio di esiso negativo
@@ -743,6 +689,29 @@ $app->post('/segnalazione', function (Request $request, Response $response) {
     return $response->withJson($responseData);
 });
 // Run app = ho riempito $app e avvio il servizio REST
+$app->post('/insertmateria', function (Request $request, Response $response) {
+    $db = new DBQueryManager();
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $id = $requestData['id'];
+    $nome = $requestData['nome'];
+    $cod_doc = $requestData['cod_doc'];
+    $cdl = $requestData['cdl'];
+
+    //Risposta del servizio REST
+    $responseData = array(); //La risposta e' un array di informazioni da compilare
+
+    //Controllo la risposta dal DB e compilo i campi della risposta
+    if ($db->testInsertMateria($id, $nome, $cod_doc, $cdl)) { //Se l'inserimento e' andata a buon fine
+        $responseData['error'] = false; //Campo errore = false
+        $responseData['message'] = 'Registrazione avvenuta con successo'; //Messaggio di esito positivo
+
+    } else {
+        $responseData['error'] = true; //Campo errore = true
+        $responseData['message'] = 'Email associata a un account giÃ  esistente!'; //Messaggio di esito negativo
+    }
+    return $response->withJson($responseData); //Invio la risposta del servizio REST al client
+});
 $app->run();
 
 ?>
