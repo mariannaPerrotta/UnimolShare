@@ -683,12 +683,16 @@ class DBQueryManager
             $campi[8] . " ) " .
             "VALUES (?,?,?,?,?,?,?)"
         );
-        $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("sssssssis", $titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autori, $cod_materia, $link);
-        $stmt->execute();
-        $stmt->store_result();
-        //Controllo se ha trovato matching tra dati inseriti e campi del db
-        return $stmt;
+        try {
+            $stmt = $this->connection->prepare($query);
+            $stmt->bind_param("sssssssis", $titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autori, $cod_materia, $link);
+            $stmt->execute();
+            $stmt->store_result();
+            return true;
+        } catch (Exception $e){
+            //Controllo se ha trovato matching tra dati inseriti e campi del db
+            return false;
+        }
     }
 
     //Funzione contatta venditore (Domenico)
