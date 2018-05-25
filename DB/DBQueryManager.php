@@ -458,13 +458,16 @@ class DBQueryManager
 
             "VALUES (?,?,?,?,?)"
         );
-
-        $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("sssis", $titolo, $cod_docente, $cod_studente, $cod_materia, $link);
-        $stmt->execute();
-        $stmt->store_result();
+        try {
+            $stmt = $this->connection->prepare($query);
+            $stmt->bind_param("sssis", $titolo, $cod_docente, $cod_studente, $cod_materia, $link);
+            $stmt->execute();
+            $stmt->store_result();
+            return true;
+        } catch (Exception $e){
         //Controllo se ha trovato matching tra dati inseriti e campi del db
-        return $stmt;
+        return false;
+    }
     }
 
     //Funzione per scaricare un documento (Andrea)
