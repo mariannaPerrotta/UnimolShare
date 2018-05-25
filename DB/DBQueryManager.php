@@ -464,7 +464,7 @@ class DBQueryManager
         $stmt->execute();
         $stmt->store_result();
         //Controllo se ha trovato matching tra dati inseriti e campi del db
-        return $stmt->num_rows > 0;
+        return $stmt;
     }
 
     //Funzione per scaricare un documento (Andrea)
@@ -685,7 +685,7 @@ class DBQueryManager
         $stmt->execute();
         $stmt->store_result();
         //Controllo se ha trovato matching tra dati inseriti e campi del db
-        return $stmt->num_rows > 0;
+        return $stmt;
     }
 
     //Funzione contatta venditore (Domenico)
