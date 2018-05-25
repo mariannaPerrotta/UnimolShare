@@ -807,6 +807,43 @@ class DBQueryManager
         }
     }
 
+    public function visualizzaDocumentistudenti()
+    {
+        $documenti = array();
+
+        $table = $this->tabelleDB[3]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
+        $table2 = $this->tabelleDB[6];
+        $campi2 = $this->campiTabelleDB[$table2];
+        $query = //"SELECT titolo,link FROM documenti INNER JOIN studenti ON cod_stud=matricola"
+            "SELECT " .
+            $campi[1] . ", " .
+            $campi[5] . " " .
+            "FROM " .
+            $table . " " .
+
+            "INNER JOIN " .
+            $table2 . 'ON '.
+            $campi[3] ." = ". $campi2[0] ;
+
+
+        $stmt = $this->connection->prepare($query);
+        $stmt->execute();
+        $stmt->store_result();
+
+        //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp
+        $stmt->bind_result($titolo,$link);
+
+        while ($stmt->fetch()) { //Scansiono la risposta della query
+            $temp = array(); //Array temporaneo per l'acquisizione dei dati
+            //Indicizzo con key i dati nell'array
+            $temp[$campi[1]] = $titolo;
+            $temp[$campi[5]] = $link;
+            array_push($documenti, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
+        }
+        return $documenti; //ritorno array libri riempito con i risultati della query effettuata.
+
+    }
     //Funzione visualizza documento per id (Danilo)
     public function visualizzaDocumentoPerId($Matricola,$tabella)
     {
