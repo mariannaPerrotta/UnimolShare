@@ -292,12 +292,13 @@ class DBQueryManager
                 $campi[2] . ", " .
                 $campi[3] . ", " .
                 $campi[4] . ", " .
-                $campi[5] . ") " .
+                $campi[5] . ", " .
+                $campi[6] . ") " .
 
-                "VALUES (?,?,?,?,?,?)"
+                "VALUES (?,?,?,?,?,?,?)"
             );
             $stmt = $this->connection->prepare($query);
-            $stmt->bind_param("sssssi", $matricola, $nome, $cognome, $email, $password, $cds); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
+            $stmt->bind_param("sssssii", $matricola, $nome, $cognome, $email, $password, $cds, 0); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
             $result = ($stmt->execute()) ? 1 : 2;
         } else if ($substr == "unimol"){
             $tabella = $this->tabelleDB[2];
@@ -309,12 +310,13 @@ class DBQueryManager
                 $campi[1] . ", " .
                 $campi[2] . ", " .
                 $campi[3] . ", " .
-                $campi[4] . ") " .
+                $campi[4] . ", " .
+                $campi[5] . ") " .
 
-                "VALUES (?,?,?,?,?)"
+                "VALUES (?,?,?,?,?,?)"
             );
             $stmt = $this->connection->prepare($query);
-            $stmt->bind_param("sssss", $matricola, $nome, $cognome, $email, $password); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
+            $stmt->bind_param("sssssi", $matricola, $nome, $cognome, $email, $password, 0); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
             $result = ($stmt->execute()) ? 1 : 2;
         } else {
             $result = 0;
