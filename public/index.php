@@ -436,7 +436,6 @@ $app->post('/downloadDocumento', function (Request $request, Response $response)
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'In download'; //Messaggio di esiso positivo
         $responseData['link'] = $link;
-
     } else { //Se si verifica un errore
         $responseData['error'] = true; //Campo errore = true
         $responseData['message'] = 'Impossibile scaricare il file'; //Messaggio di esito negativo

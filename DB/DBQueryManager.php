@@ -458,16 +458,9 @@ class DBQueryManager
 
             "VALUES (?,?,?,?,?)"
         );
-        try {
-            $stmt = $this->connection->prepare($query);
-            $stmt->bind_param("sssis", $titolo, $cod_docente, $cod_studente, $cod_materia, $link);
-            $stmt->execute();
-            $stmt->store_result();
-            return true;
-        } catch (Exception $e){
-        //Controllo se ha trovato matching tra dati inseriti e campi del db
-        return false;
-    }
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("sssis", $titolo, $cod_docente, $cod_studente, $cod_materia, $link);
+        return $stmt->execute();
     }
 
     //Funzione per scaricare un documento (Andrea)
@@ -683,16 +676,9 @@ class DBQueryManager
             $campi[8] . " ) " .
             "VALUES (?,?,?,?,?,?,?)"
         );
-        try {
-            $stmt = $this->connection->prepare($query);
-            $stmt->bind_param("sssssssis", $titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autori, $cod_materia, $link);
-            $stmt->execute();
-            $stmt->store_result();
-            return true;
-        } catch (Exception $e){
-            //Controllo se ha trovato matching tra dati inseriti e campi del db
-            return false;
-        }
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("sssssssis", $titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autori, $cod_materia, $link);
+        return $stmt->execute();
     }
 
     //Funzione contatta venditore (Domenico)
@@ -748,10 +734,7 @@ class DBQueryManager
         );
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("ii", $valutazione, $cod_documento);
-        $stmt->execute();
-        $stmt->store_result();
-        //Controllo se ha trovato matching tra dati inseriti e campi del db
-        return $stmt->num_rows > 0;
+        return $stmt->execute();
     }
 
     //Funzione per ricercare tra documenti, libri e annunci (Andrea)
