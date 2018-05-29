@@ -76,8 +76,8 @@ class DBQueryManager
             "cognome",
             "email",
             "password",
-            "cod_cds",
-            "attivo"
+            "attivo",
+            "cod_cds"
         ],
         "valutazione" => [
             "id",
@@ -221,6 +221,31 @@ class DBQueryManager
         return $stmt->num_rows > 0;
     }
 
+    // Funzione Modifica Profilo (Andrea)
+    public function confermaProfilo($email, $matricola)
+    {
+        $stringHelper = new StringHelper();
+        $substr = $stringHelper->subString($email);
+        $tabella = $this->tabelleDB[6];
+        if ($substr == "unimol") {
+            $tabella = $this->tabelleDB[2];
+        }
+        $campi = $this->campiTabelleDB[$tabella];
+        //query:  "UPDATE docente SET attivo = true WHERE matricola = ?"
+        $query = (
+            "UPDATE " .
+            $tabella . " " .
+            "SET " .
+            $campi[6] . " = true " .
+            "WHERE " .
+            $campi[0] . " = ?"
+        );
+        //Invio la query
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("ss", $email, $matricola); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
+        return($stmt->execute());
+    }
+
     // Funzione Modifica Profilo (Gigi)
     public function modificaProfilo($matricola, $nome, $cognome, $password, $tab)
     {
@@ -293,7 +318,7 @@ class DBQueryManager
                 $campi[3] . ", " .
                 $campi[4] . ", " .
                 $campi[5] . ", " .
-                $campi[6] . ") " .
+                $campi[7] . ") " .
 
                 "VALUES (?,?,?,?,?,?,?)"
             );
