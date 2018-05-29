@@ -236,13 +236,13 @@ class DBQueryManager
             "UPDATE " .
             $tabella . " " .
             "SET " .
-            $campi[6] . " = true " .
+            $campi[6] . " = 1 " .
             "WHERE " .
             $campi[0] . " = ?"
         );
         //Invio la query
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("ss", $email, $matricola); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
+        $stmt->bind_param("s", $matricola); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
         return($stmt->execute());
     }
 
