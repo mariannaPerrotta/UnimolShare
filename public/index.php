@@ -116,7 +116,9 @@ $app->post('/registrazione', function (Request $request, Response $response) {
     if ($responseDB == 1) { //Se la registrazione è andata a buon fine
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Registrazione avvenuta con successo'; //Messaggio di esito positivo
-
+        $emailSender = new EmailHelper();
+        $link = 'http://unimolshare.altervista.org/logic/UnimolShare/public/index.php/conferma?email='.$email.'&$matricola='.$matricola;
+        $emailSender->sendConfermaAccount($email, $link);
     } else if ($responseDB == 2){ //Se l'email è già presente nel DB
         $responseData['error'] = true; //Campo errore = true
         $responseData['message'] = 'Account già  esistente!'; //Messaggio di esito negativo
@@ -124,6 +126,28 @@ $app->post('/registrazione', function (Request $request, Response $response) {
     else{//Se l'email non è istituzionale
         $responseData['error'] = true; //Campo errore = true
         $responseData['message'] = "Email non valida! Usare un'email istituzionale."; //Messaggio di esito negativo
+    }
+    return $response->withJson($responseData); //Invio la risposta del servizio REST al client
+});
+
+// endpoint: /conferma (Andrea)
+$app->get('/conferma', function (Request $request, Response $response) {
+    $db = new DBQueryManager();
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $emial = $requestData['email'];
+    $matricola = $requestData['matricola'];
+
+    //Risposta del servizio REST
+    $responseData = array(); //La risposta e' un array di informazioni da compilare
+
+    //Controllo la risposta dal DB e compilo i campi della risposta
+    if ($db->confermaProfilo($emial, $matricola)) {
+        $responseData['error'] = false; //Campo errore = false
+        $responseData['message'] = 'Profilo confermato'; //Messaggio di esiso positivo
+    } else { //Se c'è stato un errore imprevisto
+        $responseData['error'] = true; //Campo errore = true
+        $responseData['message'] = "Impossibile confermare il profilo"; //Messaggio di esito negativo
     }
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
@@ -172,9 +196,7 @@ $app->post('/recupero', function (Request $request, Response $response) {
         $nuovaPassword = $randomizerPassword->generatePassword(4);
 
         if($db->modificaPassword($email, $nuovaPassword)) {
-            $messaggio = "Usa questa password temporanea";
-
-            if ($emailSender->sendResetPasswordEmail($messaggio, $email, $nuovaPassword)) {
+            if ($emailSender->sendResetPasswordEmail($email, $nuovaPassword)) {
                 $responseData['error'] = false; //Campo errore = false
                 $responseData['message'] = "Email di recupero password inviata"; //Messaggio di esito positivo
             } else {
@@ -687,7 +709,28 @@ $app->post('/segnalazione', function (Request $request, Response $response) {
     return $response->withJson($responseData);
 });
 // Run app = ho riempito $app e avvio il servizio REST
+$app->post('/insertmateria', function (Request $request, Response $response) {
+    $db = new DBQueryManager();
 
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $id = $requestData['id'];
+    $nome = $requestData['nome'];
+    $cod_doc = $requestData['cod_doc'];
+    $cdl = $requestData['cdl'];
+
+    //Risposta del servizio REST
+    $responseData = array(); //La risposta e' un array di informazioni da compilare
+
+    //Controllo la risposta dal DB e compilo i campi della risposta
+    if ($db->testInsertMateria($id, $nome, $cod_doc, $cdl)) { //Se l'inserimento e' andata a buon fine
+        $responseData['error'] = false; //Campo errore = false
+        $responseData['message'] = 'Registrazione avvenuta con successo'; //Messaggio di esito positivo
+    } else {
+        $responseData['error'] = true; //Campo errore = true
+        $responseData['message'] = 'Email associata a un account giÃ  esistente!'; //Messaggio di esito negativo
+    }
+    return $response->withJson($responseData); //Invio la risposta del servizio REST al client
+});
 $app->post('/visualizzadocumentistudenti', function (Request $request, Response $response) {
 
     $db = new DBQueryManager();

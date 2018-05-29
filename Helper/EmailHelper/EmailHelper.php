@@ -22,7 +22,9 @@ class EmailHelper
     }
 
     //Funzione per inviare un'email con la nuova password
-    function sendResetPasswordEmail($messaggio, $email, $password){
+    function sendResetPasswordEmail($email, $password){
+
+        $messaggio = "Usa questa password temporanea";
 
         $linkLogin = 'https://www.unimolshare.it/login.php';
         $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
@@ -43,11 +45,46 @@ class EmailHelper
 
             //Content
             $mail->isHTML(true); // Setto il formato dell'email in HTML
-            $mail->AddEmbeddedImage("/img/logo.jpg", "logo-img", "logo.jpg");
             $mail->Body    = '<!doctype html><html lang = "it"><header><meta charset="UTF-8"></header>';
             $mail->Body   .= '<body><h1>UnimolShare</h1><div>';
             $mail->Body   .= $messaggio.':<br/><br/><b>'.$password.'</div><br/><div>Vai su '.$linkLogin.' per entrare.</div></body></html>';
             $mail->AltBody = $messaggio.': '.$password.' --- Vai su '.$linkLogin.' per entrare.';
+            $mail->send();
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+
+
+    //Funzione per inviare un'email con la nuova password
+    function sendConfermaAccount($email, $link){
+
+        $messaggio = 'Hai appena richiesto di iscriverti ad UnimolShare!<br>Conferma la tua iscrizione col seguente link: ';
+        $linkLogin = 'https://www.unimolshare.it/login.php';
+        $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
+        try {
+            //Server settings
+            $mail->isSMTP();                                      // Set mailer to use SMTP
+            $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
+            $mail->SMTPAuth = true;                               // Enable SMTP authentication
+            $mail->Username = 'unimolshare@gmail.com';                 // SMTP username
+            $mail->Password = 'projectUnimol300518';                           // SMTP password
+            $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+            $mail->Port = 587;                                    // TCP port to connect to
+
+            //Recipients
+            $mail->setFrom('unimolshare@gmail.com', 'UnimolShare - Automatic Password Recovery');
+            $mail->addAddress('andreacb94@gmail.com', 'TEST Andrea');     // Add a recipient
+            $mail->Subject = 'UnimolShare - Recupero credenziali';
+
+            //Content
+            $mail->isHTML(true); // Setto il formato dell'email in HTML
+            $mail->Body    = '<!doctype html><html lang = "it"><header><meta charset="UTF-8"></header>';
+            $mail->Body   .= '<body><h1>UnimolShare</h1><div>';
+            $mail->Body   .= $messaggio.':<br/><br/><b>'.$link.'</div><br/><div>Vai su '.$linkLogin.' per entrare.</div></body></html>';
+            $mail->AltBody = $messaggio.': '.$link.' --- Vai su '.$linkLogin.' per entrare.';
             $mail->send();
             return true;
         } catch (Exception $e) {
