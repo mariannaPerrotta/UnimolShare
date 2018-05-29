@@ -306,6 +306,7 @@ class DBQueryManager
         $substr = $stringHelper->subString($email);
         $tabella = $this->tabelleDB[6];
         $campi = $this->campiTabelleDB[$tabella];
+        $attivo = 0;
 
         if ($substr == "studenti") {
             //query: "INSERT INTO TABLE (matricola, nome, cognome, email, password, attivo, cod_cds) VALUES (?,?,?,?,?,0,?)"
@@ -320,10 +321,10 @@ class DBQueryManager
                 $campi[5] . ", " .
                 $campi[6] . ") " .
 
-                "VALUES (?,?,?,?,?,0,?)"
+                "VALUES (?,?,?,?,?,?,?)"
             );
             $stmt = $this->connection->prepare($query);
-            $stmt->bind_param("sssssi", $matricola, $nome, $cognome, $email, $password, $cds); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
+            $stmt->bind_param("sssssii", $matricola, $nome, $cognome, $email, $password, $attivo, $cds); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
             $result = ($stmt->execute()) ? 1 : 2;
         } else if ($substr == "unimol"){
             $tabella = $this->tabelleDB[2];
@@ -338,10 +339,10 @@ class DBQueryManager
                 $campi[4] . ", " .
                 $campi[5] . ") " .
 
-                "VALUES (?,?,?,?,?,0)"
+                "VALUES (?,?,?,?,?,?)"
             );
             $stmt = $this->connection->prepare($query);
-            $stmt->bind_param("sssss", $matricola, $nome, $cognome, $email, $password); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
+            $stmt->bind_param("sssssi", $matricola, $nome, $cognome, $email, $password, $attivo); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
             $result = ($stmt->execute()) ? 1 : 2;
         } else {
             $result = 0;
