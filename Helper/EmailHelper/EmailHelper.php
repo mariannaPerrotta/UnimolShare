@@ -77,7 +77,7 @@ class EmailHelper
             //Recipients
             $mail->setFrom('unimolshare@gmail.com', 'UnimolShare - Automatic Password Recovery');
             $mail->addAddress('andreacb94@gmail.com', 'TEST Andrea');     // Add a recipient
-            $mail->Subject = 'UnimolShare - Recupero credenziali';
+            $mail->Subject = 'UnimolShare - Conferma registrazione';
 
             //Content
             $mail->isHTML(true); // Setto il formato dell'email in HTML
