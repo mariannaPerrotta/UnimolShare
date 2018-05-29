@@ -273,7 +273,6 @@ $app->post('/VisualizzaCDL', function (Request $request, Response $response) {
 
     $db = new DBQueryManager();
 
-    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
 
 //Controllo la risposta dal DB e compilo i campi della risposta
     $responseData = $db->VisualizzaCDL();
