@@ -117,7 +117,7 @@ $app->post('/registrazione', function (Request $request, Response $response) {
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Registrazione avvenuta con successo'; //Messaggio di esito positivo
         $emailSender = new EmailHelper();
-        $link = 'http://unimolshare.altervista.org/logic/UnimolShare/public/index.php/conferma?email='.$email.'&$matricola='.$matricola;
+        $link = 'http://unimolshare.altervista.org/logic/UnimolShare/public/activate?email='.$email.'&$matricola='.$matricola;
         $emailSender->sendConfermaAccount($email, $link);
     } else if ($responseDB == 2){ //Se l'email è già presente nel DB
         $responseData['error'] = true; //Campo errore = true
@@ -130,19 +130,20 @@ $app->post('/registrazione', function (Request $request, Response $response) {
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
 
+/****** PER ORA NON FUNZIONA COL L'ENDPOINT MA TRAMITE LINK DIRETTO COL FILE ACRTIVATE.PHP NELLA CARTELLA PUBLIC ***/
 // endpoint: /conferma (Andrea)
 $app->get('/conferma', function (Request $request, Response $response) {
     $db = new DBQueryManager();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
-    $emial = $requestData['email'];
+    $email = $requestData['email'];
     $matricola = $requestData['matricola'];
 
     //Risposta del servizio REST
     $responseData = array(); //La risposta e' un array di informazioni da compilare
 
     //Controllo la risposta dal DB e compilo i campi della risposta
-    if ($db->confermaProfilo($emial, $matricola)) {
+    if ($db->confermaProfilo($email, $matricola)) {
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Profilo confermato'; //Messaggio di esiso positivo
     } else { //Se c'è stato un errore imprevisto
