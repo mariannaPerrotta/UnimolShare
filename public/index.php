@@ -687,29 +687,7 @@ $app->post('/segnalazione', function (Request $request, Response $response) {
     return $response->withJson($responseData);
 });
 // Run app = ho riempito $app e avvio il servizio REST
-$app->post('/insertmateria', function (Request $request, Response $response) {
-    $db = new DBQueryManager();
 
-    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
-    $id = $requestData['id'];
-    $nome = $requestData['nome'];
-    $cod_doc = $requestData['cod_doc'];
-    $cdl = $requestData['cdl'];
-
-    //Risposta del servizio REST
-    $responseData = array(); //La risposta e' un array di informazioni da compilare
-
-    //Controllo la risposta dal DB e compilo i campi della risposta
-    if ($db->testInsertMateria($id, $nome, $cod_doc, $cdl)) { //Se l'inserimento e' andata a buon fine
-        $responseData['error'] = false; //Campo errore = false
-        $responseData['message'] = 'Registrazione avvenuta con successo'; //Messaggio di esito positivo
-
-    } else {
-        $responseData['error'] = true; //Campo errore = true
-        $responseData['message'] = 'Email associata a un account giÃ  esistente!'; //Messaggio di esito negativo
-    }
-    return $response->withJson($responseData); //Invio la risposta del servizio REST al client
-});
 $app->post('/visualizzadocumentistudenti', function (Request $request, Response $response) {
 
     $db = new DBQueryManager();
