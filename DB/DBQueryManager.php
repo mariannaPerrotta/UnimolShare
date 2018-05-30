@@ -293,10 +293,7 @@ class DBQueryManager
         //Invio la query
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("ss", $password, $email); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
-        $stmt->execute();
-        $stmt->store_result();
-        //Controllo se ha trovato matching tra dati inseriti e campi del db
-        return $stmt->num_rows > 0;
+        return $stmt->execute();
     }
 
     // Funzione registrazione (Francesco)

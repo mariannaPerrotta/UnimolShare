@@ -17,6 +17,7 @@ require_once '../vendor/autoload.php';
 require '../DB/DBConnectionManager.php';
 require '../DB/DBQueryManager.php';
 require '../Helper/EmailHelper/EmailHelper.php';
+require '../Helper/EmailHelper/EmailHelperAltervista.php';
 require '../Helper/RandomPasswordHelper/RandomPasswordHelper.php';
 
 if (PHP_SAPI == 'cli-server') {
@@ -116,8 +117,8 @@ $app->post('/registrazione', function (Request $request, Response $response) {
     if ($responseDB == 1) { //Se la registrazione è andata a buon fine
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Registrazione avvenuta con successo'; //Messaggio di esito positivo
-        $emailSender = new EmailHelper();
-        $link = 'http://unimolshare.altervista.org/logic/UnimolShare/public/activate?email='.$email.'&$matricola='.$matricola;
+        $emailSender = new EmailHelperAltervista();
+        $link = 'http://unimolshare.altervista.org/logic/UnimolShare/public/activate.php?email='.$email.'&matricola='.$matricola;
         $emailSender->sendConfermaAccount($email, $link);
     } else if ($responseDB == 2){ //Se l'email è già presente nel DB
         $responseData['error'] = true; //Campo errore = true
@@ -189,7 +190,7 @@ $app->post('/recupero', function (Request $request, Response $response) {
 
     //Risposta del servizio REST
     $responseData = array();
-    $emailSender = new EmailHelper();
+    $emailSender = new EmailHelperAltervista();
     $randomizerPassword = new RandomPasswordHelper();
 
     //Controllo la risposta dal DB e compilo i campi della risposta
@@ -690,14 +691,14 @@ $app->post('/segnalazione', function (Request $request, Response $response) {
     $db = new DBQueryManager();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
-    $nome = $requestData['email'];
+    $nome = $requestData['nome'];
     $cognome = $requestData['cognome'];
     $motivo = $requestData['motivo'];
     $contatto = $requestData['contatto'];
     $email = $requestData['email'];
     //Risposta del servizio REST
     $responseData = array();
-    $emailSender = new EmailHelper();
+    $emailSender = new EmailHelperAltervista();
     if($emailSender->sendSegnalazione($nome,$cognome,$motivo,$contatto,$email)){
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = "Segnalazione inviata"; //Messaggio di esito positivo
