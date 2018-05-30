@@ -102,9 +102,10 @@ class DBQueryManager
         $studenteTab = $this->tabelleDB[6];
         $docenteTab = $this->tabelleDB[2];
         $campi = $this->campiTabelleDB[$studenteTab];
-        /*  query: "SELECT matricola, nome, cognome, email, 'studente' as tabella FROM studente WHERE email = ? AND password = ?
+        $attivo = 1;
+        /*  query: "SELECT matricola, nome, cognome, email, 'studente' as tabella FROM studente WHERE email = ? AND password = ? AND attivo = 1
                     UNION
-                    SELECT matricola, nome, cognome, email, 'docente' as tabella FROM docente WHERE email = ? AND password = ?" */
+                    SELECT matricola, nome, cognome, email, 'docente' as tabella FROM docente WHERE email = ? AND password = ? AND attivo = 1" */
         $query = (
             "SELECT " .
             $campi[0] . ", " .
@@ -116,7 +117,8 @@ class DBQueryManager
             $studenteTab . " " .
             "WHERE " .
             $campi[3] . " = ? AND " .
-            $campi[4] . " = ? " .
+            $campi[4] . " = ? AND " .
+            $campi[5] . " = ? " .
             "UNION " .
             "SELECT " .
             $campi[0] . ", " .
@@ -128,12 +130,13 @@ class DBQueryManager
             $docenteTab . " " .
             "WHERE " .
             $campi[3] . " = ? AND " .
-            $campi[4] . " = ?"
+            $campi[4] . " = ? AND " .
+            $campi[5] . " = ?"
         );
 
         //Invio la query
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("ssss", $email, $password, $email, $password); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
+        $stmt->bind_param("ssissi", $email, $password, $attivo, $email, $password, $attivo); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
         $stmt->execute();
         //Ricevo la risposta del DB
         $stmt->store_result();
