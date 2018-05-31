@@ -73,7 +73,7 @@ $app->add(function ($req, $res, $next) {
 /**** ENDPOINT DEL PROGETTO ****/
 
 
-// endpoint: /login (Andrea)
+// endpoint: /login (Andrea) OK
 $app->post('/login', function (Request $request, Response $response) {
     $db = new DBQueryManager();
 
@@ -98,7 +98,7 @@ $app->post('/login', function (Request $request, Response $response) {
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
 
-// endpoint: /registration (Francesco)
+// endpoint: /registration (Francesco) OK
 $app->post('/registrazione', function (Request $request, Response $response) {
     $db = new DBQueryManager();
 

@@ -224,7 +224,7 @@ class DBQueryManager
         return $stmt->num_rows > 0;
     }
 
-    // Funzione Modifica Profilo (Andrea)
+    // Funzione conferma Profilo (Andrea)
     public function confermaProfilo($email, $matricola)
     {
         $stringHelper = new StringHelper();
@@ -234,7 +234,7 @@ class DBQueryManager
             $tabella = $this->tabelleDB[2];
         }
         $campi = $this->campiTabelleDB[$tabella];
-        //query:  "UPDATE docente SET attivo = true WHERE matricola = ?"
+        //query:  "UPDATE docente/studente SET attivo = true WHERE matricola = ?"
         $query = (
             "UPDATE " .
             $tabella . " " .
@@ -249,7 +249,7 @@ class DBQueryManager
         return($stmt->execute());
     }
 
-    // Funzione Modifica Profilo (Gigi)
+    // Funzione Modifica Profilo (Gigi)// da cambiare il ritotno
     public function modificaProfilo($matricola, $nome, $cognome, $password, $tab)
     {
         $tabella = $this->tabelleDB[$tab];
@@ -268,10 +268,9 @@ class DBQueryManager
         //Invio la query
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("ssss", $nome, $cognome, $password, $matricola); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
-        $stmt->execute();
-        $stmt->store_result();
+
         //Controllo se ha trovato matching tra dati inseriti e campi del db
-        return $stmt->num_rows > 0;
+        return $stmt->execute();
     }
 
     // Funzione Modifica Password (Andrea)
