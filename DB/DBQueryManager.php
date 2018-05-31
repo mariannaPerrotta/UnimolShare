@@ -170,7 +170,7 @@ class DBQueryManager
         $query = //query: "SELECT id, nome FROM cdl"
             "SELECT " .
             $campi[0] . ", " .
-            $campi[1] . ", " .
+            $campi[1] . " " .
             "FROM " .
             $table;
         $stmt = $this->connection->prepare($query);
@@ -574,7 +574,7 @@ class DBQueryManager
             $campiDocumento[1] . ", " .
             $campiDocumento[2] . ", " .
             $campiDocumento[5] . ", " .
-            $campiDocumento[6] . ", " .
+            $campiDocumento[6] . " " .
 
             "FROM " .
             $documentiTab . ", " .

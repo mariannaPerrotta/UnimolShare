@@ -180,7 +180,7 @@ $app->post('/update', function (Request $request, Response $response) {
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
 
-//endpoint /recover (Danilo)
+//endpoint /recover (Danilo) OK
 $app->post('/recupero', function (Request $request, Response $response) {
 
     $db = new DBQueryManager();
