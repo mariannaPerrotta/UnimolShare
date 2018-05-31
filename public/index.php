@@ -366,7 +366,7 @@ $app->delete('/rimuoviAnnuncio', function (Request $request, Response $response)
 });
 
 
-//endpoint /visualizzaprofilostudente (Michela)
+//endpoint /visualizzaprofilostudente (Michela) OK
 $app->post('/visualizzaprofilostudente', function (Request $request, Response $response) {
 
     $db = new DBQueryManager();
@@ -391,7 +391,7 @@ $app->post('/visualizzaprofilostudente', function (Request $request, Response $r
     }
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
-//endpoint /visualizzaprofilodocente (Michela)
+//endpoint /visualizzaprofilodocente (Michela) ok
 $app->post('/visualizzaprofilodocente', function (Request $request, Response $response) {
 
     $db = new DBQueryManager();
@@ -417,7 +417,7 @@ $app->post('/visualizzaprofilodocente', function (Request $request, Response $re
 });
 
 
-// endpoint: /caricaDocumento (Jonathan)
+// endpoint: /caricaDocumento (Jonathan) ok
 $app->post('/caricadocumento', function (Request $request, Response $response) {
     $db = new DBQueryManager();
 
@@ -443,7 +443,7 @@ $app->post('/caricadocumento', function (Request $request, Response $response) {
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
 
-// endpoint: /downloadDocumento (Andrea)
+// endpoint: /downloadDocumento (Andrea) OK
 $app->post('/downloadDocumento', function (Request $request, Response $response) {
     $db = new DBQueryManager();
 
@@ -492,7 +492,7 @@ $app->post('/contattavenditore', function (Request $request, Response $response)
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
 
-// endpoint: /valutazionedocumento (Andrea)
+// endpoint: /valutazionedocumento (Andrea) ok
 $app->post('/valutazionedocumento', function (Request $request, Response $response) {
     $db = new DBQueryManager();
 
@@ -586,31 +586,6 @@ $app->post('/visualizzaannunciopermatricola', function (Request $request, Respon
     }
 
 });
-//endpoint /visualizzalibripermatricola
-$app->post('/visualizzalibripermatricola', function (Request $request, Response $response) {
-
-    $db = new DBQueryManager();
-
-    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
-    $matricola = $requestData['matricola'];
-
-//Controllo la risposta dal DB e compilo i campi della risposta
-    $responseData = $db->visualizzaLibroPerCodiceDocente($matricola);
-    if ($responseData != null) {
-        $responseData['error'] = false; //Campo errore = false
-        $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
-
-        $response->getBody()->write(json_encode(array("libri" => $responseData)));
-        //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
-        $newResponse = $response->withHeader('Content-type', 'application/json');
-        return $newResponse; //Invio la risposta del servizio REST al client
-    } else {
-        $responseData['error'] = true; //Campo errore = false
-        $responseData['message'] = 'Errore imprevisto';
-        return $response->withJson($responseData);
-    }
-
-});
 //endpoint /visualizzalibripermateria
 $app->post('/visualizzalibripermateria', function (Request $request, Response $response) {
 
@@ -662,7 +637,7 @@ $app->post('/visualizzalibripercodicedocente', function (Request $request, Respo
 
 });
 //endpoint /visualizzalibripernomestudente (Danilo)
-$app->post('/visualizzalibripernomestudente', function (Request $request, Response $response) {
+$app->post('/visualizzalibripernomedocente', function (Request $request, Response $response) {
 
     $db = new DBQueryManager();
 

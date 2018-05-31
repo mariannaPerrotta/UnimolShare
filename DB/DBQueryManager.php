@@ -530,8 +530,8 @@ class DBQueryManager
         $campi = $this->campiTabelleDB[$tabella];
         //query:  " DELETE FROM DOCUMENTO WHERE ID = $idDocumento"
         $query = (
-            "DELETE FROM" .
-            $tabella . "WHERE " .
+            "DELETE FROM " .
+            $tabella . " WHERE " .
             $campi[0] . " = ? "
         );
         $stmt = $this->connection->prepare($query);
@@ -548,8 +548,8 @@ class DBQueryManager
         $campi = $this->campiTabelleDB[$tabella];
         //query:  " DELETE FROM ANNUNCIO WHERE ID = $idAnnuncio"
         $query = (
-            "DELETE FROM" .
-            $tabella . "WHERE " .
+            "DELETE FROM " .
+            $tabella . " WHERE " .
             $campi[0] . " = ? "
         );
 
@@ -840,7 +840,7 @@ class DBQueryManager
             $table . " " .
 
             "INNER JOIN " .
-            $table2 . 'ON '.
+            $table2 . ' ON '.
             $campi[3] ." = ". $campi2[0] ;
 
 
@@ -875,7 +875,7 @@ class DBQueryManager
                 "FROM " .
                 $tabella . " " .
                 "WHERE " .
-                $campi[2] . ' = ? '
+                $campi[2] . " = ? "
             );
         } else {
             $query = (
@@ -885,7 +885,7 @@ class DBQueryManager
                 "FROM " .
                 $tabella . " " .
                 "WHERE " .
-                $campi[3] . ' = ? '
+                $campi[3] . " = ? "
             );
         }
         $stmt = $this->connection->prepare($query);
@@ -924,10 +924,10 @@ class DBQueryManager
             $campi[5] . ", " .
             $campi[7] . " " .
 
-            "FROM " .
+            " FROM " .
             $tabella . " " .
-            "WHERE " .
-            $campi[6] . ' = ? '
+            " WHERE " .
+            $campi[6] . " = ? "
         );
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("s", $Matricola);
@@ -971,7 +971,7 @@ class DBQueryManager
             $campiAnnuncio[3] . ", " .
             $campiAnnuncio[4] . ", " .
             $campiAnnuncio[5] . ", " .
-            $campiAnnuncio[7] . ", " .
+            $campiAnnuncio[7] . " " .
 
             "FROM " .
             $annuncioTabella . ", " .
@@ -1063,7 +1063,7 @@ class DBQueryManager
             $campiLibro[2] . ", " .
             $campiLibro[3] . ", " .
             $campiLibro[4] . ", " .
-            $campiLibro[7] . ", " .
+            $campiLibro[7] . " " .
 
             "FROM " .
             $libroTabella . ", " .
@@ -1111,7 +1111,7 @@ class DBQueryManager
             $campiLibro[2] . ", " .
             $campiLibro[3] . ", " .
             $campiLibro[4] . ", " .
-            $campiLibro[7] . ", " .
+            $campiLibro[7] . " " .
 
             "FROM " .
             $libroTabella . ", " .
