@@ -11,14 +11,7 @@
 class DBConnectionManager
 {
 
-    //ALTERVISTA UFFICIALE
-    private $connection;
-    private $host = "localhost";
-    private $username = "unimolshare";
-    private $passwd = "";
-    private $dbname = "my_unimolshare";
-
-    /*SITEGROUND PER IL TESTING
+    //PER IL TESTING
 
     private $connection;
     private $host = "it30.siteground.eu";
@@ -26,7 +19,14 @@ class DBConnectionManager
     private $passwd = "projectUnimol300518";
     private $dbname = "valeri91_unimolshare";
 
-        //AZURE
+
+    function runConnection()
+    {
+
+        $this->connection = new mysqli($this->host, $this->username, $this->passwd, $this->dbname);
+
+
+        //DEFINITIVO DA INSERIRE POI
 
 /*    private $connection;
     private $host = "unimolshare.mysql.database.azure.com";
@@ -48,10 +48,6 @@ class DBConnectionManager
         }
         */
 
-    function runConnection()
-    {
-
-        $this->connection = new mysqli($this->host, $this->username, $this->passwd, $this->dbname);
         return $this->connection;
     }
 

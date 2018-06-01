@@ -721,7 +721,7 @@ $app->post('/visualizzadocumentistudenti', function (Request $request, Response 
     $responseData = $db->visualizzaDocumentistudenti();
     if ($responseData != null) {
         $responseData['error'] = false; //Campo errore = false
-        $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
+        $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esito positivo
 
         $response->getBody()->write(json_encode(array("documenti" => $responseData)));
         //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
