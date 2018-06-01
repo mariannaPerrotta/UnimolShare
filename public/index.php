@@ -222,7 +222,7 @@ $app->post('/recupero', function (Request $request, Response $response) {
 //endpoint /visualizzamateriapercdl (danilo)
 $app->post('/visualizzamateriapercdl', function (Request $request, Response $response) {
 
-    $db = new DBUtenti();
+    $db = new DBDocenti();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $cod_cdl = $requestData['cod_cdl'];
@@ -248,7 +248,7 @@ $app->post('/visualizzamateriapercdl', function (Request $request, Response $res
 //endpoint /visualizzadocumentopermateria (Danilo)
 $app->post('/visualizzadocumentopermateria', function (Request $request, Response $response) {
 
-    $db = new DBUtenti();
+    $db = new DBStudenti();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $materia = $requestData['materia'];
@@ -275,9 +275,10 @@ $app->post('/VisualizzaCDL', function (Request $request, Response $response) {
 
     $db = new DBUtenti();
 
-
+    $requestData=array();
+    $matricola=$requestData['matricola'];
 //Controllo la risposta dal DB e compilo i campi della risposta
-    $responseData = $db->VisualizzaCDL();
+    $responseData = $db->visualizzaCdlPerid($IDcds);
     if ($responseData != null) {
         $responseData['error'] = false; //Campo errore = false
 
@@ -298,7 +299,7 @@ $app->post('/VisualizzaCDL', function (Request $request, Response $response) {
 //endpoint /visualizzaannunciopermateria (danilo)
 $app->post('/visualizzaannunciopermateria', function (Request $request, Response $response) {
 
-    $db = new DBUtenti();
+    $db = new DBStudenti();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $materia = $requestData['materia'];
@@ -391,6 +392,7 @@ $app->post('/visualizzaprofilostudente', function (Request $request, Response $r
     }
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
+
 //endpoint /visualizzaprofilodocente (Michela) ok
 $app->post('/visualizzaprofilodocente', function (Request $request, Response $response) {
 

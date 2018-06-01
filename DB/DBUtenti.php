@@ -162,7 +162,7 @@ class DBUtenti
     }
 
     //danilo per visualizzare il corso di studio
-    public function visualizzaCdlPerid()
+    public function visualizzaCdlPerid($idcdl)
     {
         $CDL = array();
         $table = $this->tabelleDB[1]; //Tabella per la query
@@ -172,8 +172,10 @@ class DBUtenti
             $campi[0] . ", " .
             $campi[1] . " " .
             "FROM " .
-            $table;
+            $table." ".
+            "WHERE ". $campi[0]." = ?";
         $stmt = $this->connection->prepare($query);
+        $stmt->bind_param(i , $idcdl);
         $stmt->execute();
         $stmt->store_result();
         $stmt->bind_result($id,$nome);
@@ -391,10 +393,6 @@ class DBUtenti
             return null;
         }
     }
-
-
-    //Funzione visualizzare profilo studente (Michela e Danilo)
-
 
     //Funzione carica documento (Jonathan)
     public function caricaDocumento($titolo, $cod_docente, $cod_studente, $cod_materia, $link)
