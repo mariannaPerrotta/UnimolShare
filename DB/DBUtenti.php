@@ -172,13 +172,13 @@ class DBUtenti
             $campi[0] . ", " .
             $campi[1] . " " .
             "FROM " .
-            $table." ".
-            "WHERE ". $campi[0]." = ?";
+            $table . " " .
+            "WHERE " . $campi[0] . " = ?";
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param(i , $idcdl);
+        $stmt->bind_param(i, $idcdl);
         $stmt->execute();
         $stmt->store_result();
-        $stmt->bind_result($id,$nome);
+        $stmt->bind_result($id, $nome);
 
 
         while ($stmt->fetch()) { //Scansiono la risposta della query
@@ -248,7 +248,7 @@ class DBUtenti
         //Invio la query
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("s", $matricola); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
-        return($stmt->execute());
+        return ($stmt->execute());
     }
 
     // Funzione Modifica Profilo (Gigi)// da cambiare il ritotno
@@ -327,7 +327,7 @@ class DBUtenti
             $stmt = $this->connection->prepare($query);
             $stmt->bind_param("sssssii", $matricola, $nome, $cognome, $email, $password, $attivo, $cds); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
             $result = ($stmt->execute()) ? 1 : 2;
-        } else if ($substr == "unimol"){
+        } else if ($substr == "unimol") {
             $tabella = $this->tabelleDB[2];
             //query: "INSERT INTO TABLE (matricola, nome, cognome, email, password, attivo) VALUES (?,?,?,?,?,0)"
             $query = (
@@ -437,9 +437,9 @@ class DBUtenti
     }
 
     //Funzione visualizza documento per id (Danilo)
-    public function visualizzaDocumentoPerId($Matricola,$tabella)
+    public function visualizzaDocumentoPerId($Matricola, $tabella)
     {
-        $tabella = $this->tabelleDB[3]; //Tabella per la query
+        $tabella1 = $this->tabelleDB[3]; //Tabella per la query
         $campi = $this->campiTabelleDB[$tabella];
         if ($tabella == "studente") {//controllo per vedere se cercarlo secondo il campo cod_studente o cod_materia
             //query= SELECT nome,link FROM documento WHERE cod_studente/cod_docente=$matricols
@@ -448,19 +448,20 @@ class DBUtenti
                 $campi[1] . ", " .
                 $campi[5] . " " .
                 "FROM " .
-                $tabella . " " .
+                $tabella1 . " " .
                 "WHERE " .
-                $campi[2] . " = ? "
+                $campi[3] . " = ? "
             );
-        } else {
+        }
+        if ($tabella == "docente") {
             $query = (
                 "SELECT " .
                 $campi[1] . ", " .
                 $campi[5] . " " .
                 "FROM " .
-                $tabella . " " .
+                $tabella1 . " " .
                 "WHERE " .
-                $campi[3] . " = ? "
+                $campi[2] . " = ? "
             );
         }
         $stmt = $this->connection->prepare($query);
