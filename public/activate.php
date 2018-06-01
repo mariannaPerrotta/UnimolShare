@@ -5,13 +5,13 @@
  * Date: 29/05/18
  * Time: 23:43
  */
-require '../DB/DBQueryManager.php';
+require '../DB/DBUtenti.php';
 require '../DB/DBConnectionManager.php';
 
 $email = $_GET['email'];
 $matricola = $_GET['matricola'];
 
-$db = new DBQueryManager();
+$db = new DBUtenti();
 $esito = "";
 ($db->confermaProfilo($email, $matricola)) ? $esito = "Email confermata" : $esito = "Non è possibile confermare l'email ora, riprovare più tardi";
 
