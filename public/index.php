@@ -17,11 +17,11 @@ require_once '../vendor/autoload.php';
 require '../DB/DBConnectionManager.php';
 require '../DB/DBUtenti.php';
 require '../DB/DBDocenti.php';
-require '../DB/DBStudenti.php';
+
 require '../Helper/EmailHelper/EmailHelper.php';
 require '../Helper/EmailHelper/EmailHelperAltervista.php';
 require '../Helper/RandomPasswordHelper/RandomPasswordHelper.php';
-
+require '../DB/DBStudente.php';
 if (PHP_SAPI == 'cli-server') {
     // To help the built-in PHP dev server, check if the request was actually for
     // something which should probably be served as a static file
@@ -250,7 +250,7 @@ $app->post('/visualizzamateriapercdl', function (Request $request, Response $res
 //endpoint /visualizzadocumentopermateria (Danilo)
 $app->post('/visualizzadocumentopermateria', function (Request $request, Response $response) {
 
-    $db = new DBStudenti();
+    $db = new DBStudente();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $materia = $requestData['materia'];
@@ -301,7 +301,7 @@ $app->post('/VisualizzaCDL', function (Request $request, Response $response) {
 //endpoint /visualizzaannunciopermateria (danilo)
 $app->post('/visualizzaannunciopermateria', function (Request $request, Response $response) {
 
-    $db = new DBStudenti();
+    $db = new DBStudente();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $materia = $requestData['materia'];
@@ -370,7 +370,7 @@ $app->delete('/rimuoviAnnuncio', function (Request $request, Response $response)
 //endpoint /visualizzaprofilostudente (Michela) OK
 $app->post('/visualizzaprofilostudente', function (Request $request, Response $response) {
 
-    $db = new DBStudenti();
+    $db = new DBStudente();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $matricola = $requestData['matricola'];
@@ -407,7 +407,7 @@ $app->post('/visualizzaprofilodocente', function (Request $request, Response $re
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Elemento visualizzato con successo';//Messaggio di esiso positivo
 
-        $response->getBody()->write(json_encode(array("annunci" => $responseData)));
+        $response->getBody()->write(json_encode(array("profilo" => $responseData)));
         //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
         $newResponse = $response->withHeader('Content-type', 'application/json');
         return $newResponse; //Invio la risposta del servizio REST al client
@@ -445,7 +445,7 @@ $app->post('/caricadocumento', function (Request $request, Response $response) {
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
 $app->post('/caricaannuncio', function (Request $request, Response $response) {
-    $db = new DBStudenti();
+    $db = new DBStudente();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $titolo = $requestData['titolo'];
@@ -475,7 +475,7 @@ $app->post('/caricaannuncio', function (Request $request, Response $response) {
 
 // endpoint: /downloadDocumento (Andrea) OK
 $app->post('/downloadDocumento', function (Request $request, Response $response) {
-    $db = new DBStudenti();
+    $db = new DBStudente();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $id = $requestData['id'];
@@ -499,7 +499,7 @@ $app->post('/downloadDocumento', function (Request $request, Response $response)
 //contattavenditore by domenico
 $app->post('/contattavenditore', function (Request $request, Response $response) {
 
-    $db = new DBStudenti();
+    $db = new DBStudente();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $idAnnuncio = $requestData['id'];
@@ -524,7 +524,7 @@ $app->post('/contattavenditore', function (Request $request, Response $response)
 
 // endpoint: /valutazionedocumento (Andrea) ok
 $app->post('/valutazionedocumento', function (Request $request, Response $response) {
-    $db = new DBStudenti();
+    $db = new DBStudente();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $valutazione = $requestData['valutazione'];
@@ -548,7 +548,7 @@ $app->post('/valutazionedocumento', function (Request $request, Response $respon
 
 // endpoint: /ricerca (Andrea)
 $app->post('/ricerca', function (Request $request, Response $response) {
-    $db = new DBStudenti();
+    $db = new DBStudente();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $key = $requestData['key'];
@@ -569,16 +569,16 @@ $app->post('/visualizzadocumentoperid', function (Request $request, Response $re
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $matricola = $requestData['matricola'];
-    $tabella_utente=$requestData['$tabella_utente'];
 
 //Controllo la risposta dal DB e compilo i campi della risposta
-    $responseData = $db->visualizzaDocumentoPerId($matricola,$tabella_utente);
+    $responseData = $db->visualizzaDocumentoPerId($matricola);
+
+
     if ($responseData != null) {
         $responseData['error'] = false; //Campo errore = false
+        $responseData['message'] = 'Elemento visualizzato con successo';//Messaggio di esiso positivo
 
-        $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
         $response->getBody()->write(json_encode(array("documenti" => $responseData)));
-
         //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
         $newResponse = $response->withHeader('Content-type', 'application/json');
         return $newResponse; //Invio la risposta del servizio REST al client
@@ -592,7 +592,7 @@ $app->post('/visualizzadocumentoperid', function (Request $request, Response $re
 //endpoint /visualizzaannunciopermatricola (Danilo)
 $app->post('/visualizzaannunciopermatricola', function (Request $request, Response $response) {
 
-    $db = new DBStudenti();
+    $db = new DBStudente();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $matricola = $requestData['matricola'];
@@ -619,7 +619,7 @@ $app->post('/visualizzaannunciopermatricola', function (Request $request, Respon
 //endpoint /visualizzalibripermateria
 $app->post('/visualizzalibripermateria', function (Request $request, Response $response) {
 
-    $db = new DBStudenti();
+    $db = new DBStudente();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $materia = $requestData['materia'];
@@ -669,7 +669,7 @@ $app->post('/visualizzalibripercodicedocente', function (Request $request, Respo
 //endpoint /visualizzalibripernomestudente (Danilo)
 $app->post('/visualizzalibripernomedocente', function (Request $request, Response $response) {
 
-    $db = new DBStudenti();
+    $db = new DBStudente();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $nome = $requestData['nome'];
@@ -715,7 +715,7 @@ $app->post('/segnalazione', function (Request $request, Response $response) {
 
 $app->post('/visualizzadocumentistudenti', function (Request $request, Response $response) {
 
-    $db = new DBStudenti();
+    $db = new DBStudente();
 
 //Controllo la risposta dal DB e compilo i campi della risposta
     $responseData = $db->visualizzaDocumentistudenti();

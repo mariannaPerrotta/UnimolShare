@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Danilo
- * Date: 01/06/2018
- * Time: 10:48
- */
-
 class DBDocenti
 {
     //Variabili di classe

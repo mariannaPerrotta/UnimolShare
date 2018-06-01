@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Danilo
- * Date: 31/05/2018
- * Time: 19:50
- */
-require '../DB/DBUtenti.php';
-class DBStudenti
+//require '../DB/DBUtenti.php';
+class DBStudente
 {
     //Variabili di classe
     private $connection;
@@ -92,7 +86,7 @@ class DBStudenti
         $this->connection = $db->runConnection();
     }
 
-    //Funzione visualizza profilo studente (Danilo)
+    //Funzione visualizza profilo studente ()
     public function VisualizzaProfiloStudente($matricola)
     {
         $tabella = $this->tabelleDB[6]; //Tabella per la query

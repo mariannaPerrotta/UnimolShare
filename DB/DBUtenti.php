@@ -437,7 +437,7 @@ class DBUtenti
     }
 
     //Funzione visualizza documento per id (Danilo)
-    public function visualizzaDocumentoPerId($Matricola,$tabell)
+    public function visualizzaDocumentoPerId($Matricola)
     {
         $tabella = $this->tabelleDB[3]; //Tabella per la query
         $campi = $this->campiTabelleDB[$tabella];
@@ -459,13 +459,13 @@ class DBUtenti
         $stmt->store_result();
         if ($stmt->num_rows > 0) {
             //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp //
-            $stmt->bind_result($documento);
-            $documento = array();
+            $stmt->bind_result($titolo,$id);
+            $documento= array();
             while ($stmt->fetch()) { //Scansiono la risposta della query
                 $temp = array(); //Array temporaneo per l'acquisizione dei dati
                 //Indicizzo con key i dati nell'array
-                $temp[$campi[1]] = $documento;
-
+                $temp[$campi[1]] = $titolo;
+                $temp[$campi[5]] = $id;
                 array_push($documento, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
             }
             return $documento; //ritorno array Documento riempito con i risultati della query effettuata.
