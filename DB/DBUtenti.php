@@ -251,7 +251,7 @@ class DBUtenti
         return($stmt->execute());
     }
 
-    // Funzione Modifica Profilo (Gigi)// da cambiare il ritotno
+    // Funzione Modifica Profilo (Gigi)// da cambiare il ritotno ok
     public function modificaProfilo($matricola, $nome, $cognome, $password, $tab)
     {
         $tabella = $this->tabelleDB[$tab];
@@ -437,11 +437,11 @@ class DBUtenti
     }
 
     //Funzione visualizza documento per id (Danilo)
-    public function visualizzaDocumentoPerId($Matricola,$tabella)
+    public function visualizzaDocumentoPerId($Matricola,$tabell)
     {
         $tabella = $this->tabelleDB[3]; //Tabella per la query
         $campi = $this->campiTabelleDB[$tabella];
-        if ($tabella == 2) {//controllo per vedere se cercarlo secondo il campo cod_studente o cod_materia
+
             //query= SELECT nome,link FROM documento WHERE cod_studente/cod_docente=$matricols
             $query = (
                 "SELECT " .
@@ -450,21 +450,11 @@ class DBUtenti
                 "FROM " .
                 $tabella . " " .
                 "WHERE " .
-                $campi[2] . " = ? "
+                $campi[3] . " = ? OR ". $campi[2] . " = ? "
             );
-        } else {
-            $query = (
-                "SELECT " .
-                $campi[1] . ", " .
-                $campi[5] . " " .
-                "FROM " .
-                $tabella . " " .
-                "WHERE " .
-                $campi[3] . " = ? "
-            );
-        }
+
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("s", $Matricola);
+        $stmt->bind_param("ss", $Matricola,$Matricola);
         $stmt->execute();
         $stmt->store_result();
         if ($stmt->num_rows > 0) {

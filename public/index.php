@@ -16,6 +16,8 @@ use Slim\Http\Response;
 require_once '../vendor/autoload.php';
 require '../DB/DBConnectionManager.php';
 require '../DB/DBUtenti.php';
+require '../DB/DBDocenti.php';
+require '../DB/DBStudenti.php';
 require '../Helper/EmailHelper/EmailHelper.php';
 require '../Helper/EmailHelper/EmailHelperAltervista.php';
 require '../Helper/RandomPasswordHelper/RandomPasswordHelper.php';
@@ -433,6 +435,34 @@ $app->post('/caricadocumento', function (Request $request, Response $response) {
 
     //Controllo la risposta dal DB e compilo i campi della risposta
     if ($db->caricaDocumento($titolo, $codice_docente, $codice_studente, $codice_materia, $link)) { //Se il caricamento del doc Ã¨ andata a buon fine
+        $responseData['error'] = false; //Campo errore = false
+        $responseData['message'] = 'Caricamento avvenuto con successo'; //Messaggio di esito positivo
+
+    } else {
+        $responseData['error'] = true; //Campo errore = true
+        $responseData['message'] = 'Caricamento non effettuato'; //Messaggio di esito negativo
+    }
+    return $response->withJson($responseData); //Invio la risposta del servizio REST al client
+});
+$app->post('/caricaannuncio', function (Request $request, Response $response) {
+    $db = new DBStudenti();
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $titolo = $requestData['titolo'];
+    $contatto = $requestData['contatto'];
+    $prezzo = $requestData['prezzo'];
+    $edizione = $requestData['edizione'];
+    $casa_editrice=$requestData['casa_editrice'];
+    $cod_studente=$requestData['cod_studente'];
+    $autori=$requestData['$autori'];
+    $cod_materia=$requestData['cod_materia'];
+    $link = $requestData['link'];
+
+    //Risposta del servizio REST
+    $responseData = array(); //La risposta e' un array di informazioni da compilare
+
+    //Controllo la risposta dal DB e compilo i campi della risposta
+    if ($db->caricaAnnuncio($titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autori, $cod_materia, $link)) { //Se il caricamento del doc Ã¨ andata a buon fine
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Caricamento avvenuto con successo'; //Messaggio di esito positivo
 
