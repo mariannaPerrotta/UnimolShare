@@ -441,7 +441,7 @@ class DBUtenti
     {
         $tabella = $this->tabelleDB[3]; //Tabella per la query
         $campi = $this->campiTabelleDB[$tabella];
-        if ($tabella == 2) {//controllo per vedere se cercarlo secondo il campo cod_studente o cod_materia
+        if ($tabella == "studente") {//controllo per vedere se cercarlo secondo il campo cod_studente o cod_materia
             //query= SELECT nome,link FROM documento WHERE cod_studente/cod_docente=$matricols
             $query = (
                 "SELECT " .
