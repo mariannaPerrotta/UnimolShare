@@ -12,86 +12,19 @@ class DBUtenti
 {
     //Variabili di classe
     private $connection;
-    private $tabelleDB = [ //Array di tabelle del db
-        "annuncio",
-        "cdl",
-        "docente",
-        "documento",
-        "libro",
-        "materia",
-        "studente",
-        "valutazione"
-    ];
-    private $campiTabelleDB = [ //Campi delle tabelle (array bidimensionale indicizzato con key)
-        "annuncio" => [
-            "id",
-            "titolo",
-            "contatto",
-            "prezzo",
-            "edizione",
-            "casa_editrice",
-            "cod_stud",
-            "autore",
-            "cod_materia"
-        ],
-        "cdl" => [
-            "id",
-            "nome"
-        ],
-        "docente" => [
-            "matricola",
-            "nome",
-            "cognome",
-            "email",
-            "password",
-            "attivo"
-        ],
-        "documento" => [
-            "id",
-            "titolo",
-            "cod_docente",
-            "cod_studente",
-            "cod_materia",
-            "link"
-        ],
-        "libro" => [
-            "id",
-            "titolo",
-            "autore",
-            "casa_editrice",
-            "edizione",
-            "cod_docente",
-            "cod_materia",
-            "link"
-        ],
-        "materia" => [
-            "id",
-            "nome",
-            "cod_docente",
-            "cod_cdl"
-        ],
-        "studente" => [
-            "matricola",
-            "nome",
-            "cognome",
-            "email",
-            "password",
-            "attivo",
-            "cod_cds"
-        ],
-        "valutazione" => [
-            "id",
-            "valutazione",
-            "cod_documento"
-        ]
-    ];
+    private $tabelleDB;
+    private $campiTabelleDB;
 
     //Costruttore
     public function __construct()
     {
         //Setup della connessione col DB
-        $db = new DBConnectionManager();
+        $db = new DBQueryManager();
+        $queryManager = new DBQueryManager();
+
         $this->connection = $db->runConnection();
+        $this->tabelleDB = $queryManager->getTabelleDB();
+        $this->campiTabelleDB = $queryManager->getCampiTabelleDB();
     }
 
     //---- METODI PER GESTIRE LE QUERY ----
