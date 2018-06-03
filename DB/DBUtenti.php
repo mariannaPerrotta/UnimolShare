@@ -12,19 +12,86 @@ class DBUtenti
 {
     //Variabili di classe
     private $connection;
-    private $tabelleDB;
-    private $campiTabelleDB;
+    private $tabelleDB = [ //Array di tabelle del db
+        "annuncio",
+        "cdl",
+        "docente",
+        "documento",
+        "libro",
+        "materia",
+        "studente",
+        "valutazione"
+    ];
+    private $campiTabelleDB = [ //Campi delle tabelle (array bidimensionale indicizzato con key)
+        "annuncio" => [
+            "id",
+            "titolo",
+            "contatto",
+            "prezzo",
+            "edizione",
+            "casa_editrice",
+            "cod_stud",
+            "autore",
+            "cod_materia"
+        ],
+        "cdl" => [
+            "id",
+            "nome"
+        ],
+        "docente" => [
+            "matricola",
+            "nome",
+            "cognome",
+            "email",
+            "password",
+            "attivo"
+        ],
+        "documento" => [
+            "id",
+            "titolo",
+            "cod_docente",
+            "cod_studente",
+            "cod_materia",
+            "link"
+        ],
+        "libro" => [
+            "id",
+            "titolo",
+            "autore",
+            "casa_editrice",
+            "edizione",
+            "cod_docente",
+            "cod_materia",
+            "link"
+        ],
+        "materia" => [
+            "id",
+            "nome",
+            "cod_docente",
+            "cod_cdl"
+        ],
+        "studente" => [
+            "matricola",
+            "nome",
+            "cognome",
+            "email",
+            "password",
+            "attivo",
+            "cod_cds"
+        ],
+        "valutazione" => [
+            "id",
+            "valutazione",
+            "cod_documento"
+        ]
+    ];
 
     //Costruttore
     public function __construct()
     {
         //Setup della connessione col DB
-        $db = new DBQueryManager();
-        $queryManager = new DBQueryManager();
-
+        $db = new DBConnectionManager();
         $this->connection = $db->runConnection();
-        $this->tabelleDB = $queryManager->getTabelleDB();
-        $this->campiTabelleDB = $queryManager->getCampiTabelleDB();
     }
 
     //---- METODI PER GESTIRE LE QUERY ----
@@ -97,12 +164,12 @@ class DBUtenti
     //danilo per visualizzare il corso di studio
     public function visualizzaCdlPerid($idcdl)
     {
-        $CDL = array();
+
         $table = $this->tabelleDB[1]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
         $query = //query: "SELECT id, nome FROM cdl"
             "SELECT " .
-            $campi[0] . ", " .
+
             $campi[1] . " " .
             "FROM " .
             $table." ".
@@ -111,18 +178,18 @@ class DBUtenti
         $stmt->bind_param(i , $idcdl);
         $stmt->execute();
         $stmt->store_result();
-        $stmt->bind_result($id,$nome);
+        if ($stmt->num_rows > 0) {
+            $stmt->bind_result($nome);
 
-
-        while ($stmt->fetch()) { //Scansiono la risposta della query
-            $temp = array(); //Array temporaneo per l'acquisizione dei dati
-            //Indicizzo con key i dati nell'array
-            $temp[$campi[0]] = $id;
-            $temp[$campi[1]] = $nome;
-            array_push($CDL, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $cdl
-        }
-        return $CDL;
-
+            $CDL = array();
+            while ($stmt->fetch()) { //Scansiono la risposta della query
+                $temp = array(); //Array temporaneo per l'acquisizione dei dati
+                //Indicizzo con key i dati nell'array
+                $temp[$campi[1]] = $nome;
+                array_push($CDL, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $cdl
+            }
+            return $CDL;
+        }else return null;
     }
 
     //Funzione di recupero (Danilo)
@@ -364,9 +431,16 @@ class DBUtenti
         );
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("i", $idDocumento);
-        $stmt->execute();
+        if($stmt){
+            $result=true;
+        }else{
+            $result=false;
+
+        }
         $stmt->store_result();
-        return $stmt->num_rows > 0;
+
+
+        return $result;
     }
 
     //Funzione visualizza documento per id (Danilo)

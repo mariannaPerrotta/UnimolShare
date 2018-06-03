@@ -4,19 +4,86 @@ class DBStudente
 {
     //Variabili di classe
     private $connection;
-    private $tabelleDB;
-    private $campiTabelleDB;
+    private $tabelleDB = [ //Array di tabelle del db
+        "annuncio",
+        "cdl",
+        "docente",
+        "documento",
+        "libro",
+        "materia",
+        "studente",
+        "valutazione"
+    ];
+    private $campiTabelleDB = [ //Campi delle tabelle (array bidimensionale indicizzato con key)
+        "annuncio" => [
+            "id",
+            "titolo",
+            "contatto",
+            "prezzo",
+            "edizione",
+            "casa_editrice",
+            "cod_stud",
+            "autore",
+            "cod_materia"
+        ],
+        "cdl" => [
+            "id",
+            "nome"
+        ],
+        "docente" => [
+            "matricola",
+            "nome",
+            "cognome",
+            "email",
+            "password",
+            "attivo"
+        ],
+        "documento" => [
+            "id",
+            "titolo",
+            "cod_docente",
+            "cod_studente",
+            "cod_materia",
+            "link"
+        ],
+        "libro" => [
+            "id",
+            "titolo",
+            "autore",
+            "casa_editrice",
+            "edizione",
+            "cod_docente",
+            "cod_materia",
+            "link"
+        ],
+        "materia" => [
+            "id",
+            "nome",
+            "cod_docente",
+            "cod_cdl"
+        ],
+        "studente" => [
+            "matricola",
+            "nome",
+            "cognome",
+            "email",
+            "password",
+            "attivo",
+            "cod_cds"
+        ],
+        "valutazione" => [
+            "id",
+            "valutazione",
+            "cod_documento"
+        ]
+    ];
 
     //Costruttore
     public function __construct()
     {
         //Setup della connessione col DB
-        $db = new DBQueryManager();
-        $queryManager = new DBQueryManager();
-
+        $db = new DBConnectionManager();
         $this->connection = $db->runConnection();
-        $this->tabelleDB = $queryManager->getTabelleDB();
-        $this->campiTabelleDB = $queryManager->getCampiTabelleDB();
     }
 
     //Funzione visualizza profilo studente ()
@@ -574,6 +641,46 @@ class DBStudente
             return null;
         }
     }
+    public function visualizzaCdlStudente($matricola)
+    {
+        $cdl = array();
+
+        $table = $this->tabelleDB[1]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
+        $table2 = $this->tabelleDB[6];
+        $campi2 = $this->campiTabelleDB[$table2];
+        $query = //"SELECT id,titolo FROM cdl , studenti where matricola = ? and idcdl=cdl"
+            ("SELECT " . $table . "." .
+                $campi[0] . ", " . $table . "." .
+                $campi[1] . " " .
+                "FROM " .
+                $table . " " .
+                "inner join " . $table2 . " on " .
+                $table . "." . $campi[0] . " = " .
+                $table2 . "." . $campi2[6] .
+                " WHERE " .
+                $table2 . "." . $campi2[0] . " = ? ");
+//            "Select cdl.id,cdl.nome from cdl inner join studente on cdl.id = studente.cod_cds Where studente.matricola = ?";
 
 
+        $stmt = $this->connection->prepare(/*"Select cdl.id,cdl.nome from cdl inner join studente on cdl.id = studente.cod_cds Where studente.matricola = ?"*/$query);
+        $stmt->bind_param(s ,$matricola);
+        $result=$stmt->execute();
+//        if (!$result){
+//            throw new Exception($stmt->error);
+//        }
+        $stmt->store_result();
+
+        //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp
+        $stmt->bind_result($id,$titolo);
+        while ($stmt->fetch()) { //Scansiono la risposta della query
+            $temp = array(); //Array temporaneo per l'acquisizione dei dati
+            //Indicizzo con key i dati nell'array
+            $temp[$campi[0]] = $id;
+            $temp[$campi[1]] = $titolo;
+            array_push($cdl, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
+        }
+        return $cdl; //ritorno array libri riempito con i risultati della query effettuata.
+
+    }
 }

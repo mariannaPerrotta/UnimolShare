@@ -5,8 +5,8 @@
  * Date: 29/05/18
  * Time: 23:43
  */
-require '../DB/DBUtenti.php';
 require '../DB/DBConnectionManager.php';
+require '../DB/DBUtenti.php';
 
 $email = $_GET['email'];
 $matricola = $_GET['matricola'];

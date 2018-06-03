@@ -445,6 +445,7 @@ $app->post('/caricadocumento', function (Request $request, Response $response) {
     }
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
+
 $app->post('/caricaannuncio', function (Request $request, Response $response) {
     $db = new DBStudente();
 
@@ -546,7 +547,6 @@ $app->post('/valutazionedocumento', function (Request $request, Response $respon
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
 
-
 // endpoint: /ricerca (Andrea)
 $app->post('/ricerca', function (Request $request, Response $response) {
     $db = new DBStudente();
@@ -590,6 +590,7 @@ $app->post('/visualizzadocumentoperid', function (Request $request, Response $re
     }
 
 });
+
 //endpoint /visualizzaannunciopermatricola (Danilo)
 $app->post('/visualizzaannunciopermatricola', function (Request $request, Response $response) {
 
@@ -617,6 +618,7 @@ $app->post('/visualizzaannunciopermatricola', function (Request $request, Respon
     }
 
 });
+
 //endpoint /visualizzalibripermateria
 $app->post('/visualizzalibripermateria', function (Request $request, Response $response) {
 
@@ -642,6 +644,7 @@ $app->post('/visualizzalibripermateria', function (Request $request, Response $r
     }
 
 });
+
 //endpoint /visualizzalibripercodicedocente (Danilo)
 $app->post('/visualizzalibripercodicedocente', function (Request $request, Response $response) {
 
@@ -667,6 +670,7 @@ $app->post('/visualizzalibripercodicedocente', function (Request $request, Respo
     }
 
 });
+
 //endpoint /visualizzalibripernomestudente (Danilo)
 $app->post('/visualizzalibripernomedocente', function (Request $request, Response $response) {
 
@@ -735,6 +739,7 @@ $app->post('/visualizzadocumentistudenti', function (Request $request, Response 
     }
 
 });
+
 $app->run();
 
 ?>
