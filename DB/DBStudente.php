@@ -319,10 +319,11 @@ class DBStudente
     //Funzione per ricercare tra documenti, libri e annunci (Andrea)
     public function ricerca($key)
     {
-        $annunci = $this->tabelleDB[1];
-        $docs = $this->tabelleDB[4];
-        $libri = $this->tabelleDB[5];
+        $annunci = $this->tabelleDB[0];
+        $docs = $this->tabelleDB[3];
+        $libri = $this->tabelleDB[4];
         $campi = $this->campiTabelleDB[$annunci];
+
         /*query: "  SELECT id, titolo, tabella FROM annuncio WHERE titolo LIKE '%?%'
                     UNION
                     SELECT id, titolo, tabella FROM documento WHERE titolo LIKE '%?%'
@@ -330,31 +331,31 @@ class DBStudente
                     SELECT id, titolo, tabella FROM libro WHERE titolo LIKE '%?%' */
         $query = (
             "SELECT " .
-            $campi[0] . ", " .
-            $campi[1] . ", " .
-            "'" . $annunci . "' as tabella " .
+            $annunci.".".$campi[0] . ", " .
+            $annunci.".".$campi[1] . ", 'annuncio' as Source " .
+
             "FROM " .
             $annunci . " " .
             "WHERE " .
-            $campi[1] . " LIKE"." '%".$key."%' " .
+            $annunci.".".$campi[1] . " LIKE"." '%".$key."%' " .
             "UNION " .
             "SELECT " .
-            $campi[0] . ", " .
-            $campi[1] . ", " .
-            "'" . $docs . "' as tabella " .
+            $docs.".".$campi[0] . ", " .
+            $docs.".".$campi[1] . ", 'docs' as Source  " .
+
             "FROM " .
             $docs . " " .
             "WHERE " .
-            $campi[1] . " LIKE"." '%".$key."%' " .
+            $docs.".".$campi[1] . " LIKE"." '%".$key."%' " .
             "UNION " .
             "SELECT " .
-            $campi[0] . ", " .
-            $campi[1] . ", " .
-            "'" . $libri . "' as tabella " .
+            $libri.".".$campi[0] . ", " .
+            $libri.".".$campi[1] . ", 'libri' as Source  " .
+
             "FROM " .
             $libri . " " .
             "WHERE " .
-            $campi[1] . " LIKE"." '%".$key."%'"
+            $libri.".".$campi[1] . " LIKE"." '%".$key."%'"
         );
         $stmt = $this->connection->prepare($query); //Preparo la query
         $stmt->execute();//Esegue la query
@@ -368,6 +369,7 @@ class DBStudente
                 $temp[$campi[0]] = $id;
                 $temp[$campi[1]] = $titolo;
                 $temp['tabella'] = $tabella;
+
                 array_push($risultato, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $utenti
             }
             return $risultato;
