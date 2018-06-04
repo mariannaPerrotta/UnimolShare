@@ -147,10 +147,10 @@ class DBDocenti
             "FROM " .
             $tabella . " " .
             "WHERE " .
-            $campi[6] . ' = ? '
+            $campi[5] . " = ? "
         );
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("s", $Matricola);
+        $stmt->bind_param("s", $matricola);
         $stmt->execute();
         $stmt->store_result();
         if ($stmt->num_rows > 0) {
@@ -194,7 +194,7 @@ class DBDocenti
             while ($stmt->fetch()) { //Scansiono la risposta della query
                 $temp = array();
                 //Indicizzo con key i dati nell'array
-                $temp[$campi[1]] = $materie;
+                $temp[$campi[1]] = $nome_materia;
                 array_push($materie, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $materie
             }
             return $materie; //ritorno array $materie riempito con i risultati della query effettuata.
