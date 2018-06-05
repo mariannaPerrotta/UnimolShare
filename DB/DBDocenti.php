@@ -188,7 +188,7 @@ class DBDocenti
             "FROM " .
             $tabella . " " .
             "WHERE " .
-            $campi[0] . ' = ? ';
+            $campi[3] . ' = ? ';
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("i", $cdlid);
         $stmt->execute();

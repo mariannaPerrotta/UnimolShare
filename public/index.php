@@ -232,7 +232,7 @@ $app->post('/visualizzamateriapercdl', function (Request $request, Response $res
 
     //Controllo la risposta dal DB e compilo i campi della risposta
     $responseData = $db->visualizzaMateriaPerCdl($cod_cdl);
-    $contatore=(count($responseData));
+    $contatore=(count($responseData['message']));
 
     if ($responseData != null) {
         $responseData['error'] = false; //Campo errore = false
