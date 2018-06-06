@@ -425,7 +425,7 @@ class DBUtenti
         $campi = $this->campiTabelleDB[$tabella];
         //query:  " DELETE FROM DOCUMENTO WHERE ID = $idDocumento"
         $query = (
-            "DELETE FROM " .
+            " DELETE FROM " .
             $tabella . " WHERE " .
             $campi[0] . " = ? "
         );
@@ -468,7 +468,8 @@ class DBUtenti
             //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp //
             $stmt->bind_result($titolo,$id);
             $documento= array();
-            while ($stmt->fetch()) { //Scansiono la risposta della query
+            while ($stmt->fetch()) {
+                //Scansiono la risposta della query
                 $temp = array(); //Array temporaneo per l'acquisizione dei dati
                 //Indicizzo con key i dati nell'array
                 $temp[$campi[1]] = $titolo;

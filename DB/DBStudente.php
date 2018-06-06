@@ -149,30 +149,30 @@ class DBStudente
         $campiDocumento = $this->campiTabelleDB[$documentiTab];
         $materieTab = $this->tabelleDB[5];
         $campiMateria = $this->campiTabelleDB[$materieTab];
-        //query: SELECT documento.titolo,documento.cod_docente,documento.cod_studente,documento.link FROM documento Inner join materia ON documento.cod_materia = materia.id Where materia.nome = "Ingegneria" AND id_materia=cod_materia"
+        //query: "SELECT id=0, titolo=1, cod_docente=2, cod materia=5,link=6, id_materia=0, FROM documento,materia WHERE nomemateria= ? AND id_materia=cod_materia"
         $query = (
             "SELECT " .
-            $documentiTab.".". $campiDocumento[0] . ", " .
-            $documentiTab.".".$campiDocumento[1] . ", " .
-            $documentiTab.".".$campiDocumento[2] . ", " .
-            $documentiTab.".".$campiDocumento[3] . ", " .
-            $documentiTab.".".$campiDocumento[5] . " " .
-            "FROM ".$documentiTab." ".
-            "Inner join " .
-            $materieTab . " " .
-            "ON " .
-            $documentiTab.".".$campiDocumento[4] . " = " .
-            $materieTab.".".$campiMateria[0].
-            " WHERE " . $materieTab.".".$campiMateria[1] . '= ? '
+            $campiDocumento[0] . ", " .
+            $campiDocumento[1] . ", " .
+            $campiDocumento[2] . ", " .
+            $campiDocumento[5] . ", " .
+            $campiDocumento[6] . " " .
 
+            "FROM " .
+            $documentiTab . ", " .
+            $materieTab . " " .
+            "WHERE" . $campiMateria[1] . '= ? ' .
+            "AND " .
+            $campiDocumento[4] . " = " .
+            $campiMateria[0]
         );
 
-        $stmt = $this->connection->prepare(/*"SELECT documento.titolo,documento.cod_docente,documento.cod_studente,documento.link FROM documento Inner join materia ON documento.cod_materia = materia.id Where materia.nome = ? "*/$query);
+        $stmt = $this->connection->prepare($query);
         $stmt->bind_param("s", $Materia);
         $stmt->execute();
         $stmt->store_result();
         if ($stmt->num_rows > 0) {
-            $stmt->bind_result($idDocumento, $titolo, $cod_docente, $cod_studente, $link);
+            $stmt->bind_result($idDocumento, $titolo, $cod_docente, $cod_materia, $link);
             $documento = array();
             while ($stmt->fetch()) { //Scansiono la risposta della query
                 $temp = array();
@@ -180,9 +180,8 @@ class DBStudente
                 $temp[$campiDocumento[0]] = $idDocumento;
                 $temp[$campiDocumento[1]] = $titolo;
                 $temp[$campiDocumento[2]] = $cod_docente;
-                $temp[$campiDocumento[3]] = $cod_studente;
-                $temp[$campiDocumento[5]] = $link;
-
+                $temp[$campiDocumento[5]] = $cod_materia;
+                $temp[$campiDocumento[6]] = $link;
                 array_push($documento, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $documento
             }
             return $documento; //ritorno array $documento riempito con i risultati della query effettuata.
@@ -238,7 +237,7 @@ class DBStudente
     }
 
     //Funzione carica annuncio (Jonathan e Danilo)
-    public function caricaAnnuncio($titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autori, $cod_materia)
+    public function caricaAnnuncio($titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autori, $cod_materia, $link)
     {
         $tabella = $this->tabelleDB[0];
         $campi = $this->campiTabelleDB[$tabella];
@@ -253,10 +252,10 @@ class DBStudente
             $campi[6] . ", " .
             $campi[7] . ", " .
             $campi[8] . " ) " .
-            "VALUES (?,?,?,?,?,?,?,?)"
+            "VALUES (?,?,?,?,?,?,?)"
         );
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("ssdssssi", $titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autori, $cod_materia);
+        $stmt->bind_param("sssssssis", $titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autori, $cod_materia, $link);
         return $stmt->execute();
     }
 
@@ -319,11 +318,10 @@ class DBStudente
     //Funzione per ricercare tra documenti, libri e annunci (Andrea)
     public function ricerca($key)
     {
-        $annunci = $this->tabelleDB[0];
-        $docs = $this->tabelleDB[3];
-        $libri = $this->tabelleDB[4];
+        $annunci = $this->tabelleDB[1];
+        $docs = $this->tabelleDB[4];
+        $libri = $this->tabelleDB[5];
         $campi = $this->campiTabelleDB[$annunci];
-
         /*query: "  SELECT id, titolo, tabella FROM annuncio WHERE titolo LIKE '%?%'
                     UNION
                     SELECT id, titolo, tabella FROM documento WHERE titolo LIKE '%?%'
@@ -331,31 +329,31 @@ class DBStudente
                     SELECT id, titolo, tabella FROM libro WHERE titolo LIKE '%?%' */
         $query = (
             "SELECT " .
-            $annunci.".".$campi[0] . ", " .
-            $annunci.".".$campi[1] . ", 'annuncio' as Source " .
-
+            $campi[0] . ", " .
+            $campi[1] . ", " .
+            "'" . $annunci . "' as tabella " .
             "FROM " .
             $annunci . " " .
             "WHERE " .
-            $annunci.".".$campi[1] . " LIKE"." '%".$key."%' " .
+            $campi[1] . " LIKE"." '%".$key."%' " .
             "UNION " .
             "SELECT " .
-            $docs.".".$campi[0] . ", " .
-            $docs.".".$campi[1] . ", 'docs' as Source  " .
-
+            $campi[0] . ", " .
+            $campi[1] . ", " .
+            "'" . $docs . "' as tabella " .
             "FROM " .
             $docs . " " .
             "WHERE " .
-            $docs.".".$campi[1] . " LIKE"." '%".$key."%' " .
+            $campi[1] . " LIKE"." '%".$key."%' " .
             "UNION " .
             "SELECT " .
-            $libri.".".$campi[0] . ", " .
-            $libri.".".$campi[1] . ", 'libri' as Source  " .
-
+            $campi[0] . ", " .
+            $campi[1] . ", " .
+            "'" . $libri . "' as tabella " .
             "FROM " .
             $libri . " " .
             "WHERE " .
-            $libri.".".$campi[1] . " LIKE"." '%".$key."%'"
+            $campi[1] . " LIKE"." '%".$key."%'"
         );
         $stmt = $this->connection->prepare($query); //Preparo la query
         $stmt->execute();//Esegue la query
@@ -369,7 +367,6 @@ class DBStudente
                 $temp[$campi[0]] = $id;
                 $temp[$campi[1]] = $titolo;
                 $temp['tabella'] = $tabella;
-
                 array_push($risultato, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $utenti
             }
             return $risultato;
@@ -420,7 +417,7 @@ class DBStudente
     //Funzione visualizza documento per id (Danilo)
     public function visualizzaAnnuncioPerId($Matricola)
     {
-        $tabella = $this->tabelleDB[0]; //Tabella per la query
+        $tabella = $this->tabelleDB[6]; //Tabella per la query
         $campi = $this->campiTabelleDB[$tabella];
         //query: "SELECT titolo, contatto, prezzo,edizione, casaeditrice,autore FROM annunci WHERE cod_stud= $matricola"
         $query = (
@@ -508,22 +505,20 @@ class DBStudente
         //query: "SELECT titolo, contatto, prezzo,edizione, casaeditrice,autore FROM annuncio,materia WHERE nome_materia=$materia AND cod_materia=idmateria"
         $query = (
             "SELECT " .
-            $annuncioTabella.".".$campiAnnuncio[1] . ", " .
-            $annuncioTabella.".".$campiAnnuncio[2] . ", " .
-            $annuncioTabella.".".$campiAnnuncio[3] . ", " .
-            $annuncioTabella.".".$campiAnnuncio[4] . ", " .
-            $annuncioTabella.".".$campiAnnuncio[5] . ", " .
-            $annuncioTabella.".".$campiAnnuncio[7] . " " .
+            $campiAnnuncio[1] . ", " .
+            $campiAnnuncio[2] . ", " .
+            $campiAnnuncio[3] . ", " .
+            $campiAnnuncio[4] . ", " .
+            $campiAnnuncio[5] . ", " .
+            $campiAnnuncio[7] . " " .
 
             "FROM " .
-            $annuncioTabella . " " .
-            "Inner join ".
-            $materiaTabella . " ON " .
-            $annuncioTabella.".".$campiAnnuncio[8] . " = " .
-            $materiaTabella.".".$campiMateria[0].
-            " WHERE " . $materiaTabella.".".$campiMateria[1] . '= ? '
-
-
+            $annuncioTabella . ", " .
+            $materiaTabella . " " .
+            "WHERE" . $campiMateria[1] . '= ? ' .
+            "AND " .
+            $campiAnnuncio[8] . " = " .
+            $campiMateria[0]
         );
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("s", $Materia);
@@ -561,21 +556,19 @@ class DBStudente
         //"SELECT titolo,autore,casaeditrice,edizione,link FROM libri,materie where nome=$materia AND cod_materia=idmateria"
         $query = (
             "SELECT " .
-            $libroTabella.".".$campiLibro[1] . ", " .
-            $libroTabella.".".$campiLibro[2] . ", " .
-            $libroTabella.".".$campiLibro[3] . ", " .
-            $libroTabella.".".$campiLibro[4] . ", " .
-            $libroTabella.".".$campiLibro[7] . " " .
+            $campiLibro[1] . ", " .
+            $campiLibro[2] . ", " .
+            $campiLibro[3] . ", " .
+            $campiLibro[4] . ", " .
+            $campiLibro[7] . " " .
 
-            " FROM " .
-            $libroTabella . " " .
-            " Inner join ".
+            "FROM " .
+            $libroTabella . ", " .
             $materiaTabella . " " .
-            " ON " .
-            $libroTabella.".".$campiLibro[6] . " = " .
-            $materiaTabella.".".$campiMateria[0].
-            " WHERE " . $materiaTabella.".".$campiMateria[1] . " = ? "
-
+            "WHERE" . $campiMateria[1] . '= ? ' .
+            "AND " .
+            $campiLibro[5] . " = " .
+            $campiMateria[0]
         );
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("s", $materia);
@@ -593,7 +586,6 @@ class DBStudente
                 $temp[$campiLibro[4]] = $edizione;
 
                 $temp[$campiLibro[7]] = $link;
-//                $temp['query']=$query;
                 array_push($libri, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
             }
             return $libri; //ritorno array libri riempito con i risultati della query effettuata.
@@ -603,7 +595,7 @@ class DBStudente
     }
 
     //Funzione visualizza libro per nome docente (Danilo)
-    public function visualizzaLibroPerCognomeDocente($cognomedocente)
+    public function visualizzaLibroPerNomeDocente($nomedocente)
     {
         $libroTabella = $this->tabelleDB[4]; //Tabella per la query
         $campiLibro = $this->campiTabelleDB[$libroTabella];
@@ -612,24 +604,22 @@ class DBStudente
         //query: "SELECT titolo,autore,casaeditrice,edizione,link FROM libri,docenti WHERE nome=$nomedocente AND cod_docente=iddocente "
         $query = (
             "SELECT " .
-            $libroTabella.".".$campiLibro[1] . ", " .
-            $libroTabella.".".$campiLibro[2] . ", " .
-            $libroTabella.".".$campiLibro[3] . ", " .
-            $libroTabella.".".$campiLibro[4] . ", " .
-            $libroTabella.".".$campiLibro[7] . " " .
+            $campiLibro[1] . ", " .
+            $campiLibro[2] . ", " .
+            $campiLibro[3] . ", " .
+            $campiLibro[4] . ", " .
+            $campiLibro[7] . " " .
 
             "FROM " .
-            $libroTabella . " " .
-            "Inner join ".
-            $docenteTabella . " ON " .
-            $libroTabella.".".$campiLibro[5] . " = " .
-            $docenteTabella.".".$campiDocente[0].
-            " WHERE " .$docenteTabella.".".$campiDocente[2] . "= ? "
-
-
+            $libroTabella . ", " .
+            $docenteTabella . " " .
+            "WHERE" . $campiDocente[1] . '= ? ' .
+            "AND " .
+            $campiLibro[5] . " = " .
+            $campiDocente[0]
         );
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("s", $cognomedocente);
+        $stmt->bind_param("s", $nomedocente);
         $stmt->execute();
         $stmt->store_result();
         if ($stmt->num_rows > 0) {
