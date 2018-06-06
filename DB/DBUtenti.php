@@ -429,14 +429,8 @@ class DBUtenti
         );
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("i", $idDocumento);
-        if($stmt){
-            $result=true;
-        }else{
-            $result=false;
-
-        }
+        $result = $stmt->execute();
         $stmt->store_result();
-
 
         return $result;
     }
@@ -482,4 +476,4 @@ class DBUtenti
 }
 
 
-?>
+?>

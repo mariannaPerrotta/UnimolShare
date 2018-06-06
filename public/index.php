@@ -538,10 +538,9 @@ $app->post('/visualizzacdl', function (Request $request, Response $response) {
 
 });
 //endpoint rimuovi by jo dom
-$app->delete('/rimuovidocumento', function (Request $request, Response $response) {
+$app->delete('/rimuovidocumento/{id}', function (Request $request, Response $response) {
     $db = new DBUtenti();
-    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
-    $idDocumento = $requestData['idDocumento'];
+    $idDocumento = $request->getAttribute('id');
     //Risposta del servizio REST
     $responseData = array(); //La risposta è un array di informazioni da compilare
 
