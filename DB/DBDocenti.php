@@ -18,7 +18,8 @@ class DBDocenti
         "libro",
         "materia",
         "studente",
-        "valutazione"
+        "valutazione",
+        "cdl_doc"
     ];
     private $campiTabelleDB = [ //Campi delle tabelle (array bidimensionale indicizzato con key)
         "annuncio" => [
@@ -81,6 +82,10 @@ class DBDocenti
             "id",
             "valutazione",
             "cod_documento"
+        ],
+        "cdl_doc" =>[
+            "id_cdl",
+            "cod_doc"
         ]
     ];
 
@@ -183,7 +188,7 @@ class DBDocenti
             "FROM " .
             $tabella . " " .
             "WHERE " .
-            $campi[0] . ' = ? ';
+            $campi[3] . ' = ? ';
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("i", $cdlid);
         $stmt->execute();
@@ -202,4 +207,35 @@ class DBDocenti
             return null;
         }
     }
+    public function visualizzaCdlPerCodDoc($matricola)
+    {
+        $tabella = $this->tabelleDB[8]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$tabella];
+        $query = //query: "SELECT nome, FROM materia WHERE cod_cdl = ? "
+            "SELECT " .
+            $campi[0] . " " .
+            "FROM " .
+            $tabella . " " .
+            "WHERE " .
+            $campi[1] . ' = 111 ';
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("s", $matricola);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows > 0) {
+            $stmt->bind_result($nome_materia);
+            $CDL = array();
+            while ($stmt->fetch()) { //Scansiono la risposta della query
+                $temp = array();
+                //Indicizzo con key i dati nell'array
+                $temp[$campi[0]] = $nome_materia;
+                $temp['matricola'] = $matricola;
+                array_push($CDL, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $materie
+            }
+            return $CDL; //ritorno array $materie riempito con i risultati della query effettuata.
+        } else {
+            return null;
+        }
+    }
+
 }
