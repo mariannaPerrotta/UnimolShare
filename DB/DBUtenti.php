@@ -20,8 +20,7 @@ class DBUtenti
         "libro",
         "materia",
         "studente",
-        "valutazione",
-        "cdl_doc"
+        "valutazione"
     ];
     private $campiTabelleDB = [ //Campi delle tabelle (array bidimensionale indicizzato con key)
         "annuncio" => [
@@ -84,10 +83,6 @@ class DBUtenti
             "id",
             "valutazione",
             "cod_documento"
-        ],
-        "cdl_doc" =>[
-            "id",
-            "cod_doc"
         ]
     ];
 
@@ -173,41 +168,12 @@ class DBUtenti
         $table = $this->tabelleDB[1]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
         $query = //query: "SELECT id, nome FROM cdl"
-            "SELECT " .
-
-            $campi[1] . " " .
+            "SELECT * " .
             "FROM " .
             $table." ".
             "WHERE ". $campi[0]." = ?";
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param(i , $idcdl);
-        $stmt->execute();
-        $stmt->store_result();
-        if ($stmt->num_rows > 0) {
-            $stmt->bind_result($nome);
-
-            $CDL = array();
-            while ($stmt->fetch()) { //Scansiono la risposta della query
-                $temp = array(); //Array temporaneo per l'acquisizione dei dati
-                //Indicizzo con key i dati nell'array
-                $temp[$campi[1]] = $nome;
-                array_push($CDL, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $cdl
-            }
-            return $CDL;
-        }else return null;
-    }
-    public function visualizzaCdl()
-    {
-
-        $table = $this->tabelleDB[1]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$table];
-        $query = //query: "SELECT id, nome FROM cdl"
-            "SELECT " .
-            $campi[0].", ".
-            $campi[1]." ".
-            "FROM " .
-            $table;
-        $stmt = $this->connection->prepare($query);
         $stmt->execute();
         $stmt->store_result();
         if ($stmt->num_rows > 0) {
@@ -217,7 +183,6 @@ class DBUtenti
             while ($stmt->fetch()) { //Scansiono la risposta della query
                 $temp = array(); //Array temporaneo per l'acquisizione dei dati
                 //Indicizzo con key i dati nell'array
-                $temp[$campi[0]] = $id;
                 $temp[$campi[1]] = $nome;
                 array_push($CDL, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $cdl
             }
@@ -485,7 +450,6 @@ class DBUtenti
             //query= SELECT nome,link FROM documento WHERE cod_studente/cod_docente=$matricols
             $query = (
                 "SELECT " .
-                $campi[0].", ".
                 $campi[1] . ", " .
                 $campi[5] . " " .
                 "FROM " .
@@ -500,14 +464,13 @@ class DBUtenti
         $stmt->store_result();
         if ($stmt->num_rows > 0) {
             //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp //
-            $stmt->bind_result($id,$titolo,$link);
+            $stmt->bind_result($titolo,$id);
             $documento= array();
             while ($stmt->fetch()) { //Scansiono la risposta della query
                 $temp = array(); //Array temporaneo per l'acquisizione dei dati
                 //Indicizzo con key i dati nell'array
-                $temp[$campi[0]] = $id;
                 $temp[$campi[1]] = $titolo;
-                $temp[$campi[5]] = $link;
+                $temp[$campi[5]] = $id;
                 array_push($documento, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
             }
             return $documento; //ritorno array Documento riempito con i risultati della query effettuata.
@@ -516,8 +479,7 @@ class DBUtenti
         }
     }
 
-
 }
 
 
-?>
+?>
