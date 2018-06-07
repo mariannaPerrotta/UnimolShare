@@ -62,7 +62,7 @@ class EmailHelperAltervista
     function sendSegnalazione($nome, $cognome, $motivo, $contatto, $email){
 
         $emailTo = "unimolshare@gmail.com";
-        $subject = "UnimolShare - Conferma registrazione";
+        $subject = "UnimolShare - Seg";
         $message   = '<html><body><h1>UnimolShare - Segnalazione Profilo</h1><div>';
         $message   .= $nome.', '.$cognome.'</div><br/><div>Motivo segnalazione: '.$motivo.'<br/>Contatti studente segnalato: '.$contatto.' '.$email.'.<br/><br/></div></body></html>';
         $headers = "MIME-Version: 1.0\r\n";

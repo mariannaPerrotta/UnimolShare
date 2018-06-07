@@ -217,7 +217,7 @@ class DBDocenti
             "FROM " .
             $tabella . " " .
             "WHERE " .
-            $campi[1] . ' = 111 ';
+            $campi[1] . ' = ? ';
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("s", $matricola);
         $stmt->execute();
@@ -238,4 +238,4 @@ class DBDocenti
         }
     }
 
-}
+}
