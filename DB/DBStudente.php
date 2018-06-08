@@ -258,8 +258,8 @@ class DBStudente
         );
         $stmt = $this->connection->prepare($query);
         //$stmt->bind_param("ssdssssi", $titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autori, $cod_materia);
-        $stmt->execute();
-        return $autori.$titolo;
+
+        return $stmt->execute();
     }
 
     //Funzione contatta venditore (Domenico)

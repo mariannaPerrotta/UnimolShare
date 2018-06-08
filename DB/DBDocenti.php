@@ -302,4 +302,34 @@ class DBDocenti
 
         return $stmt->execute();
     }
+    //titolo
+    //autore
+    //casa_editrice
+    //edizione
+    //cod_docente
+    //cod_materia
+    //link
+    public function caricaLibro($titolo,  $edizione, $casa_editrice, $cod_docente, $autori, $cod_materia,$link)
+    {
+        $tabella = $this->tabelleDB[0];
+        $campi = $this->campiTabelleDB[$tabella];
+        //query: "INSERT INTO annuncio (id, titolo, contatto, prezzo, edizione, casa_editrice, cod_studente, autori, cod_materia, link) VALUES (?,?,?,?,?,?,?,?)"
+        $query =/*"INSERT INTO annuncio ( titolo, contatto, prezzo, edizione, casa_editrice, cod_stud, autore, cod_materia) VALUES (?,?,'".$prezzo."',?,?,?,?,?)";*/
+            ("INSERT INTO  " .
+                $tabella . " ( " .
+                $campi[1] . ", " .
+                $campi[2] . ", " .
+                $campi[3] . ", " .
+                $campi[4] . ", " .
+                $campi[5] . ", " .
+                $campi[6] . ", " .
+                $campi[7] . " " .
+                "VALUES (?,?,?,?,?,?,?)"
+            );
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("sssssis", $titolo, $autori, $casa_editrice,$edizione,  $cod_docente,  $cod_materia,$link);
+
+        return $stmt->execute();
+    }
+
 }
