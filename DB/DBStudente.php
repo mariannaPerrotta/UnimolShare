@@ -243,7 +243,8 @@ class DBStudente
         $tabella = $this->tabelleDB[0];
         $campi = $this->campiTabelleDB[$tabella];
         //query: "INSERT INTO annuncio (id, titolo, contatto, prezzo, edizione, casa_editrice, cod_studente, autori, cod_materia, link) VALUES (?,?,?,?,?,?,?,?)"
-        $query = ("INSERT INTO  " .
+        $query =/*"INSERT INTO annuncio ( titolo, contatto, prezzo, edizione, casa_editrice, cod_stud, autore, cod_materia) VALUES (?,?,'".$prezzo."',?,?,?,?,?)";*/
+            ("INSERT INTO  " .
             $tabella . " ( " .
             $campi[1] . ", " .
             $campi[2] . ", " .
@@ -253,11 +254,12 @@ class DBStudente
             $campi[6] . ", " .
             $campi[7] . ", " .
             $campi[8] . " ) " .
-            "VALUES (?,?,?,?,?,?,?,?)"
+            "VALUES ('".$titolo."','".$contatto."','".$prezzo."','".$edizione."','".$casa_editrice."','".$cod_studente."','".$autori."','".$cod_materia."' )"
         );
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("ssdssssi", $titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autori, $cod_materia);
-        return $stmt->execute();
+        //$stmt->bind_param("ssdssssi", $titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autori, $cod_materia);
+        $stmt->execute();
+        return $autori.$titolo;
     }
 
     //Funzione contatta venditore (Domenico)
@@ -418,20 +420,21 @@ class DBStudente
     }
 
     //Funzione visualizza documento per id (Danilo)
-    public function visualizzaAnnuncioPerId($Matricola)
+   public function visualizzaAnnuncioPerId($Matricola)
     {
         $tabella = $this->tabelleDB[0]; //Tabella per la query
         $campi = $this->campiTabelleDB[$tabella];
         //query: "SELECT titolo, contatto, prezzo,edizione, casaeditrice,autore FROM annunci WHERE cod_stud= $matricola"
         $query = (
             "SELECT " .
+            $campi[0] . ", " .
             $campi[1] . ", " .
             $campi[2] . ", " .
             $campi[3] . ", " .
             $campi[4] . ", " .
             $campi[5] . ", " .
-            $campi[7] . " " .
-
+            $campi[7] . " ," .
+            $campi[8] . " " .
             " FROM " .
             $tabella . " " .
             " WHERE " .
@@ -443,18 +446,19 @@ class DBStudente
         $stmt->store_result();
         if ($stmt->num_rows > 0) {
             //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp //
-            $stmt->bind_result($titolo, $contatto, $prezzo, $edizione, $casaeditrice, $autore);
+            $stmt->bind_result($id, $titolo, $contatto, $prezzo, $edizione, $casaeditrice, $autore,$num_materia);
             $annunci = array();
             while ($stmt->fetch()) { //Scansiono la risposta della query
                 $temp = array(); //Array temporaneo per l'acquisizione dei dati
                 //Indicizzo con key i dati nell'array
-
+                $temp[$campi[0]] = $id;
                 $temp[$campi[1]] = $titolo;
                 $temp[$campi[2]] = $contatto;
                 $temp[$campi[3]] = $prezzo;
                 $temp[$campi[4]] = $edizione;
                 $temp[$campi[5]] = $casaeditrice;
                 $temp[$campi[7]] = $autore;
+                $temp[$campi[8]] = $num_materia;
                 array_push($annunci, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $documento
             }
             return $annunci; //ritorno array annunci riempito con i risultati della query effettuata.
@@ -693,4 +697,4 @@ class DBStudente
         return $cdl; //ritorno array libri riempito con i risultati della query effettuata.
 
     }
-}
+}
