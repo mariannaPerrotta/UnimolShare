@@ -208,31 +208,31 @@ class DBDocenti
         }
     }
     
-    public function visualizzaMateriaPerid($id)
+    public function visualizzaMateriaPernome($materia)
     {
         $tabella = $this->tabelleDB[5]; //Tabella per la query
         $campi = $this->campiTabelleDB[$tabella];
-        $query = //query: "SELECT nome, FROM materia WHERE id = ? "
+        $query = //query: "SELECT id, FROM materia WHERE nome = ? "
             "SELECT " .
-            $campi[1] . " " .
+            $campi[0] . " " .
             "FROM " .
             $tabella . " " .
             "WHERE " .
-            $campi[0] . ' = ? ';
+            $campi[1] . ' = ? ';
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("i", $id);
+        $stmt->bind_param("i", $materia);
         $stmt->execute();
         $stmt->store_result();
         if ($stmt->num_rows > 0) {
             $stmt->bind_result($nome_materia);
-            $materie = array();
+            $id = array();
             while ($stmt->fetch()) { //Scansiono la risposta della query
                 $temp = array();
                 //Indicizzo con key i dati nell'array
                 $temp[$campi[1]] = $nome_materia;
-                array_push($materie, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $materie
+                array_push($id, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $materie
             }
-            return $materie; //ritorno array $materie riempito con i risultati della query effettuata.
+            return $id; //ritorno array $materie riempito con i risultati della query effettuata.
         } else {
             return null;
         }

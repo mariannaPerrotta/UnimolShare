@@ -872,15 +872,15 @@ $app->post('/segnalazione', function (Request $request, Response $response) {
     return $response->withJson($responseData);
 });
 
-$app->post('/visualizzamateriaperid', function (Request $request, Response $response) {
+$app->post('/visualizzamateriapernome', function (Request $request, Response $response) {
 
     $db = new DBDocenti();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
-    $id = $requestData['id'];
+    $nome = $requestData['materia'];
 
     //Controllo la risposta dal DB e compilo i campi della risposta
-    $responseData = $db->visualizzaMateriaPerid($id);
+    $responseData = $db->visualizzaMateriaPernome($nome);
     $contatore = (count($responseData));
     if ($responseData != null) {
         $responseData['error'] = false; //Campo errore = false
