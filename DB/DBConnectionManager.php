@@ -1,13 +1,5 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: Andrea
- * Date: 11/05/18
- * Time: 19:50
- */
-
-//Classe che gestisce la connessione col database relazionale
 class DBConnectionManager
 {
 
@@ -17,6 +9,7 @@ class DBConnectionManager
     private $username = "unimolshare";
     private $passwd = "";
     private $dbname = "my_unimolshare";
+
 
     /*SITEGROUND PER IL TESTING
 
