@@ -116,18 +116,17 @@ $app->post('/registrazione', function (Request $request, Response $response) {
     $responseData = array(); //La risposta e' un array di informazioni da compilare
 
     //Controllo la risposta dal DB e compilo i campi della risposta
-    $responseDB = $db->registrazione($matricola, $nome, $cognome, $email, $password,$cds);
+    $responseDB = $db->registrazione($matricola, $nome, $cognome, $email, $password, $cds);
     if ($responseDB == 1) { //Se la registrazione è andata a buon fine
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Registrazione avvenuta con successo'; //Messaggio di esito positivo
         $emailSender = new EmailHelperAltervista();
-        $link = 'http://unimolshare.altervista.org/logic/UnimolShare/public/activate.php?email='.$email.'&matricola='.$matricola;
+        $link = 'http://unimolshare.altervista.org/logic/UnimolShare/public/activate.php?email=' . $email . '&matricola=' . $matricola;
         $emailSender->sendConfermaAccount($email, $link);
-    } else if ($responseDB == 2){ //Se l'email è già presente nel DB
+    } else if ($responseDB == 2) { //Se l'email è già presente nel DB
         $responseData['error'] = true; //Campo errore = true
         $responseData['message'] = 'Account già  esistente!'; //Messaggio di esito negativo
-    }
-    else{//Se l'email non è istituzionale
+    } else {//Se l'email non è istituzionale
         $responseData['error'] = true; //Campo errore = true
         $responseData['message'] = "Email non valida! Usare un'email istituzionale."; //Messaggio di esito negativo
     }
@@ -200,7 +199,7 @@ $app->post('/recupero', function (Request $request, Response $response) {
     if ($db->recupero($email)) { //Se l'email viene trovata
         $nuovaPassword = $randomizerPassword->generatePassword(4);
 
-        if($db->modificaPassword($email, $nuovaPassword)) {
+        if ($db->modificaPassword($email, $nuovaPassword)) {
             if ($emailSender->sendResetPasswordEmail($email, $nuovaPassword)) {
                 $responseData['error'] = false; //Campo errore = false
                 $responseData['message'] = "Email di recupero password inviata"; //Messaggio di esito positivo
@@ -208,8 +207,7 @@ $app->post('/recupero', function (Request $request, Response $response) {
                 $responseData['error'] = true; //Campo errore = true
                 $responseData['message'] = "Impossibile inviare l'email di recupero"; //Messaggio di esito negativo
             }
-        }
-        else { //Se le credenziali non sono corrette
+        } else { //Se le credenziali non sono corrette
             $responseData['error'] = true; //Campo errore = true
             $responseData['message'] = 'Impossibile comunicare col Database'; //Messaggio di esito negativo
         }
@@ -232,11 +230,11 @@ $app->post('/visualizzamateriapercdl', function (Request $request, Response $res
 
     //Controllo la risposta dal DB e compilo i campi della risposta
     $responseData = $db->visualizzaMateriaPerCdl($cod_cdl);
-    $contatore=(count($responseData));
+    $contatore = (count($responseData));
     if ($responseData != null) {
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
-        $responseData['contatore']=$contatore;
+        $responseData['contatore'] = $contatore;
         $response->getBody()->write(json_encode(array("nomi_materie" => $responseData)));
         //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
         $newResponse = $response->withHeader('Content-type', 'application/json');
@@ -259,9 +257,9 @@ $app->post('/visualizzadocumentopermateria', function (Request $request, Respons
 
 //Controllo la risposta dal DB e compilo i campi della risposta
     $responseData = $db->visualizzaDocumentoPerMateria($materia);
-    $contatore=(count($responseData));
+    $contatore = (count($responseData));
     if ($responseData != null) {
-        $responseData['contatore']=$contatore;
+        $responseData['contatore'] = $contatore;
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
         $response->getBody()->write(json_encode(array("documenti" => $responseData)));
@@ -285,13 +283,13 @@ $app->post('/visualizzadocumentoperid', function (Request $request, Response $re
 
 //Controllo la risposta dal DB e compilo i campi della risposta
     $responseData = $db->visualizzaDocumentoPerId($matricola);
-    $contatore=(count($responseData));
+    $contatore = (count($responseData));
 
     if ($responseData != null) {
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Elemento visualizzato con successo';//Messaggio di esiso positivo
 
-        $responseData['contatore']=$contatore;
+        $responseData['contatore'] = $contatore;
         $response->getBody()->write(json_encode(array("documenti" => $responseData)));
         //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
         $newResponse = $response->withHeader('Content-type', 'application/json');
@@ -308,14 +306,14 @@ $app->post('/visualizzacdlperiddocente', function (Request $request, Response $r
 
     $db = new DBDocenti();
 
-    $requestData=$request->getParsedBody();
-    $iddoc=$requestData['iddoc'];
+    $requestData = $request->getParsedBody();
+    $iddoc = $requestData['iddoc'];
 //Controllo la risposta dal DB e compilo i campi della risposta
     $responseData = $db->visualizzaCdlPerCodDoc($iddoc);
-    $contatore=(count($responseData));
+    $contatore = (count($responseData));
     if ($responseData != null) {
         $responseData['error'] = false; //Campo errore = false
-        $responseData['contatore']=$contatore;
+        $responseData['contatore'] = $contatore;
         $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
         $response->getBody()->write(json_encode(array("CDL" => $responseData)));
         //metto in un json e lo inserisco nella risposta del servizio REST
@@ -334,15 +332,15 @@ $app->post('/visualizzacdlperidstudente', function (Request $request, Response $
 
     $db = new DBStudente();
 
-    $requestData=$request->getParsedBody();
-    $matricola=$requestData['matricola'];
+    $requestData = $request->getParsedBody();
+    $matricola = $requestData['matricola'];
 //Controllo la risposta dal DB e compilo i campi della risposta
     $responseData = $db->visualizzaCdlStudente($matricola);
 
-    $contatore=(count($responseData));
+    $contatore = (count($responseData));
     if ($responseData != null) {
         $responseData['error'] = false; //Campo errore = false
-        $responseData['contatore']=$contatore;
+        $responseData['contatore'] = $contatore;
         $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
         $response->getBody()->write(json_encode(array("CDL" => $responseData)));
         //metto in un json e lo inserisco nella risposta del servizio REST
@@ -362,14 +360,14 @@ $app->post('/visualizzacdlperid', function (Request $request, Response $response
 
     $db = new DBUtenti();
 
-    $requestData=$request->getParsedBody();
-    $idcdl=$requestData['idcdl'];
+    $requestData = $request->getParsedBody();
+    $idcdl = $requestData['idcdl'];
 //Controllo la risposta dal DB e compilo i campi della risposta
     $responseData = $db->visualizzaCdlPerid($idcdl);
-    $contatore=(count($responseData));
+    $contatore = (count($responseData));
     if ($responseData != null) {
         $responseData['error'] = false; //Campo errore = false
-        $responseData['contatore']=$contatore;
+        $responseData['contatore'] = $contatore;
         $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
         $response->getBody()->write(json_encode(array("CDL" => $responseData)));
         //metto in un json e lo inserisco nella risposta del servizio REST
@@ -388,13 +386,13 @@ $app->post('/visualizzacdl', function (Request $request, Response $response) {
 
     $db = new DBUtenti();
 
-    $requestData=$request->getParsedBody();
+    $requestData = $request->getParsedBody();
 //Controllo la risposta dal DB e compilo i campi della risposta
     $responseData = $db->visualizzaCdl();
-    $contatore=(count($responseData));
+    $contatore = (count($responseData));
     if ($responseData != null) {
         $responseData['error'] = false; //Campo errore = false
-        $responseData['contatore']=$contatore;
+        $responseData['contatore'] = $contatore;
         $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
         $response->getBody()->write(json_encode(array("CDL" => $responseData)));
         //metto in un json e lo inserisco nella risposta del servizio REST
@@ -420,11 +418,11 @@ $app->post('/visualizzaannunciopermateria', function (Request $request, Response
 
 //Controllo la risposta dal DB e compilo i campi della risposta
     $responseData = $db->visualizzaAnnuncioPerMateria($materia);
-    $contatore=(count($responseData));
+    $contatore = (count($responseData));
     if ($responseData != null) {
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
-        $responseData['contatore']=$contatore;
+        $responseData['contatore'] = $contatore;
         $response->getBody()->write(json_encode(array("libri" => $responseData)));
         //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
         $newResponse = $response->withHeader('Content-type', 'application/json');
@@ -446,11 +444,11 @@ $app->post('/visualizzaannuncioperid', function (Request $request, Response $res
 
 //Controllo la risposta dal DB e compilo i campi della risposta
     $responseData = $db->visualizzaAnnuncioPerId($matricola);
-    $contatore=(count($responseData));
+    $contatore = (count($responseData));
     if ($responseData != null) {
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
-        $responseData['contatore']=$contatore;
+        $responseData['contatore'] = $contatore;
         $response->getBody()->write(json_encode(array("annunci" => $responseData)));
         //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
         $newResponse = $response->withHeader('Content-type', 'application/json');
@@ -472,11 +470,11 @@ $app->post('/visualizzalibropermateria', function (Request $request, Response $r
 
 //Controllo la risposta dal DB e compilo i campi della risposta
     $responseData = $db->visualizzaLibroPerMateria($materia);
-    $contatore=(count($responseData));
+    $contatore = (count($responseData));
     if ($responseData != null) {
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
-        $responseData['contatore']=$contatore;
+        $responseData['contatore'] = $contatore;
         $response->getBody()->write(json_encode(array("libri" => $responseData)));
         //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
         $newResponse = $response->withHeader('Content-type', 'application/json');
@@ -498,11 +496,11 @@ $app->post('/visualizzalibropercognomedocente', function (Request $request, Resp
 
 //Controllo la risposta dal DB e compilo i campi della risposta
     $responseData = $db->visualizzaLibroPerCognomeDocente($cognome);
-    $contatore=(count($responseData));
+    $contatore = (count($responseData));
     if ($responseData != null) {
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
-        $responseData['contatore']=$contatore;
+        $responseData['contatore'] = $contatore;
         $response->getBody()->write(json_encode(array("libri" => $responseData)));
         //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
         $newResponse = $response->withHeader('Content-type', 'application/json');
@@ -524,11 +522,11 @@ $app->post('/visualizzadocumentistudenti', function (Request $request, Response 
 
 //Controllo la risposta dal DB e compilo i campi della risposta ok
     $responseData = $db->visualizzaDocumentistudenti();
-    $contatore=(count($responseData));
+    $contatore = (count($responseData));
     if ($responseData != null) {
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esito positivo
-        $responseData['contatore']=$contatore;
+        $responseData['contatore'] = $contatore;
         $response->getBody()->write(json_encode(array("documenti" => $responseData)));
         //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
         $newResponse = $response->withHeader('Content-type', 'application/json');
@@ -546,10 +544,10 @@ $app->post('/visualizzatutticdl', function (Request $request, Response $response
 
 //Controllo la risposta dal DB e compilo i campi della risposta
     $responseData = $db->visualizzaCdl();
-    $contatore=(count($responseData));
+    $contatore = (count($responseData));
     if ($responseData != null) {
         $responseData['error'] = false; //Campo errore = false
-        $responseData['contatore']=$contatore;
+        $responseData['contatore'] = $contatore;
         $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
         $response->getBody()->write(json_encode(array("CDL" => $responseData)));
         //metto in un json e lo inserisco nella risposta del servizio REST
@@ -586,7 +584,7 @@ $app->delete('/rimuoviAnnuncio{id}', function (Request $request, Response $respo
     $db = new DBStudente();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
-    $id =$request->getAttribute('id');
+    $id = $request->getAttribute('id');
 
 
     //Risposta del servizio REST
@@ -692,7 +690,7 @@ $app->post('/caricacdldocente', function (Request $request, Response $response) 
     $responseData = array(); //La risposta e' un array di informazioni da compilare
 
     //Controllo la risposta dal DB e compilo i campi della risposta
-    if ($db->caricaCdl($id,$matricola)){
+    if ($db->caricaCdl($id, $matricola)) {
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Caricamento avvenuto con successo'; //Messaggio di esito positivo
 
@@ -711,10 +709,10 @@ $app->post('/caricaannuncio', function (Request $request, Response $response) {
     $contatto = $requestData['contatto'];
     $prezzo = $requestData['prezzo'];
     $edizione = $requestData['edizione'];
-    $casa_editrice=$requestData['casa_editrice'];
-    $cod_studente=$requestData['cod_studente'];
-    $autori=$requestData['autori'];
-    $cod_materia=$requestData['cod_materia'];
+    $casa_editrice = $requestData['casa_editrice'];
+    $cod_studente = $requestData['cod_studente'];
+    $autori = $requestData['autori'];
+    $cod_materia = $requestData['cod_materia'];
 
 
     //Risposta del servizio REST
@@ -739,18 +737,18 @@ $app->post('/caricalibro', function (Request $request, Response $response) {
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $titolo = $requestData['titolo'];
     $edizione = $requestData['edizione'];
-    $casa_editrice=$requestData['casa_editrice'];
-    $cod_docente=$requestData['cod_studente'];
-    $autori=$requestData['autori'];
-    $cod_materia=$requestData['cod_materia'];
-    $link=$requestData['link'];
+    $casa_editrice = $requestData['casa_editrice'];
+    $cod_docente = $requestData['cod_studente'];
+    $autori = $requestData['autori'];
+    $cod_materia = $requestData['cod_materia'];
+    $link = $requestData['link'];
 
 
     //Risposta del servizio REST
     $responseData = array(); //La risposta e' un array di informazioni da compilare
 //$query=$db->caricaAnnuncio($titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autori, $cod_materia, $link);
     //Controllo la risposta dal DB e compilo i campi della risposta
-    if ($db->caricaLibro($titolo, $edizione, $casa_editrice, $cod_docente, $autori, $cod_materia,$link)) { //Se il caricamento del doc Ã¨ andata a buon fine
+    if ($db->caricaLibro($titolo, $edizione, $casa_editrice, $cod_docente, $autori, $cod_materia, $link)) { //Se il caricamento del doc Ã¨ andata a buon fine
 
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Caricamento avvenuto con successo '; //Messaggio di esito positivo
@@ -844,9 +842,9 @@ $app->post('/ricerca', function (Request $request, Response $response) {
     $key = $requestData['key'];
 
     $responseData = $db->ricerca($key);//Risposta del DB
-    $contatore=(count($responseData));
+    $contatore = (count($responseData));
     //metto in un json e lo inserisco nella risposta del servizio REST
-    $responseData['contatore']=$contatore;
+    $responseData['contatore'] = $contatore;
     $response->getBody()->write(json_encode(array("lista" => $responseData)));
     //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
     $newResponse = $response->withHeader('Content-type', 'application/json');
@@ -863,10 +861,10 @@ $app->post('/segnalazione', function (Request $request, Response $response) {
     //Risposta del servizio REST
     $responseData = array();
     $emailSender = new EmailHelperAltervista();
-    if($emailSender->sendSegnalazione($nome,$cognome,$motivo,$contatto,$email)){
+    if ($emailSender->sendSegnalazione($nome, $cognome, $motivo, $contatto, $email)) {
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = "Segnalazione inviata"; //Messaggio di esito positivo
-    }else{
+    } else {
 
         $responseData['error'] = true; //Campo errore = true
         $responseData['message'] = "impossibile inviare la segnalazione"; //Messaggio di esito negativo
@@ -883,11 +881,11 @@ $app->post('/visualizzamateriaperid', function (Request $request, Response $resp
 
     //Controllo la risposta dal DB e compilo i campi della risposta
     $responseData = $db->visualizzaMateriaPerid($id);
-    $contatore=(count($responseData));
+    $contatore = (count($responseData));
     if ($responseData != null) {
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
-        $responseData['contatore']=$contatore;
+        $responseData['contatore'] = $contatore;
         $response->getBody()->write(json_encode(array("nomi_materie" => $responseData)));
         //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
         $newResponse = $response->withHeader('Content-type', 'application/json');
