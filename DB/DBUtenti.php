@@ -190,6 +190,34 @@ class DBUtenti
         }else return null;
     }
 
+
+   public function visualizzaCdl()
+    {
+
+        $table = $this->tabelleDB[1]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
+        $query = //query: "SELECT id, nome FROM cdl"
+            ("SELECT * " .
+            "FROM " .
+            $table." ");
+        $stmt = $this->connection->prepare($query);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows > 0) {
+            $stmt->bind_result($id,$nome);
+
+            $CDL = array();
+            while ($stmt->fetch()) { //Scansiono la risposta della query
+                $temp = array(); //Array temporaneo per l'acquisizione dei dati
+                //Indicizzo con key i dati nell'array
+                $temp[$campi[0]] = $id;
+                $temp[$campi[1]] = $nome;
+                array_push($CDL, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $cdl
+            }
+            return $CDL;
+        }else return null;
+    }
+
     //Funzione di recupero (Danilo)
     public function recupero($email)
     {
@@ -444,7 +472,9 @@ class DBUtenti
             //query= SELECT nome,link FROM documento WHERE cod_studente/cod_docente=$matricols
             $query = (
                 "SELECT " .
+                $campi[0] . ", " .
                 $campi[1] . ", " .
+                $campi[4] . ", " .
                 $campi[5] . " " .
                 "FROM " .
                 $tabella . " " .
@@ -458,13 +488,15 @@ class DBUtenti
         $stmt->store_result();
         if ($stmt->num_rows > 0) {
             //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp //
-            $stmt->bind_result($titolo,$id);
+            $stmt->bind_result($id, $titolo, $cod_materia,$link);
             $documento= array();
             while ($stmt->fetch()) { //Scansiono la risposta della query
                 $temp = array(); //Array temporaneo per l'acquisizione dei dati
                 //Indicizzo con key i dati nell'array
+                $temp[$campi[0]] = $id;
                 $temp[$campi[1]] = $titolo;
-                $temp[$campi[5]] = $id;
+                $temp[$campi[4]] = $cod_materia;
+                $temp[$campi[5]] = $link;
                 array_push($documento, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
             }
             return $documento; //ritorno array Documento riempito con i risultati della query effettuata.
@@ -472,6 +504,7 @@ class DBUtenti
             return null;
         }
     }
+
 
 }
 
