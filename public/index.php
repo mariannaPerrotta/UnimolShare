@@ -874,7 +874,7 @@ $app->post('/segnalazione', function (Request $request, Response $response) {
 
 $app->post('/visualizzaidmateriapernome', function (Request $request, Response $response) {
 
-    $db = new DBStudente();
+    $db = new DBUtenti();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $nome = $requestData['materia'];
@@ -887,6 +887,31 @@ $app->post('/visualizzaidmateriapernome', function (Request $request, Response $
         $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
         $responseData['contatore'] = $contatore;
         $response->getBody()->write(json_encode(array("id" => $responseData)));
+        //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
+        $newResponse = $response->withHeader('Content-type', 'application/json');
+        return $newResponse; //Invio la risposta del servizio REST al client
+    } else {
+        $responseData['error'] = true; //Campo errore = false
+        $responseData['message'] = 'Errore imprevisto';
+        return $response->withJson($responseData);
+    }
+    //Invio la risposta del servizio REST al client
+});
+$app->post('/visualizzanomemateriaperid', function (Request $request, Response $response) {
+
+    $db = new DBUtenti();
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $id = $requestData['id'];
+
+    //Controllo la risposta dal DB e compilo i campi della risposta
+    $responseData = $db->visualizzaNomeMateriaPerID($id);
+    $contatore = (count($responseData));
+    if ($responseData != null) {
+        $responseData['error'] = false; //Campo errore = false
+        $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
+        $responseData['contatore'] = $contatore;
+        $response->getBody()->write(json_encode(array("nomi" => $responseData)));
         //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
         $newResponse = $response->withHeader('Content-type', 'application/json');
         return $newResponse; //Invio la risposta del servizio REST al client

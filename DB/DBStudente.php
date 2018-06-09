@@ -698,33 +698,5 @@ class DBStudente
 
     }
 
-    public function visualizzaIDMateriaPerNome($materia)
-    {
-        $tabella = $this->tabelleDB[5]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$tabella];
-        $query = //query: "SELECT id FROM materia WHERE nome = ? "
-            "SELECT " .
-            $campi[0] . " " .
-            "FROM " .
-            $tabella . " " .
-            "WHERE " .
-            $campi[1] . ' = ? ';
-        $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("s", $materia);
-        $stmt->execute();
-        $stmt->store_result();
-        if ($stmt->num_rows > 0) {
-            $stmt->bind_result($id_materia);
-            $id = array();
-            while ($stmt->fetch()) { //Scansiono la risposta della query
-                $temp = array();
-                //Indicizzo con key i dati nell'array
-                $temp[$campi[0]] = $id_materia;
-                array_push($id, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $materie
-            }
-            return $id; //ritorno array $materie riempito con i risultati della query effettuata.
-        } else {
-            return null;
-        }
-    }
+
 }
