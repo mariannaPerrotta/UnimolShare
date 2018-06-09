@@ -268,7 +268,7 @@ $app->post('/visualizzadocumentopermateria', function (Request $request, Respons
         return $newResponse; //Invio la risposta del servizio REST al client
     } else {
         $responseData['error'] = true; //Campo errore = false
-        $responseData['message'] = 'Errore imprevisto';
+        $responseData['message'] = 'Non ci sono documenti per la materia selezionata';
         return $response->withJson($responseData);
     }
 
