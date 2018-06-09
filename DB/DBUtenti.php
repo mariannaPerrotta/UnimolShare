@@ -278,14 +278,13 @@ class DBUtenti
     }
 
     // Funzione Modifica Profilo (Gigi)// da cambiare il ritotno ok
-    public function modificaProfilo($matricola, $nome, $cognome, $password, $tab)
+    public function modificaProfilo($matricola, $nome, $cognome, $password, $tabella)
     {
-        $tabella = $this->tabelleDB[$tab];
         $campi = $this->campiTabelleDB[$tabella];
         //query:  "UPDATE TABLE SET nome = ?, cognome = ?, password = ? WHERE matricola = ?"
         $query = (
             "UPDATE " .
-            $tabella . " " .
+            $tabella. " " .
             "SET " .
             $campi[1] . " = ?, " .
             $campi[2] . " = ?, " .
@@ -297,8 +296,10 @@ class DBUtenti
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("ssss", $nome, $cognome, $password, $matricola); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
 
+        $result = $stmt->execute();
+
         //Controllo se ha trovato matching tra dati inseriti e campi del db
-        return $stmt->execute();
+        return $result;
     }
 
     // Funzione Modifica Password (Andrea)
