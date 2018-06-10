@@ -126,7 +126,7 @@ class DBStudente
     //Funzione rimuovi annuncio (Domenico e Jonathan)
     public function rimuoviAnnuncio($idAnnuncio)
     {
-        $tabella = $this->tabelleDB[1]; //Tabella per la query
+        $tabella = $this->tabelleDB[0]; //Tabella per la query
         $campi = $this->campiTabelleDB[$tabella];
         //query:  " DELETE FROM ANNUNCIO WHERE ID = $idAnnuncio"
         $query = (
@@ -137,9 +137,9 @@ class DBStudente
 
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("i", $idAnnuncio);
-        $stmt->execute();
+        $result = $stmt->execute();
         $stmt->store_result();
-        return $stmt->num_rows > 0;
+        return $result;
     }
 
     //funzione visualizza documento per nome materia(Danilo)

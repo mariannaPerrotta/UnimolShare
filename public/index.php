@@ -580,7 +580,7 @@ $app->delete('/rimuovidocumento/{id}', function (Request $request, Response $res
     }
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
-$app->delete('/rimuoviAnnuncio{id}', function (Request $request, Response $response) {
+$app->delete('/rimuoviannuncio/{id}', function (Request $request, Response $response) {
     $db = new DBStudente();
 
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
@@ -593,7 +593,7 @@ $app->delete('/rimuoviAnnuncio{id}', function (Request $request, Response $respo
 
     if ($db->rimuoviAnnuncio($id)) { //Se l'utente esiste ed è corretta la password
         $responseData['error'] = false; //Campo errore = false
-        $responseData['message'] = 'Documento eliminato'; //Messaggio di esiso positivo
+        $responseData['message'] = 'Annuncio eliminato'; //Messaggio di esiso positivo
 
 
     } else { //Se si è verificato un errore imprevisto
