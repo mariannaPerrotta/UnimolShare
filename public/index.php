@@ -711,7 +711,7 @@ $app->post('/caricaannuncio', function (Request $request, Response $response) {
     $edizione = $requestData['edizione'];
     $casa_editrice = $requestData['casa_editrice'];
     $cod_studente = $requestData['cod_studente'];
-    $autori = $requestData['autori'];
+    $autore = $requestData['autore'];
     $cod_materia = $requestData['cod_materia'];
 
 
@@ -719,7 +719,7 @@ $app->post('/caricaannuncio', function (Request $request, Response $response) {
     $responseData = array(); //La risposta e' un array di informazioni da compilare
 //$query=$db->caricaAnnuncio($titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autori, $cod_materia, $link);
     //Controllo la risposta dal DB e compilo i campi della risposta
-    if ($db->caricaAnnuncio($titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autori, $cod_materia)) { //Se il caricamento del doc Ã¨ andata a buon fine
+    if ($db->caricaAnnuncio($titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autore, $cod_materia)) { //Se il caricamento del doc Ã¨ andata a buon fine
 
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Caricamento avvenuto con successo '; //Messaggio di esito positivo
