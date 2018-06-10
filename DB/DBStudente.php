@@ -126,7 +126,7 @@ class DBStudente
     //Funzione rimuovi annuncio (Domenico e Jonathan)
     public function rimuoviAnnuncio($idAnnuncio)
     {
-        $tabella = $this->tabelleDB[1]; //Tabella per la query
+        $tabella = $this->tabelleDB[0]; //Tabella per la query
         $campi = $this->campiTabelleDB[$tabella];
         //query:  " DELETE FROM ANNUNCIO WHERE ID = $idAnnuncio"
         $query = (
@@ -137,9 +137,9 @@ class DBStudente
 
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("i", $idAnnuncio);
-        $stmt->execute();
+        $result = $stmt->execute();
         $stmt->store_result();
-        return $stmt->num_rows > 0;
+        return $result;
     }
 
     //funzione visualizza documento per nome materia(Danilo)
@@ -238,7 +238,7 @@ class DBStudente
     }
 
     //Funzione carica annuncio (Jonathan e Danilo)
-    public function caricaAnnuncio($titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autori, $cod_materia)
+    public function caricaAnnuncio($titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autore, $cod_materia)
     {
         $tabella = $this->tabelleDB[0];
         $campi = $this->campiTabelleDB[$tabella];
@@ -254,7 +254,7 @@ class DBStudente
             $campi[6] . ", " .
             $campi[7] . ", " .
             $campi[8] . " ) " .
-            "VALUES ('".$titolo."','".$contatto."','".$prezzo."','".$edizione."','".$casa_editrice."','".$cod_studente."','".$autori."','".$cod_materia."' )"
+            "VALUES ('".$titolo."','".$contatto."','".$prezzo."','".$edizione."','".$casa_editrice."','".$cod_studente."','".$autore."','".$cod_materia."' )"
         );
         $stmt = $this->connection->prepare($query);
         //$stmt->bind_param("ssdssssi", $titolo, $contatto, $prezzo, $edizione, $casa_editrice, $cod_studente, $autori, $cod_materia);
@@ -424,7 +424,7 @@ class DBStudente
     {
         $tabella = $this->tabelleDB[0]; //Tabella per la query
         $campi = $this->campiTabelleDB[$tabella];
-        //query: "SELECT titolo, contatto, prezzo,edizione, casaeditrice,autore FROM annunci WHERE cod_stud= $matricola"
+        //query: "SELECT titolo, contatto, prezzo,edizione, casaeditrice, autore FROM annunci WHERE cod_stud= $matricola"
         $query = (
             "SELECT " .
             $campi[0] . ", " .
@@ -433,7 +433,7 @@ class DBStudente
             $campi[3] . ", " .
             $campi[4] . ", " .
             $campi[5] . ", " .
-            $campi[7] . " ," .
+            $campi[7] . ", " .
             $campi[8] . " " .
             " FROM " .
             $tabella . " " .
@@ -446,7 +446,7 @@ class DBStudente
         $stmt->store_result();
         if ($stmt->num_rows > 0) {
             //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp //
-            $stmt->bind_result($id, $titolo, $contatto, $prezzo, $edizione, $casaeditrice, $autore,$num_materia);
+            $stmt->bind_result($id, $titolo, $contatto, $prezzo, $edizione, $casaeditrice, $autore, $num_materia);
             $annunci = array();
             while ($stmt->fetch()) { //Scansiono la risposta della query
                 $temp = array(); //Array temporaneo per l'acquisizione dei dati
@@ -698,33 +698,5 @@ class DBStudente
 
     }
 
-    public function visualizzaIDMateriaPerNome($materia)
-    {
-        $tabella = $this->tabelleDB[5]; //Tabella per la query
-        $campi = $this->campiTabelleDB[$tabella];
-        $query = //query: "SELECT id FROM materia WHERE nome = ? "
-            "SELECT " .
-            $campi[0] . " " .
-            "FROM " .
-            $tabella . " " .
-            "WHERE " .
-            $campi[1] . ' = ? ';
-        $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("s", $materia);
-        $stmt->execute();
-        $stmt->store_result();
-        if ($stmt->num_rows > 0) {
-            $stmt->bind_result($id_materia);
-            $id = array();
-            while ($stmt->fetch()) { //Scansiono la risposta della query
-                $temp = array();
-                //Indicizzo con key i dati nell'array
-                $temp[$campi[0]] = $id_materia;
-                array_push($id, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $materie
-            }
-            return $id; //ritorno array $materie riempito con i risultati della query effettuata.
-        } else {
-            return null;
-        }
-    }
+
 }

@@ -170,14 +170,14 @@ class DBUtenti
         $query = //query: "SELECT id, nome FROM cdl"
             "SELECT * " .
             "FROM " .
-            $table . " " .
-            "WHERE " . $campi[0] . " = ?";
+            $table." ".
+            "WHERE ". $campi[0]." = ?";
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param(i, $idcdl);
+        $stmt->bind_param(i , $idcdl);
         $stmt->execute();
         $stmt->store_result();
         if ($stmt->num_rows > 0) {
-            $stmt->bind_result($id, $nome);
+            $stmt->bind_result($id,$nome);
 
             $CDL = array();
             while ($stmt->fetch()) { //Scansiono la risposta della query
@@ -187,24 +187,24 @@ class DBUtenti
                 array_push($CDL, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $cdl
             }
             return $CDL;
-        } else return null;
+        }else return null;
     }
 
 
-    public function visualizzaCdl()
+   public function visualizzaCdl()
     {
 
         $table = $this->tabelleDB[1]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
         $query = //query: "SELECT id, nome FROM cdl"
             ("SELECT * " .
-                "FROM " .
-                $table . " ");
+            "FROM " .
+            $table." ");
         $stmt = $this->connection->prepare($query);
         $stmt->execute();
         $stmt->store_result();
         if ($stmt->num_rows > 0) {
-            $stmt->bind_result($id, $nome);
+            $stmt->bind_result($id,$nome);
 
             $CDL = array();
             while ($stmt->fetch()) { //Scansiono la risposta della query
@@ -215,7 +215,7 @@ class DBUtenti
                 array_push($CDL, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $cdl
             }
             return $CDL;
-        } else return null;
+        }else return null;
     }
 
     //Funzione di recupero (Danilo)
@@ -274,18 +274,17 @@ class DBUtenti
         //Invio la query
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("s", $matricola); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
-        return ($stmt->execute());
+        return($stmt->execute());
     }
 
     // Funzione Modifica Profilo (Gigi)// da cambiare il ritotno ok
-    public function modificaProfilo($matricola, $nome, $cognome, $password, $tab)
+    public function modificaProfilo($matricola, $nome, $cognome, $password, $tabella)
     {
-        $tabella = $this->tabelleDB[$tab];
         $campi = $this->campiTabelleDB[$tabella];
         //query:  "UPDATE TABLE SET nome = ?, cognome = ?, password = ? WHERE matricola = ?"
         $query = (
             "UPDATE " .
-            $tabella . " " .
+            $tabella. " " .
             "SET " .
             $campi[1] . " = ?, " .
             $campi[2] . " = ?, " .
@@ -297,8 +296,10 @@ class DBUtenti
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("ssss", $nome, $cognome, $password, $matricola); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
 
+        $result = $stmt->execute();
+
         //Controllo se ha trovato matching tra dati inseriti e campi del db
-        return $stmt->execute();
+        return $result;
     }
 
     // Funzione Modifica Password (Andrea)
@@ -353,7 +354,7 @@ class DBUtenti
             $stmt = $this->connection->prepare($query);
             $stmt->bind_param("sssssii", $matricola, $nome, $cognome, $email, $password, $attivo, $cds); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
             $result = ($stmt->execute()) ? 1 : 2;
-        } else if ($substr == "unimol") {
+        } else if ($substr == "unimol"){
             $tabella = $this->tabelleDB[2];
             //query: "INSERT INTO TABLE (matricola, nome, cognome, email, password, attivo) VALUES (?,?,?,?,?,0)"
             $query = (
@@ -469,35 +470,94 @@ class DBUtenti
         $tabella = $this->tabelleDB[3]; //Tabella per la query
         $campi = $this->campiTabelleDB[$tabella];
 
-        //query= SELECT nome,link FROM documento WHERE cod_studente/cod_docente=$matricols
-        $query = (
-            "SELECT " .
-            $campi[0] . ", " .
-            $campi[1] . ", " .
-            $campi[5] . " " .
-            "FROM " .
-            $tabella . " " .
-            "WHERE " .
-            $campi[3] . " = ? OR " . $campi[2] . " = ? "
-        );
+            //query= SELECT nome,link FROM documento WHERE cod_studente/cod_docente=$matricols
+            $query = (
+                "SELECT " .
+                $campi[0] . ", " .
+                $campi[1] . ", " .
+                $campi[4] . ", " .
+                $campi[5] . " " .
+                "FROM " .
+                $tabella . " " .
+                "WHERE " .
+                $campi[3] . " = ? OR ". $campi[2] . " = ? "
+            );
 
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("ss", $Matricola, $Matricola);
+        $stmt->bind_param("ss", $Matricola,$Matricola);
         $stmt->execute();
         $stmt->store_result();
         if ($stmt->num_rows > 0) {
             //Salvo il risultato della query in alcune variabili che andranno a comporre l'array temp //
-            $stmt->bind_result($id, $titolo, $link);
-            $documento = array();
+            $stmt->bind_result($id, $titolo, $cod_materia,$link);
+            $documento= array();
             while ($stmt->fetch()) { //Scansiono la risposta della query
                 $temp = array(); //Array temporaneo per l'acquisizione dei dati
                 //Indicizzo con key i dati nell'array
                 $temp[$campi[0]] = $id;
                 $temp[$campi[1]] = $titolo;
+                $temp[$campi[4]] = $cod_materia;
                 $temp[$campi[5]] = $link;
                 array_push($documento, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
             }
             return $documento; //ritorno array Documento riempito con i risultati della query effettuata.
+        } else {
+            return null;
+        }
+    }
+    public function visualizzaNomeMateriaPerID($idmateria)
+    {
+
+        $table = $this->tabelleDB[5]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$table];
+        $query = //query: "SELECT id, nome FROM cdl"
+            "SELECT " .
+            $campi[1]." ".
+            "FROM " .
+            $table." ".
+            "WHERE ". $campi[0]." = ?";
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("i" , $idmateria);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows > 0) {
+            $stmt->bind_result($nome);
+
+            $materie = array();
+            while ($stmt->fetch()) { //Scansiono la risposta della query
+                $temp = array(); //Array temporaneo per l'acquisizione dei dati
+                //Indicizzo con key i dati nell'array
+                $temp[$campi[1]] = $nome;
+                array_push($materie, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $cdl
+            }
+            return $materie;
+        }else return null;
+    }
+    public function visualizzaIDMateriaPerNome($materia)
+    {
+        $tabella = $this->tabelleDB[5]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$tabella];
+        $query = //query: "SELECT id FROM materia WHERE nome = ? "
+            "SELECT " .
+            $campi[0] . " " .
+            "FROM " .
+            $tabella . " " .
+            "WHERE " .
+            $campi[1] . ' = ? ';
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("s", $materia);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows > 0) {
+            $stmt->bind_result($id_materia);
+            $id = array();
+            while ($stmt->fetch()) { //Scansiono la risposta della query
+                $temp = array();
+                //Indicizzo con key i dati nell'array
+                $temp[$campi[0]] = $id_materia;
+                array_push($id, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $materie
+            }
+            return $id; //ritorno array $materie riempito con i risultati della query effettuata.
         } else {
             return null;
         }
