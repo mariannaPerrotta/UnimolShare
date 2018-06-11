@@ -238,6 +238,35 @@ class DBDocenti
             return null;
         }
     }
+    public function visualizzLibriPerCoddoc($matricola)
+    {
+        $tabella = $this->tabelleDB[4]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$tabella];
+        $query = //query: "SELECT nome, FROM materia WHERE cod_cdl = ? "
+            "SELECT " .
+            $campi[1] . " " .
+            "FROM " .
+            $tabella . " " .
+            "WHERE " .
+            $campi[5] . ' = ? ';
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("s", $matricola);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows > 0) {
+            $stmt->bind_result($nome_libro);
+            $libro = array();
+            while ($stmt->fetch()) { //Scansiono la risposta della query
+                $temp = array();
+                //Indicizzo con key i dati nell'array
+                $temp[$campi[1]] = $nome_libro;
+                array_push($libro, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $materie
+            }
+            return $libro; //ritorno array $materie riempito con i risultati della query effettuata.
+        } else {
+            return null;
+        }
+    }
     public function rimuoviLibro($libro)
     {
         $tabella = $this->tabelleDB[4]; //Tabella per la query
