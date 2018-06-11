@@ -328,6 +328,33 @@ $app->post('/visualizzacdlperiddocente', function (Request $request, Response $r
 
 });
 
+
+$app->post('/visualizzanomecdlperid', function (Request $request, Response $response) {
+
+    $db = new DBDocenti();
+
+    $requestData = $request->getParsedBody();
+    $id = $requestData['id'];
+//Controllo la risposta dal DB e compilo i campi della risposta
+    $responseData = $db->visualizzaNomeCdl($id);
+    $contatore = (count($responseData));
+    if ($responseData != null) {
+        $responseData['error'] = false; //Campo errore = false
+        $responseData['contatore'] = $contatore;
+        $responseData['message'] = 'Elemento visualizzato con successo'; //Messaggio di esiso positivo
+        $response->getBody()->write(json_encode(array("CDL" => $responseData)));
+        //metto in un json e lo inserisco nella risposta del servizio REST
+        //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
+        $newResponse = $response->withHeader('Content-type', 'application/json');
+        return $newResponse; //Invio la risposta del servizio REST al client
+    } else {
+        $responseData['error'] = true; //Campo errore = false
+        $responseData['message'] = 'Errore imprevisto';
+        return $response->withJson($responseData);
+    }
+
+});
+
 $app->post('/visualizzacdlperidstudente', function (Request $request, Response $response) {
 
     $db = new DBStudente();
