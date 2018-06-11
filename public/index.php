@@ -831,10 +831,34 @@ $app->post('/valutazionedocumento', function (Request $request, Response $respon
 
     } else {
         $responseData['error'] = true; //Campo errore = true
-        $responseData['message'] = 'Valutaizone non effettuata'; //Messaggio di esito negativo
+        $responseData['message'] = 'Valutazione non effettuata'; //Messaggio di esito negativo
     }
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
+
+
+// endpoint: /valutazionedocumento (Andrea) ok
+$app->post('/mediavalutazione', function (Request $request, Response $response) {
+    $db = new DBStudente();
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $cod_documento = $requestData['cod_documento'];
+
+    //Risposta del servizio REST
+    $responseData = array();
+
+    //Controllo la risposta dal DB
+    if ($db->mediaValutazione($cod_documento)) { //Se il caricamento della valutaizone è andato a buon fine
+        $responseData['error'] = false; //Campo errore = false
+        $responseData['message'] = 'Media recuperata'; //Messaggio di esito positivo
+
+    } else {
+        $responseData['error'] = true; //Campo errore = true
+        $responseData['message'] = 'Media non disponibile'; //Messaggio di esito negativo
+    }
+    return $response->withJson($responseData); //Invio la risposta del servizio REST al client
+});
+
 
 $app->post('/ricerca', function (Request $request, Response $response) {
     $db = new DBStudente();

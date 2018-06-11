@@ -324,6 +324,39 @@ class DBStudente
         return $stmt->execute();
     }
 
+
+    //Funzione valutazione documenti (Andrea)
+    public function mediaValutazione($cod_documento)
+    {
+        $tabella = $this->tabelleDB[7]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$tabella];
+        //query: SELECT AVG(valutazione) AS temp FROM valutazione WHERE cod_documento = ?
+        $query = (
+            "SELECT AVG(" .
+            $campi[1] . ") AS temp FROM " .
+            $tabella . " WHERE " .
+            $campi[2] . " = ?"
+        );
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("i", $cod_documento);
+        $stmt->execute();//Esegue la query
+        $stmt->store_result();
+        if ($stmt->num_rows > 0) {
+            $stmt->bind_result($media);
+            $risultato = array();
+            while ($stmt->fetch()) { //Scansiono la risposta della query
+                $temp = array(); //Array temporaneo per l'acquisizione dei dati
+                //Indicizzo con key i dati nell'array
+                $temp["media"] = $media;
+
+                array_push($risultato, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $utenti
+            }
+            return $risultato;
+        } else {
+            return null;
+        }
+    }
+
     //Funzione per ricercare tra documenti, libri e annunci (Andrea)
     public function ricerca($key)
     {
