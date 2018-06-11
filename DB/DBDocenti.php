@@ -184,6 +184,7 @@ class DBDocenti
         $campi = $this->campiTabelleDB[$tabella];
         $query = //query: "SELECT nome, FROM materia WHERE cod_cdl = ? "
             "SELECT " .
+            $campi[0] . ", " .
             $campi[1] . " " .
             "FROM " .
             $tabella . " " .
@@ -194,11 +195,12 @@ class DBDocenti
         $stmt->execute();
         $stmt->store_result();
         if ($stmt->num_rows > 0) {
-            $stmt->bind_result($nome_materia);
+            $stmt->bind_result($id_materia, $nome_materia);
             $materie = array();
             while ($stmt->fetch()) { //Scansiono la risposta della query
                 $temp = array();
                 //Indicizzo con key i dati nell'array
+                $temp[$campi[0]] = $id_materia;
                 $temp[$campi[1]] = $nome_materia;
                 array_push($materie, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $materie
             }
