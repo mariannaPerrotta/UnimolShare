@@ -819,12 +819,13 @@ $app->post('/valutazionedocumento', function (Request $request, Response $respon
     $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
     $valutazione = $requestData['valutazione'];
     $cod_documento = $requestData['cod_documento'];
+    $cod_studente = $requestData['cod_studente'];
 
     //Risposta del servizio REST
     $responseData = array();
 
     //Controllo la risposta dal DB
-    if ($db->valutazioneDocumento($valutazione, $cod_documento)) { //Se il caricamento della valutaizone è andato a buon fine
+    if ($db->valutazioneDocumento($valutazione, $cod_documento, $cod_studente)) { //Se il caricamento della valutaizone è andato a buon fine
         $responseData['error'] = false; //Campo errore = false
         $responseData['message'] = 'Valutazione avvenuta con successo'; //Messaggio di esito positivo
 

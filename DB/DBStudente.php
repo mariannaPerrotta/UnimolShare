@@ -74,7 +74,12 @@ class DBStudente
         "valutazione" => [
             "id",
             "valutazione",
-            "cod_documento"
+            "cod_documento",
+            "cod_studente"
+        ],
+        "cdl_doc" =>[
+            "id_cdl",
+            "cod_doc"
         ]
     ];
 
@@ -301,7 +306,7 @@ class DBStudente
     }
 
     //Funzione valutazione documenti (Andrea)
-    public function valutazioneDocumento($valutazione, $cod_documento)
+    public function valutazioneDocumento($valutazione, $cod_documento, $cod_studente)
     {
         $tabella = $this->tabelleDB[7]; //Tabella per la query
         $campi = $this->campiTabelleDB[$tabella];
@@ -310,11 +315,12 @@ class DBStudente
             "INSERT INTO  " .
             $tabella . " ( " .
             $campi[1] . ", " .
-            $campi[2] . " ) " .
-            "VALUES (?,?)"
+            $campi[2] . ", " .
+            $campi[3] . " ) " .
+            "VALUES (?,?,?)"
         );
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("ii", $valutazione, $cod_documento);
+        $stmt->bind_param("iis", $valutazione, $cod_documento, $cod_studente);
         return $stmt->execute();
     }
 

@@ -81,7 +81,8 @@ class DBDocenti
         "valutazione" => [
             "id",
             "valutazione",
-            "cod_documento"
+            "cod_documento",
+            "cod_studente"
         ],
         "cdl_doc" =>[
             "id_cdl",
