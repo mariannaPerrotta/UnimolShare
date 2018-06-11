@@ -846,17 +846,22 @@ $app->post('/mediavalutazione', function (Request $request, Response $response) 
 
     //Risposta del servizio REST
     $responseData = array();
+//Controllo la risposta dal DB e compilo i campi della risposta
+    $responseData = $db->mediaValutazione($cod_documento);
 
-    //Controllo la risposta dal DB
-    if ($db->mediaValutazione($cod_documento)) { //Se il caricamento della valutaizone è andato a buon fine
+    if ($responseData != null) {
         $responseData['error'] = false; //Campo errore = false
-        $responseData['message'] = 'Media recuperata'; //Messaggio di esito positivo
-
+        $responseData['message'] = 'Elementi visualizzati con successo'; //Messaggio di esito positivo
+        $response->getBody()->write(json_encode(array("contatti" => $responseData)));
+        //Definisco il Content-type come json, i dati sono strutturati e lo dichiaro al browser
+        $newResponse = $response->withHeader('Content-type', 'application/json');
+        return $newResponse; //Invio la risposta del servizio REST al client
     } else {
         $responseData['error'] = true; //Campo errore = true
-        $responseData['message'] = 'Media non disponibile'; //Messaggio di esito negativo
+        $responseData['message'] = 'Errore imprevisto'; //Messaggio di esito negativo
+        return $response->withJson($responseData);
     }
-    return $response->withJson($responseData); //Invio la risposta del servizio REST al client
+    //Invio la risposta del servizio REST al client
 });
 
 
