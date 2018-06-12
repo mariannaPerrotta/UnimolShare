@@ -211,6 +211,66 @@ class DBDocenti
         }
     }
 
+//Funzione visualizza materia per cdl (Danilo)
+    public function visualizzaMaterieDisponibili($cod_docente)
+    {
+        $tabella = $this->tabelleDB[5]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$tabella];
+        $query = //query: "SELECT id, nome, cod_docente, cod_cdl FROM materia WHERE cod_docente = ? OR cod_docente IS NULL "
+            "SELECT " .
+            $campi[0] . ", " .
+            $campi[1] . ", " .
+            $campi[2] . ", " .
+            $campi[3] . " " .
+            "FROM " .
+            $tabella . " " .
+            "WHERE " .
+            $campi[2] . ' = ? OR ' .
+            $campi[2] . ' IS NULL ' .
+            'ORDER BY ' . $campi[3] ;
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("s", $cod_docente);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows > 0) {
+            $stmt->bind_result($id_materia, $nome_materia, $cod_doc, $cdl);
+            $materie = array();
+            while ($stmt->fetch()) { //Scansiono la risposta della query
+                $temp = array();
+                //Indicizzo con key i dati nell'array
+                $temp[$campi[0]] = $id_materia;
+                $temp[$campi[1]] = $nome_materia;
+                $temp[$campi[2]] = $cod_doc;
+                $temp[$campi[3]] = $cdl;
+                array_push($materie, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $materie
+            }
+            return $materie; //ritorno array $materie riempito con i risultati della query effettuata.
+        } else {
+            return null;
+        }
+    }
+
+
+    // Funzione conferma Profilo (Andrea)
+    public function assegnaDocenteAmateria($cod_docente, $cod_materia)
+    {
+        $tabella = $this->tabelleDB[5]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$tabella];
+        //query:  "UPDATE docente/studente SET attivo = true WHERE matricola = ?"
+        $query = (
+            "UPDATE " .
+            $tabella . " " .
+            "SET " .
+            $campi[2] . " = ? " .
+            "WHERE " .
+            $campi[0] . " = ?"
+        );
+        //Invio la query
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("si", $cod_docente, $cod_materia); //ss se sono 2 stringhe, ssi 2 string e un int (sostituisce ? della query)
+        return $stmt->execute();
+    }
+
     public function visualizzaCdlPerCodDoc($matricola)
     {
         $tabella = $this->tabelleDB[8]; //Tabella per la query
@@ -241,6 +301,72 @@ class DBDocenti
         } else {
             return null;
         }
+    }
+
+    public function checkMateriaPerCodDoc($cod_materia, $matricola)
+    {
+        $tabella = $this->tabelleDB[5]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$tabella];
+        $query = //query: "SELECT true AS check FROM materia WHERE id = ? AND cod_docente = ?"
+            "SELECT 'true' AS `check` " .
+            "FROM " .
+            $tabella . " " .
+            "WHERE " .
+            $campi[0] . ' = '.$cod_materia. ' AND ' .
+            $campi[2] . ' = '.$matricola;
+        $stmt = $this->connection->prepare($query);
+        //$stmt->bind_param("is", $cod_materia, $matricola);
+        $stmt->execute();
+        $stmt->store_result();
+        $check = array();
+        if ($stmt->num_rows > 0) {
+            $stmt->bind_result($checked);
+            while ($stmt->fetch()) { //Scansiono la risposta della query
+                $temp = array();
+                //Indicizzo con key i dati nell'array
+                $temp['check'] = $checked;
+                array_push($check, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $materie
+            }
+        } else {
+            $temp = array();
+            //Indicizzo con key i dati nell'array
+            $temp['check'] = false;
+            array_push($check, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $materie
+        }
+        return $check; //ritorno array $materie riempito con i risultati della query effettuata.
+    }
+
+    public function checkCdlPerCodDoc($cdl, $matricola)
+    {
+        $tabella = $this->tabelleDB[8]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$tabella];
+        $query = //query: "SELECT true AS check FROM materia WHERE id = ? AND cod_docente = ?"
+            "SELECT 'true' AS `check` " .
+            "FROM " .
+            $tabella . " " .
+            "WHERE " .
+            $campi[0] . ' = '.$cdl. ' AND ' .
+            $campi[1] . ' = '.$matricola;
+        $stmt = $this->connection->prepare($query);
+        //$stmt->bind_param("is", $cod_materia, $matricola);
+        $stmt->execute();
+        $stmt->store_result();
+        $check = array();
+        if ($stmt->num_rows > 0) {
+            $stmt->bind_result($checked);
+            while ($stmt->fetch()) { //Scansiono la risposta della query
+                $temp = array();
+                //Indicizzo con key i dati nell'array
+                $temp['check'] = $checked;
+                array_push($check, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $materie
+            }
+        } else {
+            $temp = array();
+            //Indicizzo con key i dati nell'array
+            $temp['check'] = false;
+            array_push($check, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $materie
+        }
+        return $check; //ritorno array $materie riempito con i risultati della query effettuata.
     }
 
 
@@ -335,9 +461,29 @@ class DBDocenti
             );
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("is", $id,$matricola);
+        return ($stmt->execute());
+    }
+
+
+    public function caricaMateria($id,$matricola)
+    {
+        $tabella = $this->tabelleDB[8];
+        $campi = $this->campiTabelleDB[$tabella];
+        //query: "INSERT INTO annuncio (id, titolo, contatto, prezzo, edizione, casa_editrice, cod_studente, autori, cod_materia, link) VALUES (?,?,?,?,?,?,?,?)"
+        $query =/*"INSERT INTO annuncio ( titolo, contatto, prezzo, edizione, casa_editrice, cod_stud, autore, cod_materia) VALUES (?,?,'".$prezzo."',?,?,?,?,?)";*/
+            ("INSERT INTO  " .
+                $tabella . " ( " .
+                $campi[0] . ", " .
+                $campi[1] . " " .
+                " ) " .
+                "VALUES (?,?)"
+            );
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("is", $id,$matricola);
 
         return $stmt->execute();
     }
+
     //titolo
     //autore
     //casa_editrice
