@@ -715,6 +715,24 @@ $app->post('/visualizzatutticdl', function (Request $request, Response $response
 
 });
 //endpoint rimuovi by jo dom
+$app->delete('/rimuovilibro/{id}', function (Request $request, Response $response) {
+    $db = new DBDocenti();
+    $idLibro = $request->getAttribute('id');
+    //Risposta del servizio REST
+    $responseData = array(); //La risposta è un array di informazioni da compilare
+
+    //Controllo la risposta dal DB e compilo i campi della risposta
+    $esito = $db->rimuoviLibro($idLibro);
+    if ($esito) { //Se è stato possibile rimuovere il documento
+        $responseData['error'] = false; //Campo errore = false
+        $responseData['message'] = 'Libro rimosso'; //Messaggio di esito positivo
+
+    } else { //Se si è verificato un errore imprevisto
+        $responseData['error'] = true; //Campo errore = true
+        $responseData['message'] = 'Documento non rimosso'; //Messaggio di esito negativo
+    }
+    return $response->withJson($responseData); //Invio la risposta del servizio REST al client
+});
 $app->delete('/rimuovidocumento/{id}', function (Request $request, Response $response) {
     $db = new DBUtenti();
     $idDocumento = $request->getAttribute('id');

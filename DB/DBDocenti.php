@@ -141,9 +141,10 @@ class DBDocenti
     {
         $tabella = $this->tabelleDB[4]; //Tabella per la query
         $campi = $this->campiTabelleDB[$tabella];
-        //query: "SELECT titolo,autore,casaeditrice,edizione,link FROM libri WHERE cod_docente = $matricola "
+        //query: "SELECT id,titolo,autore,casaeditrice,edizione,link FROM libri WHERE cod_docente = $matricola "
         $query = (
             "SELECT " .
+            $campi[0] . ", " .
             $campi[1] . ", " .
             $campi[2] . ", " .
             $campi[3] . ", " .
@@ -160,11 +161,12 @@ class DBDocenti
         $stmt->execute();
         $stmt->store_result();
         if ($stmt->num_rows > 0) {
-            $stmt->bind_result($titolo, $autore, $casaeditrice, $edizione, $link);
+            $stmt->bind_result($id, $titolo, $autore, $casaeditrice, $edizione, $link);
             $libri = array();
             while ($stmt->fetch()) { //Scansiono la risposta della query
                 $temp = array();
                 //Indicizzo con key i dati nell'array
+                $temp[$campi[0]] = $id;
                 $temp[$campi[1]] = $titolo;
                 $temp[$campi[2]] = $autore;
                 $temp[$campi[3]] = $casaeditrice;
@@ -462,22 +464,24 @@ class DBDocenti
             return null;
         }
     }
-    public function rimuoviLibro($libro)
+
+    //Funzione rimuovi documento (Domenico e Jonathan)
+    public function rimuoviLibro($idLibro)
     {
         $tabella = $this->tabelleDB[4]; //Tabella per la query
         $campi = $this->campiTabelleDB[$tabella];
-        //query:  " DELETE FROM ANNUNCIO WHERE ID = $idAnnuncio"
+        //query:  " DELETE FROM DOCUMENTO WHERE ID = $idDocumento"
         $query = (
             "DELETE FROM " .
             $tabella . " WHERE " .
             $campi[0] . " = ? "
         );
-
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("i", $libro);
-        $stmt->execute();
+        $stmt->bind_param("i", $idLibro);
+        $result = $stmt->execute();
         $stmt->store_result();
-        return $stmt->num_rows > 0;
+
+        return $result;
     }
     public function caricaCdl($id,$matricola)
     {
