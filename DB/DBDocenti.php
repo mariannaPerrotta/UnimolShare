@@ -212,6 +212,39 @@ class DBDocenti
     }
 
 //Funzione visualizza materia per cdl (Danilo)
+    public function visualizzaMateriaPerMatricola($matricola)
+    {
+        $tabella = $this->tabelleDB[5]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$tabella];
+        $query = //query: "SELECT id, nome FROM materia WHERE cod_docente = ? "
+            "SELECT " .
+            $campi[0] . ", " .
+            $campi[1] . " " .
+            "FROM " .
+            $tabella . " " .
+            "WHERE " .
+            $campi[2] . ' = ? ';
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("s", $matricola);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows > 0) {
+            $stmt->bind_result($id_materia, $nome_materia);
+            $materie = array();
+            while ($stmt->fetch()) { //Scansiono la risposta della query
+                $temp = array();
+                //Indicizzo con key i dati nell'array
+                $temp[$campi[0]] = $id_materia;
+                $temp[$campi[1]] = $nome_materia;
+                array_push($materie, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $materie
+            }
+            return $materie; //ritorno array $materie riempito con i risultati della query effettuata.
+        } else {
+            return null;
+        }
+    }
+
+//Funzione visualizza materia per cdl (Danilo)
     public function visualizzaMaterieDisponibili($cod_docente)
     {
         $tabella = $this->tabelleDB[5]; //Tabella per la query
@@ -484,19 +517,12 @@ class DBDocenti
         return $stmt->execute();
     }
 
-    //titolo
-    //autore
-    //casa_editrice
-    //edizione
-    //cod_docente
-    //cod_materia
-    //link
-    public function caricaLibro($titolo,  $edizione, $casa_editrice, $cod_docente, $autori, $cod_materia,$link)
+    public function caricaLibro($titolo,  $edizione, $casa_editrice, $cod_docente, $autore, $cod_materia, $link)
     {
-        $tabella = $this->tabelleDB[0];
+        $tabella = $this->tabelleDB[4];
         $campi = $this->campiTabelleDB[$tabella];
         //query: "INSERT INTO annuncio (id, titolo, contatto, prezzo, edizione, casa_editrice, cod_studente, autori, cod_materia, link) VALUES (?,?,?,?,?,?,?,?)"
-        $query =/*"INSERT INTO annuncio ( titolo, contatto, prezzo, edizione, casa_editrice, cod_stud, autore, cod_materia) VALUES (?,?,'".$prezzo."',?,?,?,?,?)";*/
+        $query =/*"INSERT INTO libro ( titolo, autore, casa_editrice, edizione, cod_docente, cod_materia, link ) VALUES (?,?,'".$prezzo."',?,?,?,?,?)";*/
             ("INSERT INTO  " .
                 $tabella . " ( " .
                 $campi[1] . ", " .
@@ -505,11 +531,11 @@ class DBDocenti
                 $campi[4] . ", " .
                 $campi[5] . ", " .
                 $campi[6] . ", " .
-                $campi[7] . " " .
+                $campi[7] . " ) " .
                 "VALUES (?,?,?,?,?,?,?)"
             );
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("sssssis", $titolo, $autori, $casa_editrice,$edizione,  $cod_docente,  $cod_materia,$link);
+        $stmt->bind_param("sssssis", $titolo, $autore, $casa_editrice, $edizione, $cod_docente, $cod_materia, $link);
 
         return $stmt->execute();
     }
