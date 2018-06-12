@@ -104,6 +104,7 @@ class DBUtenti
     //Funzione di accesso (Andrea)
     public function login($email, $password)
     {
+        $password = hash('sha256', $password);
         $studenteTab = $this->tabelleDB[6];
         $docenteTab = $this->tabelleDB[2];
         $campi = $this->campiTabelleDB[$studenteTab];
@@ -286,6 +287,7 @@ class DBUtenti
     // Funzione Modifica Profilo (Gigi)// da cambiare il ritotno ok
     public function modificaProfilo($matricola, $nome, $cognome, $password, $tabella)
     {
+        $password = hash('sha256', $password);
         $campi = $this->campiTabelleDB[$tabella];
         //query:  "UPDATE TABLE SET nome = ?, cognome = ?, password = ? WHERE matricola = ?"
         $query = (
@@ -311,6 +313,7 @@ class DBUtenti
     // Funzione Modifica Password (Andrea)
     public function modificaPassword($email, $password)
     {
+        $password = hash('sha256', $password);
         $stringHelper = new StringHelper();
         $substr = $stringHelper->subString($email);
         $tabella = $this->tabelleDB[6];
@@ -336,6 +339,7 @@ class DBUtenti
     // Funzione registrazione (Francesco)
     public function registrazione($matricola, $nome, $cognome, $email, $password, $cds)
     {
+        $password = hash('sha256', $password);
         $stringHelper = new StringHelper();
         $substr = $stringHelper->subString($email);
         $tabella = $this->tabelleDB[6];
