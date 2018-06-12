@@ -149,6 +149,7 @@ class DBDocenti
             $campi[2] . ", " .
             $campi[3] . ", " .
             $campi[4] . ", " .
+            $campi[6] . ", " .
             $campi[7] . " " .
 
             "FROM " .
@@ -161,7 +162,7 @@ class DBDocenti
         $stmt->execute();
         $stmt->store_result();
         if ($stmt->num_rows > 0) {
-            $stmt->bind_result($id, $titolo, $autore, $casaeditrice, $edizione, $link);
+            $stmt->bind_result($id, $titolo, $autore, $casaeditrice, $edizione, $cod_materia, $link);
             $libri = array();
             while ($stmt->fetch()) { //Scansiono la risposta della query
                 $temp = array();
@@ -171,6 +172,7 @@ class DBDocenti
                 $temp[$campi[2]] = $autore;
                 $temp[$campi[3]] = $casaeditrice;
                 $temp[$campi[4]] = $edizione;
+                $temp[$campi[6]] = $cod_materia;
                 $temp[$campi[7]] = $link;
                 array_push($libri, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $annunci
             }

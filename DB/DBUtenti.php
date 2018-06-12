@@ -471,7 +471,7 @@ class DBUtenti
     }
 
     //Funzione visualizza documento per id (Danilo)
-    public function VISUvisualizzaDocumentoPerId($Matricola)
+    public function visualizzaDocumentoPerId($Matricola)
     {
         $tabella = $this->tabelleDB[3]; //Tabella per la query
         $campi = $this->campiTabelleDB[$tabella];
