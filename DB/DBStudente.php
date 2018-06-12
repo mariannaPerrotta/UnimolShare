@@ -74,7 +74,12 @@ class DBStudente
         "valutazione" => [
             "id",
             "valutazione",
-            "cod_documento"
+            "cod_documento",
+            "cod_studente"
+        ],
+        "cdl_doc" =>[
+            "id_cdl",
+            "cod_doc"
         ]
     ];
 
@@ -301,7 +306,7 @@ class DBStudente
     }
 
     //Funzione valutazione documenti (Andrea)
-    public function valutazioneDocumento($valutazione, $cod_documento)
+    public function valutazioneDocumento($valutazione, $cod_documento, $cod_studente)
     {
         $tabella = $this->tabelleDB[7]; //Tabella per la query
         $campi = $this->campiTabelleDB[$tabella];
@@ -310,12 +315,46 @@ class DBStudente
             "INSERT INTO  " .
             $tabella . " ( " .
             $campi[1] . ", " .
-            $campi[2] . " ) " .
-            "VALUES (?,?)"
+            $campi[2] . ", " .
+            $campi[3] . " ) " .
+            "VALUES (?,?,?)"
         );
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("ii", $valutazione, $cod_documento);
+        $stmt->bind_param("iis", $valutazione, $cod_documento, $cod_studente);
         return $stmt->execute();
+    }
+
+
+    //Funzione valutazione documenti (Andrea)
+    public function mediaValutazione($cod_documento)
+    {
+        $tabella = $this->tabelleDB[7]; //Tabella per la query
+        $campi = $this->campiTabelleDB[$tabella];
+        //query: SELECT AVG(valutazione) AS temp FROM valutazione WHERE cod_documento = ?
+        $query = (
+            "SELECT AVG(" .
+            $campi[1] . ") AS temp FROM " .
+            $tabella . " WHERE " .
+            $campi[2] . " = ?"
+        );
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("i", $cod_documento);
+        $stmt->execute();//Esegue la query
+        $stmt->store_result();
+        if ($stmt->num_rows > 0) {
+            $stmt->bind_result($media);
+            $risultato = array();
+            while ($stmt->fetch()) { //Scansiono la risposta della query
+                $temp = array(); //Array temporaneo per l'acquisizione dei dati
+                //Indicizzo con key i dati nell'array
+                $temp["media"] = $media;
+
+                array_push($risultato, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $utenti
+            }
+            return $risultato;
+        } else {
+            return null;
+        }
     }
 
     //Funzione per ricercare tra documenti, libri e annunci (Andrea)

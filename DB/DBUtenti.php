@@ -82,7 +82,12 @@ class DBUtenti
         "valutazione" => [
             "id",
             "valutazione",
-            "cod_documento"
+            "cod_documento",
+            "cod_studente"
+        ],
+        "cdl_doc" =>[
+            "id_cdl",
+            "cod_doc"
         ]
     ];
 
@@ -132,6 +137,7 @@ class DBUtenti
             $campi[3] . " = ? AND " .
             $campi[4] . " = ? AND " .
             $campi[5] . " = ?"
+
         );
 
         //Invio la query
