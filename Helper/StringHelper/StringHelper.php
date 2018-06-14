@@ -17,7 +17,7 @@ class StringHelper
     }
 
     //Funzione per selezionare la sottostringa tra @ e . nel domionio delle email
-    function subString($str){
+    function subString($str ){
         $subString = substr($str, strpos($str, "@") +1);
         $subString = substr($subString, 0,strpos($subString, "."));
         return $subString;
