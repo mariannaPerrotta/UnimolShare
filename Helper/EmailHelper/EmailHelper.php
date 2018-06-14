@@ -29,7 +29,7 @@ class EmailHelper
 
         $messaggio = "Usa questa password temporanea";
 
-        $linkLogin = 'https://www.unimolshare.it/login.php';
+        $linkLogin = 'http://unimolsharewebapp.altervista.org/pages/login.php';
         $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
         try {
             //Server settings
@@ -65,7 +65,7 @@ class EmailHelper
     function sendConfermaAccount($email, $link){
 
         $messaggio = 'Hai appena richiesto di iscriverti ad UnimolShare!<br>Conferma la tua iscrizione col seguente link: ';
-        $linkLogin = 'https://www.unimolshare.it/login.php';
+        $linkLogin = 'http://unimolsharewebapp.altervista.org/pages/login.php';
         $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
         try {
             //Server settings

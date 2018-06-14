@@ -103,6 +103,18 @@ $app->post('/login', function (Request $request, Response $response) {
 
 
 // endpoint: /registration (Francesco) OK
+$app->post('/confermaaccount', function (Request $request, Response $response) {
+    $db = new DBUtenti();
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $email = $requestData['email'];
+    $link = $requestData['link'];
+    $emailSender = new EmailHelper();
+    return $response->withJson($emailSender->sendConfermaAccount($email, $link));
+
+});
+
+// endpoint: /registration (Francesco) OK
 $app->post('/registrazione', function (Request $request, Response $response) {
     $db = new DBUtenti();
 
@@ -120,10 +132,10 @@ $app->post('/registrazione', function (Request $request, Response $response) {
     $responseDB = $db->registrazione($matricola, $nome, $cognome, $email, $password, $cds);
     if ($responseDB == 1) { //Se la registrazione è andata a buon fine
         $responseData['error'] = false; //Campo errore = false
-        $responseData['message'] = 'Registrazione avvenuta con successo'; //Messaggio di esito positivo
+        //$responseData['message'] = 'Registrazione avvenuta con successo'; //Messaggio di esito positivo
         $emailSender = new EmailHelperAltervista();
         $link = 'http://unimolshare.altervista.org/logic/UnimolShare/public/activate.php?email=' . $email . '&matricola=' . $matricola;
-        $emailSender->sendConfermaAccount($email, $link);
+        $responseData['message'] = $emailSender->sendConfermaAccount($email, $link);
     } else if ($responseDB == 2) { //Se l'email è già presente nel DB
         $responseData['error'] = true; //Campo errore = true
         $responseData['message'] = 'Account già  esistente!'; //Messaggio di esito negativo

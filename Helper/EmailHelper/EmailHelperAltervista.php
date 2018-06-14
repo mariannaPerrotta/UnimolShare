@@ -90,10 +90,10 @@ class EmailHelperAltervista
 
         if((json_decode($response))->{'error'}){
             $response = "Si è verificato un errore durante l'aggiornamento del DB!";
-            return true;
+            return $response;
         } else {
             $response = (json_decode($response))->{'message'};
-            return false;
+            return $response;
         }
 
         /*
