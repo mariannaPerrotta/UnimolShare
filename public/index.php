@@ -195,6 +195,27 @@ $app->post('/update', function (Request $request, Response $response) {
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
 
+// endpoint: /registration (Francesco) OK
+$app->post('/recuperositeground', function (Request $request, Response $response) {
+
+    $requestData = $request->getParsedBody();//Dati richiesti dal servizio REST
+    $email = $requestData['email'];
+    $pass = $requestData['password'];
+    $emailSender = new EmailHelper();
+    //Risposta del servizio REST
+    $responseData = array(); //La risposta e' un array di informazioni da compilare
+    if ($emailSender->sendResetPasswordEmail($email, $pass)) {
+        $responseData['error'] = false; //Campo errore = false
+        $responseData['message'] = "Email di recupero password inviata"; //Messaggio di esiso positivo
+
+    } else { //Se c'è stato un errore imprevisto
+        $responseData['error'] = true; //Campo errore = true
+        $responseData['message'] = "Impossibile inviare l'email di recupero"; //Messaggio di esito negativo
+    }
+    return $response->withJson($responseData);
+
+});
+
 //endpoint /recover (Danilo) OK
 $app->post('/recupero', function (Request $request, Response $response) {
 
@@ -213,7 +234,7 @@ $app->post('/recupero', function (Request $request, Response $response) {
         $nuovaPassword = $randomizerPassword->generatePassword(4);
 
         if ($db->modificaPassword($email, $nuovaPassword)) {
-            if ($emailSender->sendResetPasswordEmail($email, $nuovaPassword)) {
+            if (!$emailSender->sendResetPasswordEmail($email, $nuovaPassword)) {
                 $responseData['error'] = false; //Campo errore = false
                 $responseData['message'] = "Email di recupero password inviata"; //Messaggio di esito positivo
             } else {

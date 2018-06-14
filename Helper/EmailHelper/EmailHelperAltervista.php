@@ -18,7 +18,7 @@ class EmailHelperAltervista
     //Funzione per inviare un'email con la nuova password
     function sendResetPasswordEmail($email, $password){
 
-        $urlRest = "http://petrelladev.eu/projects/UnimolShare/public/recupero";
+        $urlRest = "http://petrelladev.eu/projects/UnimolShare/public/recuperositeground";
 
         //Reinderizza all'host sitegrounf
         $data = array(

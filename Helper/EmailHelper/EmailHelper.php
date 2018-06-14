@@ -52,8 +52,8 @@ class EmailHelper
             $mail->Body   .= '<body><h1>UnimolShare</h1><div>';
             $mail->Body   .= $messaggio.':<br/><br/><b>'.$password.'</div><br/><div>Vai su '.$linkLogin.' per entrare.</div></body></html>';
             $mail->AltBody = $messaggio.': '.$password.' --- Vai su '.$linkLogin.' per entrare.';
-            $mail->send();
-            return true;
+
+            return $mail->send();
         } catch (Exception $e) {
             return false;
         }
@@ -78,7 +78,7 @@ class EmailHelper
             $mail->Port = 587;                                    // TCP port to connect to
 
             //Recipients
-            $mail->setFrom('unimolshare@gmail.com', 'UnimolShare - Automatic Password Recovery');
+            $mail->setFrom('unimolshare@gmail.com', 'UnimolShare - Automatic Register System');
             $mail->addAddress($email, 'Utente');     // Add a recipient
             $mail->Subject = 'UnimolShare - Conferma registrazione';
 
@@ -88,8 +88,7 @@ class EmailHelper
             $mail->Body   .= '<body><h1>UnimolShare</h1><div>';
             $mail->Body   .= $messaggio.':<br/><br/><b>'.$link.'</div><br/><div>Vai su '.$linkLogin.' per entrare.</div></body></html>';
             $mail->AltBody = $messaggio.': '.$link.' --- Vai su '.$linkLogin.' per entrare.';
-            $mail->send();
-            return true;
+            return $mail->send();
         } catch (Exception $e) {
             return false;
         }
