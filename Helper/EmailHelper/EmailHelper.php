@@ -43,7 +43,7 @@ class EmailHelper
 
             //Recipients
             $mail->setFrom('unimolshare@gmail.com', 'UnimolShare - Automatic Password Recovery');
-            $mail->addAddress('andreacb94@gmail.com', 'TEST Andrea');     // Add a recipient
+            $mail->addAddress($email, 'Utente');     // Add a recipient
             $mail->Subject = 'UnimolShare - Recupero credenziali';
 
             //Content
@@ -79,7 +79,7 @@ class EmailHelper
 
             //Recipients
             $mail->setFrom('unimolshare@gmail.com', 'UnimolShare - Automatic Password Recovery');
-            $mail->addAddress('andreacb94@gmail.com', 'TEST Andrea');     // Add a recipient
+            $mail->addAddress($email, 'Utente');     // Add a recipient
             $mail->Subject = 'UnimolShare - Conferma registrazione';
 
             //Content

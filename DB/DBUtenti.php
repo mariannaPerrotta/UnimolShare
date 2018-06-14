@@ -175,12 +175,14 @@ class DBUtenti
         $table = $this->tabelleDB[1]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
         $query = //query: "SELECT id, nome FROM cdl"
-            "SELECT * " .
+            "SELECT " .
+            $campi[0] . ", " .
+            $campi[1] . " " .
             "FROM " .
             $table." ".
             "WHERE ". $campi[0]." = ?";
         $stmt = $this->connection->prepare($query);
-        $stmt->bind_param(i , $idcdl);
+        $stmt->bind_param("i" , $idcdl);
         $stmt->execute();
         $stmt->store_result();
         if ($stmt->num_rows > 0) {
@@ -194,7 +196,8 @@ class DBUtenti
                 array_push($CDL, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $cdl
             }
             return $CDL;
-        }else return null;
+        } else
+            return null;
     }
 
 
@@ -204,15 +207,18 @@ class DBUtenti
         $table = $this->tabelleDB[1]; //Tabella per la query
         $campi = $this->campiTabelleDB[$table];
         $query = //query: "SELECT id, nome FROM cdl"
-            ("SELECT * " .
-            "FROM " .
-            $table." ");
+            (
+                "SELECT " .
+                $campi[0] . ", " .
+                $campi[1] . " " .
+                "FROM " .
+                $table
+            );
         $stmt = $this->connection->prepare($query);
         $stmt->execute();
         $stmt->store_result();
         if ($stmt->num_rows > 0) {
             $stmt->bind_result($id,$nome);
-
             $CDL = array();
             while ($stmt->fetch()) { //Scansiono la risposta della query
                 $temp = array(); //Array temporaneo per l'acquisizione dei dati
@@ -222,7 +228,8 @@ class DBUtenti
                 array_push($CDL, $temp); //Inserisco l'array $temp all'ultimo posto dell'array $cdl
             }
             return $CDL;
-        }else return null;
+        } else
+            return null;
     }
 
     //Funzione di recupero (Danilo)

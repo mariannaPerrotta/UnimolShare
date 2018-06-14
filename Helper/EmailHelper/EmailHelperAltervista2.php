@@ -18,34 +18,6 @@ class EmailHelperAltervista
     //Funzione per inviare un'email con la nuova password
     function sendResetPasswordEmail($email, $password){
 
-        $urlRest = "http://petrelladev.eu/projects/UnimolShare/public/recupero";
-
-        //Reinderizza all'host sitegrounf
-        $data = array(
-            'email' => $email,
-            'password' => $password
-        );
-
-        $options = array(
-            'http' => array(
-                'method'  => 'POST',
-                'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-                'content' => http_build_query($data)
-            )
-        );
-        $context  = stream_context_create($options);
-        $response = file_get_contents($urlRest, false, $context);
-
-        if((json_decode($response))->{'error'}){
-            $response = "Si è verificato un errore durante l'aggiornamento del DB!";
-            return true;
-        } else {
-            $response = (json_decode($response))->{'message'};
-            return false;
-        }
-
-        /*
-
         $messaggio = "Usa questa password temporanea";
 
         $linkLogin = 'https://www.unimolshare.it/login.php';
@@ -63,56 +35,39 @@ class EmailHelperAltervista
             return false;
         }
 
-        */
-
     }
 
     //Funzione per inviare un'email di conferma dell'account
     function sendConfermaAccount($email, $link){
 
-        $urlRest = "http://petrelladev.eu/projects/UnimolShare/public/confermaaccount";
+        // using SendGrid's PHP Library
+//      https://github.com/sendgrid/sendgrid-php
+        require '../../vendor/autoload.php';
+        $sendgrid = new SendGrid("SENDGRID_APIKEY");
+        $emailTo    = new SendGrid\Email();
 
-        //Reinderizza all'host sitegrounf
-        $data = array(
-            'email' => $email,
-            'link' => $link
-        );
-
-        $options = array(
-            'http' => array(
-                'method'  => 'POST',
-                'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-                'content' => http_build_query($data)
-            )
-        );
-        $context  = stream_context_create($options);
-        $response = file_get_contents($urlRest, false, $context);
-
-        if((json_decode($response))->{'error'}){
-            $response = "Si è verificato un errore durante l'aggiornamento del DB!";
-            return true;
-        } else {
-            $response = (json_decode($response))->{'message'};
-            return false;
-        }
-
-        /*
+        $sendgrid->send($emailTo);
 
         $messaggio = 'Hai appena richiesto di iscriverti ad UnimolShare!<br>Conferma la tua iscrizione col seguente link:';
         $linkLogin = 'https://www.unimolshare.it/login.php';
-        $emailTo = "andrea_cb_94@hotmail.it";
         $subject = "UnimolShare - Conferma registrazione";
         $message   = '<html><body><h1>UnimolShare</h1><div>';
         $message   .= $messaggio.'<br/><br/>'.$link.'</div><br/><div>Vai su '.$linkLogin.' per entrare.</div></body></html>';
         $headers = "MIME-Version: 1.0\r\n";
         $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
 
+
+
+        $emailTo->addTo($email)
+            ->setSubject($subject)
+            ->setHtml($message);
+
         try {
             return mail($emailTo, $subject, $message, $headers);
         } catch (Exception $e){
             return false;
         }
-*/
+
     }
 
     //Funzione per inviare email di segnalazione

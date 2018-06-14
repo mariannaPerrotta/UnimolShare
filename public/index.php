@@ -101,6 +101,7 @@ $app->post('/login', function (Request $request, Response $response) {
     return $response->withJson($responseData); //Invio la risposta del servizio REST al client
 });
 
+
 // endpoint: /registration (Francesco) OK
 $app->post('/registrazione', function (Request $request, Response $response) {
     $db = new DBUtenti();
@@ -247,7 +248,7 @@ $app->post('/visualizzamateriapercdl', function (Request $request, Response $res
     //Invio la risposta del servizio REST al client
 });
 
-//endpoint /visualizzamateriapercdl (danilo)ok
+//endpoint /visualizzamateriapermatricola (danilo)ok
 $app->post('/visualizzamateriapermatricola', function (Request $request, Response $response) {
 
     $db = new DBDocenti();
